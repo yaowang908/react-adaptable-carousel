@@ -90,15 +90,20 @@ const Carousel: React.FC<Props> = (props) => {
   },[containerWidth]);
 
   //  NOTE: using componentWidth control carousel width, if componentWidth = 0, layout becomes accordion like, container width = 100%
-  //            TODO: under accordion layout, should have other variables control round corner and margin in-between
+  //  TODO: under accordion layout, should have other variables control round corner and margin in-between
   //  
-  /**TODO: steps
+  /** steps
    * 1. pass in div element DONE: currently, only handles div > img 
    * 2. pass in img urls as array DONE: create singleElement.tsx
    * 3. pass in url array including videos TODO: import video array
-   * 4. when not full width slider container width < sliderWidthSum TODO: should turn to full width slider
-   * 5. auto rotate TODO:
-   * 6. add link to image TODO:, meanwhile add tooltip
+   *        1. string[] => treat as image array
+   *            1. FIXME: pure image array, reconsider how to present different size image
+   *        2. object[] => { itemType:'img | video | div | text', url:'https://your-website-url'  }
+   * 4. TODO: when not full width slider container width < sliderWidthSum should turn to full width slider
+   * 5. TODO: when full width, should display 100% width image, change height accordingly
+   * 6. auto rotate TODO:
+   * 7. add link to image TODO:, meanwhile add tooltip
+   * 8. TODO: touch screen
    * 
    */
 
