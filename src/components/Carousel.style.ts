@@ -6,7 +6,7 @@ interface ContainerProps {
 }
 
 const Container = styled.div<ContainerProps>`
-  ${props=>props.componentWidth === 0 ? 'width: 100%;' : 'max-width:'+props.componentWidth+'px'};
+  width: 100%;
   height: 400px;
   overflow: hidden;
   padding: 0;
@@ -25,13 +25,14 @@ const Container = styled.div<ContainerProps>`
 
 interface ImagesHolderProps {
   componentWidth?: number;
+  gap?: number;
 }
 
 const ImagesHolder = styled.div<ImagesHolderProps>`
   display: flex;
   flex-wrap: nowrap;
   width: 100%;
-  height: 100%;
+  height: calc(100% + 3px);
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -39,23 +40,27 @@ const ImagesHolder = styled.div<ImagesHolderProps>`
   overflow-x: scroll;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  & > div {
-    scroll-snap-align: start;
-    height: 100%;
-    max-width:100%;
-    ${props=>props.componentWidth === 0 ? 'width: auto' : 'width:'+props.componentWidth+'px'};
-    flex: 0 0 ${props=>props.componentWidth === 0 ? 'auto' : props.componentWidth+'px'};
-    ${props=>props.componentWidth === 0 ? '' : 'display: grid;place-items: center;'};
-  }
-  & img {
-    -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
-    user-drag: none;
-    object-fit: fill;
-    height: 100%;
-  }
+  
+  ${props=>props.gap ? `margin: 0 0 0 -${props.gap}px;` : ''};
+  ${props=>props.gap ? `width: calc(100% + ${props.gap}px);` : ''};
+  
+  // & > div {
+  //   scroll-snap-align: start;
+  //   height: 100%;
+  //   max-width:100%;
+  //   ${props=>props.componentWidth === 0 ? 'width: auto' : 'width:'+props.componentWidth+'px'};
+  //   ${props=>props.componentWidth === 0 ? 'flex: 0 0 auto' : 'flex: 0 0' + props.componentWidth+'px'};
+  //   ${props=>props.componentWidth === 0 ? '' : 'display: grid;place-items: center;'};
+  // }
+  // & img {
+  //   -webkit-user-drag: none;
+  //   -khtml-user-drag: none;
+  //   -moz-user-drag: none;
+  //   -o-user-drag: none;
+  //   user-drag: none;
+  //   object-fit: fill;
+  //   height: 100%;
+  // }
   &::-webkit-scrollbar {
     height: 3px;
   }
