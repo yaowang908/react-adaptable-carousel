@@ -11,7 +11,9 @@ interface Props {
   
   isDivElement:boolean;
   children?: JSX.Element[] | JSX.Element;
-  
+
+  roundCorner?: number;//only work when full-width is disabled 
+  minWidth?: number;//if child element is div, must set a minWidth for child container
   gap?: number; //space between items
 };
 
@@ -27,12 +29,12 @@ const SingleElement: React.FC<Props> = (props) => {
       );
     } else {
       return (
-        <Styled.Image src={props.imgUrl} alt={props.imgAlt} gap={props.gap}/>
+        <Styled.Image src={props.imgUrl} alt={props.imgAlt} gap={props.gap} roundCorner={props.roundCorner}/>
       );
     }
   } else if(props.isDivElement && props.children) {
       return (
-        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap}>
+        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap} minWidth={props.minWidth}>
           {props.children}
         </Styled.Container>
       )

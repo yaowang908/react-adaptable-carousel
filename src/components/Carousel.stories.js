@@ -12,6 +12,7 @@ const Template = args => <Carousel { ...args } />;
 export const Default = Template.bind({});
 Default.args = {
   componentWidth: 0,
+  componentHeight: 400,
   imgUrlArray: [
     "http://placekitten.com/200/300",
     "http://placekitten.com/400/300",
@@ -27,6 +28,7 @@ Default.args = {
   isDivElement: false,
   isImageElement: true,
   gap: 12,
+  roundCorner: 10,
 };
 
 export const FullWidthSlide = Template.bind({});
@@ -43,6 +45,7 @@ FullWidthSlide.args = {
     "http://placekitten.com/800/300",
   ],
   componentWidth: 600,
+  componentHeight: 400,
   isFullWidthItem: true,
   isDivElement: false,
   isImageElement: true,
@@ -63,11 +66,23 @@ export const DivElementSlide = args => (
       <div>Cat image 3</div>
       <img src="http://placekitten.com/200/300" alt="cat 3"/>
     </div>
+    <div>
+      <div>Cat image 3</div>
+      <img src="http://placekitten.com/200/300" alt="cat 3"/>
+    </div>
+    <div>
+      <div>Cat image 3</div>
+      <img src="http://placekitten.com/200/300" alt="cat 3"/>
+    </div>
   </Carousel>
 );
 DivElementSlide.args = {
+  // componentWidth: 600,
+  componentHeight: 600,
   isFullWidthItem: false,
   isDivElement: true,
+  divElementMinWidth: 400,
+  gap: 12,
   isImageElement: false,
 }
 
