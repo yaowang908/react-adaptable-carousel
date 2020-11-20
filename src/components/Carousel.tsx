@@ -31,13 +31,16 @@ const Carousel: React.FC<Props> = (props) => {
   const imagesHolderRef = React.useRef<HTMLDivElement>(null);
   const buttonPrevRef = React.useRef<HTMLDivElement>(null);
   const buttonNextRef = React.useRef<HTMLDivElement>(null);
+  const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]);
+  const [itemsWidth, setItemsWidth] = React.useState<number[]>([]);
   React.useEffect(() => {// handler drag move carousel
     if (null !== imagesHolderRef.current) {
       const holder = imagesHolderRef.current;
       holder.style.cursor = 'grab';
       let pos = { top:0, left:0, x:0, y:0};
-
       const mouseDownHandler = (e: MouseEvent) => {
+        e.stopPropagation();
+        console.log('Mouse down');
         holder.style.cursor = 'grabbing';
         holder.style.userSelect = 'none';
         holder.style.removeProperty('scroll-snap-type');
@@ -50,29 +53,36 @@ const Carousel: React.FC<Props> = (props) => {
           y: e.clientY,
         };
 
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
+        holder.addEventListener('mousemove', mouseMoveHandler);
+        holder.addEventListener('mouseup', mouseUpHandler);
       }
-
       const mouseMoveHandler = (e: MouseEvent) => {
+        e.stopPropagation();
+        console.log('Mouse move');
         const dx = e.clientX - pos.x;
         const dy = e.clientY - pos.y;
 
         holder.scrollTop = pos.top - dy;
         holder.scrollLeft = pos.left - dx;
       };
-
-      const mouseUpHandler = () => {
+      const mouseUpHandler = (e: MouseEvent) => {
+        e.stopPropagation();
+        console.log('Mouse up');
         holder.style.cursor = 'grab';
         holder.style.removeProperty('user-select');
         holder.style['scroll-snap-type' as any] = 'x mandatory';
 
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-      };
+        console.log(itemRefs[0].current?.getBoundingClientRect().left);
 
+        holder.removeEventListener('mousemove', mouseMoveHandler);
+        holder.removeEventListener('mouseup', mouseUpHandler);
+      };
       holder.addEventListener('mousedown', mouseDownHandler);
-      
+      return () => {
+        holder.removeEventListener('mousedown', mouseDownHandler);
+        holder.removeEventListener('mousemove', mouseMoveHandler);
+        holder.removeEventListener('mouseup', mouseUpHandler);
+      };
     }
   });
   React.useEffect(() => {//set container width
@@ -82,19 +92,28 @@ const Carousel: React.FC<Props> = (props) => {
       setContainerWidth(props.componentWidth);
     }
   },[containerWidth, props.componentWidth]);
+  const debounce = (func: () =>void, wait = 1000) => {
+    let h:number;
+    return () => {
+      clearTimeout(h);
+      h = setTimeout(()=>func(), wait);
+    }
+  };
+  // change container width when window resize
+  const resizeHandler = React.useCallback(// keep the function instance the same between renders
+      debounce(()=>{
+        let __containerWidth : number = containerRef.current ? Number(containerRef.current.offsetWidth.toString().replace('px', '')) : 0;
+        setContainerWidth(__containerWidth);
+        console.log(__containerWidth);
+      }, 1000),
+      []
+  );
   React.useEffect(() => {//set containerWidth on window resize
-    // TODO: set containerWidth on window resize
+    // DONE: set containerWidth on window resize
     // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
     let _containerWidth : number = containerRef.current ? Number(containerRef.current.offsetWidth.toString().replace('px', '')) : 0;
     setContainerWidth(_containerWidth);
-    // change container width when window resize
-    const resizeHandler = () => {
-        let __containerWidth : number = containerRef.current ? Number(containerRef.current.offsetWidth.toString().replace('px', '')) : 0;
-        setContainerWidth(__containerWidth);
-        console.log(containerWidth);
-    }
     window.addEventListener("resize", resizeHandler);
-
     return () => window.removeEventListener("resize", resizeHandler);
   },[containerWidth]);
   React.useEffect(() => {// set item amount
@@ -140,14 +159,35 @@ const Carousel: React.FC<Props> = (props) => {
       setCurrentSliderIndex(currentSliderIndex + 1);
     }
   };
+
+  React.useEffect(() => {// init item refs
+    setItemRefs(itemRefs => (
+      Array(itemAmount).fill(0).map((_,i) => itemRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>())
+    ));
+  }, [itemAmount]);
+
+  React.useEffect(() => { //get all items width
+    const __itemsWidth:number[] = Array(itemAmount).fill(0).map((_,i) => {
+        if( itemRefs[i] ) {
+          let _cur = itemRefs[i].current;
+          return Number(_cur?.offsetWidth.toString().replace('px', ''));
+        } else {
+          // console.error('1');
+          return 0;
+        }
+      });
+    setItemsWidth(__itemsWidth);
+  }, [containerWidth, itemAmount, itemRefs]);
+
   React.useEffect(() => { // move the slide automatically or by clicking the buttons. Not swap or drag
     //TODO:
     //take the current slide index and display it
-
+    console.log(itemsWidth);
+    console.log(currentSliderIndex);
     // if is paused then pause
     // if is not paused
       //auto increase current slide index by 1 until reach the end then go back to 0
-  });
+  },[itemsWidth, currentSliderIndex]);
   //  NOTE: using componentWidth control carousel width, if componentWidth = 0, layout becomes accordion like, container width = 100%
   //  DONE: under accordion layout, should have other variables control round corner and margin in-between
   //  
@@ -168,19 +208,21 @@ const Carousel: React.FC<Props> = (props) => {
    */
 
   return (
-      <Styled.Container ref={containerRef} 
+      <Styled.Container ref={containerRef as any} 
+      // styled-components won't pass ref T.T 
+      //https://github.com/DefinitelyTyped/DefinitelyTyped/issues/28884
                         componentWidth={containerWidth} 
                         componentHeight={props.componentHeight}
                         onMouseEnter = {() => mouseEnterHandler()}
                         onMouseLeave = {() => mouseLeaveHandler()}
                         >
-        <Styled.ButtonPrev ref={buttonPrevRef} 
+        <Styled.ButtonPrev ref={buttonPrevRef  as any} 
                             color='#e31b23'
                             onClick={() => prevButtonClickHandler()}>{'<'}</Styled.ButtonPrev>
-        <Styled.ButtonNext ref={buttonNextRef} 
+        <Styled.ButtonNext ref={buttonNextRef  as any} 
                             color='#e31b23'
                             onClick={() => nextButtonClickHandler()}>{'>'}</Styled.ButtonNext>
-        <Styled.ImagesHolder ref={imagesHolderRef} componentWidth={containerWidth} gap={props.gap}>
+        <Styled.ImagesHolder ref={imagesHolderRef  as any} componentWidth={containerWidth} gap={props.gap}>
           {
             props.isImageElement && props.imgUrlArray ? props.imgUrlArray.map((x, index) => {
               return <SingleElement isDivElement={props.isDivElement} 
@@ -191,15 +233,18 @@ const Carousel: React.FC<Props> = (props) => {
                                     gap={props.gap}
                                     roundCorner={props.roundCorner}
                                     key={index}
+                                    _ref={itemRefs[index]}
                       ></SingleElement>
-            }) : (props.isDivElement && props.children ? React.Children.map(props.children, (child: React.ReactElement) => {
+            }) : (props.isDivElement && props.children ? React.Children.map(props.children, (child: React.ReactElement, index: number) => {
               return (
                 <SingleElement isDivElement={props.isDivElement} 
                               isImageElement={props.isImageElement} 
                               isFullWidthElement={props.isFullWidthItem}
                               gap={props.gap}
                               minWidth={props.divElementMinWidth}
-                              roundCorner={props.roundCorner}>
+                              roundCorner={props.roundCorner}
+                              _ref={itemRefs[index]}>
+                                
                   {child}
                 </SingleElement>
               )

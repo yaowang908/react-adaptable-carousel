@@ -15,6 +15,7 @@ interface Props {
   roundCorner?: number;//only work when full-width is disabled 
   minWidth?: number;//if child element is div, must set a minWidth for child container
   gap?: number; //space between items
+  _ref?: React.RefObject<HTMLDivElement>;//ref is reserved, cannot use ref as prop here
 };
 
 const SingleElement: React.FC<Props> = (props) => {
@@ -23,18 +24,18 @@ const SingleElement: React.FC<Props> = (props) => {
     if(props.isFullWidthElement) {
       // console.log(props.children);
       return (
-        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap}>
+        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap} ref={props._ref}>
           <Styled.Image src={props.imgUrl} alt={props.imgAlt}/>
         </Styled.Container>
       );
     } else {
       return (
-        <Styled.Image src={props.imgUrl} alt={props.imgAlt} gap={props.gap} roundCorner={props.roundCorner}/>
+        <Styled.Image src={props.imgUrl} alt={props.imgAlt} gap={props.gap} roundCorner={props.roundCorner} ref={props._ref as any}/>
       );
     }
   } else if(props.isDivElement && props.children) {
       return (
-        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap} minWidth={props.minWidth}>
+        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap} minWidth={props.minWidth} ref={props._ref}>
           {props.children}
         </Styled.Container>
       )
