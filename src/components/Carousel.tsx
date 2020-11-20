@@ -19,7 +19,7 @@ interface Props {
   
   divElementMinWidth?: number;//if child element is div, must set a minWidth for child container
   // space between items
-  gap?: number;
+  gap: number;
 }
 
 const Carousel: React.FC<Props> = (props) => {
@@ -33,6 +33,7 @@ const Carousel: React.FC<Props> = (props) => {
   const buttonNextRef = React.useRef<HTMLDivElement>(null);
   const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]);
   const [itemsWidth, setItemsWidth] = React.useState<number[]>([]);
+  const [carouselPosition, setCarouselPosition] = React.useState<number>(0);
   React.useEffect(() => {// handler drag move carousel
     if (null !== imagesHolderRef.current) {
       const holder = imagesHolderRef.current;
@@ -40,7 +41,7 @@ const Carousel: React.FC<Props> = (props) => {
       let pos = { top:0, left:0, x:0, y:0};
       const mouseDownHandler = (e: MouseEvent) => {
         e.stopPropagation();
-        console.log('Mouse down');
+        // console.log('Mouse down');
         holder.style.cursor = 'grabbing';
         holder.style.userSelect = 'none';
         holder.style.removeProperty('scroll-snap-type');
@@ -58,7 +59,7 @@ const Carousel: React.FC<Props> = (props) => {
       }
       const mouseMoveHandler = (e: MouseEvent) => {
         e.stopPropagation();
-        console.log('Mouse move');
+        // console.log('Mouse move');
         const dx = e.clientX - pos.x;
         const dy = e.clientY - pos.y;
 
@@ -71,8 +72,25 @@ const Carousel: React.FC<Props> = (props) => {
         holder.style.cursor = 'grab';
         holder.style.removeProperty('user-select');
         holder.style['scroll-snap-type' as any] = 'x mandatory';
-
-        console.log(itemRefs[0].current?.getBoundingClientRect().left);
+        console.log(holder.scrollLeft);
+        setCarouselPosition( holder.scrollLeft );
+        
+        //FIXME: set index base on scrollLeft
+        const stepsLengthArr: number[] = [];//these are the actual number to move 
+        let __position = props.gap;
+        stepsLengthArr.push(__position);
+        for(let i = 0; i<itemAmount-1; i++) {
+          __position = __position + itemsWidth[i] + props.gap;
+          stepsLengthArr.push(__position);
+        }
+        let __tempIndex:number = 0;
+        for(let i=0; i<stepsLengthArr.length; i++) {
+          if(holder && (holder.scrollLeft >= stepsLengthArr[i])) {
+            __tempIndex = i;
+          }
+        }
+        setCurrentSliderIndex(__tempIndex);
+        console.log('__tempIndex: '+__tempIndex);
 
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
@@ -128,8 +146,9 @@ const Carousel: React.FC<Props> = (props) => {
       const buttonPrev = buttonPrevRef.current;
       const buttonNext = buttonNextRef.current;
       setIsCarouselPaused(true);
-      buttonPrev.style.display = 'grid';
-      buttonNext.style.display = 'grid';
+      // hide buttons
+      // buttonPrev.style.display = 'grid';
+      // buttonNext.style.display = 'grid';
     }
   };
   const mouseLeaveHandler = () => {//mouse over container hide buttons
@@ -159,13 +178,11 @@ const Carousel: React.FC<Props> = (props) => {
       setCurrentSliderIndex(currentSliderIndex + 1);
     }
   };
-
   React.useEffect(() => {// init item refs
     setItemRefs(itemRefs => (
       Array(itemAmount).fill(0).map((_,i) => itemRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>())
     ));
   }, [itemAmount]);
-
   React.useEffect(() => { //get all items width
     const __itemsWidth:number[] = Array(itemAmount).fill(0).map((_,i) => {
         if( itemRefs[i] ) {
@@ -178,16 +195,64 @@ const Carousel: React.FC<Props> = (props) => {
       });
     setItemsWidth(__itemsWidth);
   }, [containerWidth, itemAmount, itemRefs]);
-
   React.useEffect(() => { // move the slide automatically or by clicking the buttons. Not swap or drag
     //TODO:
     //take the current slide index and display it
-    console.log(itemsWidth);
-    console.log(currentSliderIndex);
+    const auto_interval = 2000; //interval 
+    const holder = imagesHolderRef.current;
+    const stepsLengthArr: number[] = [];//these are the actual number to move 
+    let __position = props.gap;
+    const carouselWidth = props.gap + itemsWidth.reduce((acc, cur) => { return acc+cur+props.gap}, 0) - props.gap; // left margin include, but subtract the right margin
+    const positionLeftLimit = carouselWidth - containerWidth - props.gap; //going to assign it with carouselWidth - containerWidth, but the result is missing one gap, compare to the real circumstance 
+    stepsLengthArr.push(__position);
+    for(let i = 0; i<itemAmount-1; i++) {
+      __position = __position + itemsWidth[i] + props.gap;
+      stepsLengthArr.push(__position);
+    }
+
+    let currentPosition: number = 0;// the number to set scrollLeft
+    let __temp = false;
+    for(let i = 0; i<currentSliderIndex; i++) {
+      if(stepsLengthArr[i] <= positionLeftLimit) {
+        currentPosition = stepsLengthArr[i];
+      } else {
+        if(__temp) {
+          currentPosition = 0;
+          setCurrentSliderIndex(0);
+        } else {
+          currentPosition = positionLeftLimit;
+          __temp = true;
+        }
+      }
+    }
+    console.log('currentPosition: '+currentPosition);
+    if(holder && !isCarouselPaused) {
+      holder.scrollLeft = currentPosition;
+    }
+
     // if is paused then pause
     // if is not paused
       //auto increase current slide index by 1 until reach the end then go back to 0
-  },[itemsWidth, currentSliderIndex]);
+    const nIntervalId = setInterval(() => {
+      if(isCarouselPaused) {
+        //pause carousel
+        console.log('paused');
+      } else {
+        // console.log(currentSliderIndex);
+        if(currentSliderIndex === (itemAmount - 1)) {
+          if(__temp) { 
+            setCurrentSliderIndex(0);
+          } else {
+            //do nothing
+          }
+        } else {
+          setCurrentSliderIndex(currentSliderIndex + 1);
+        }
+      }
+    }, auto_interval);
+
+    return () => clearInterval(nIntervalId);
+  },[containerWidth, itemsWidth, currentSliderIndex, carouselPosition, props.gap, itemAmount, isCarouselPaused]);
   //  NOTE: using componentWidth control carousel width, if componentWidth = 0, layout becomes accordion like, container width = 100%
   //  DONE: under accordion layout, should have other variables control round corner and margin in-between
   //  
