@@ -1,6 +1,7 @@
 import React from 'react';
 
 import SingleElement from './SingleElement';
+import debounce from '../lib/debounce';
 import { Styled } from './Carousel.style';
 
 interface Props {
@@ -110,20 +111,13 @@ const Carousel: React.FC<Props> = (props) => {
       setContainerWidth(props.componentWidth);
     }
   },[containerWidth, props.componentWidth]);
-  const debounce = (func: () =>void, wait = 1000) => {
-    let h:number;
-    return () => {
-      clearTimeout(h);
-      h = setTimeout(()=>func(), wait);
-    }
-  };
   // change container width when window resize
   const resizeHandler = React.useCallback(// keep the function instance the same between renders
       debounce(()=>{
         let __containerWidth : number = containerRef.current ? Number(containerRef.current.offsetWidth.toString().replace('px', '')) : 0;
         setContainerWidth(__containerWidth);
         console.log(__containerWidth);
-      }, 1000),
+      }, 500),
       []
   );
   React.useEffect(() => {//set containerWidth on window resize
