@@ -8,7 +8,7 @@ const left = (element: HTMLDivElement, to: number, duration: number) => {
         
   var animateScroll = async function(){        
       currentTime += increment;
-      var val = Math.easeInOutQuad(currentTime, start, change, duration);
+      var val = easeInOutQuad(currentTime, start, change, duration);
       element.scrollLeft = val;
       if(currentTime < duration) {
           await new Promise((resolve) => setTimeout(() => {
@@ -25,7 +25,7 @@ const left = (element: HTMLDivElement, to: number, duration: number) => {
 //b = start value
 //c = change in value
 //d = duration
-Math.easeInOutQuad = function (t, b, c, d) {
+const easeInOutQuad = function (t:number, b:number, c:number, d:number) {
   t /= d/2;
 	if (t < 1) return c/2*t*t + b;
 	t--;

@@ -200,6 +200,21 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
       scrollTo.left(holder, currentPosition, 1000);
     }
   },[containerWidth, itemsWidth, currentSliderIndex, carouselPosition, itemAmount, isCarouselPaused]);
+  React.useEffect(() => { // pause auto movement when tag lose focus
+    const visibilityHandler = () => {
+      if(document.visibilityState === 'visible') {
+        // console.log("focus");
+        setIsCarouselPaused(false);
+      } else {
+        // console.log("blur");
+        setIsCarouselPaused(true);
+      }
+    };
+    window.addEventListener("visibilitychange",visibilityHandler);
+    return () => {
+      window.removeEventListener("visibilitychange", visibilityHandler);
+    }
+  });
   const mouseEnterHandler = () => {
     setIsCarouselPaused(true);
   };
