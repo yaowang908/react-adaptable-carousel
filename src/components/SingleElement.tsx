@@ -6,6 +6,7 @@ interface Props {
   isImageElement: boolean;
   imgUrl?: string;
   imgAlt?: string;
+  height?: number;
 
   isFullWidthElement?: boolean;
   
@@ -24,18 +25,18 @@ const SingleElement: React.FC<Props> = (props) => {
     if(props.isFullWidthElement) {
       // console.log(props.children);
       return (
-        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap} ref={props._ref}>
-          <Styled.Image src={props.imgUrl} alt={props.imgAlt}/>
+        <Styled.Container isFullWidthElement={props.isFullWidthElement} height={props.height} gap={props.gap} ref={props._ref}>
+          <Styled.Image src={props.imgUrl} alt={props.imgAlt} height={props.height} />
         </Styled.Container>
       );
     } else {
       return (
-        <Styled.Image src={props.imgUrl} alt={props.imgAlt} gap={props.gap} roundCorner={props.roundCorner} ref={props._ref as any}/>
+        <Styled.Image src={props.imgUrl} alt={props.imgAlt} height={props.height} gap={props.gap} roundCorner={props.roundCorner} ref={props._ref as any}/>
       );
     }
   } else if(props.isDivElement && props.children) {
       return (
-        <Styled.Container isFullWidthElement={props.isFullWidthElement} gap={props.gap} minWidth={props.minWidth} ref={props._ref}>
+        <Styled.Container isFullWidthElement={props.isFullWidthElement} height={props.height} gap={props.gap} minWidth={props.minWidth} ref={props._ref}>
           {props.children}
         </Styled.Container>
       )

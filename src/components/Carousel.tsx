@@ -3,6 +3,7 @@ import React from 'react';
 import SingleElement from './SingleElement';
 import debounce from '../lib/debounce';
 import { Styled } from './Carousel.style';
+import { Button } from './Button.style';
 
 interface Props {
   componentWidth: number;
@@ -275,12 +276,12 @@ const Carousel: React.FC<Props> = (props) => {
                         onMouseEnter = {() => mouseEnterHandler()}
                         onMouseLeave = {() => mouseLeaveHandler()}
                         >
-        <Styled.ButtonPrev ref={buttonPrevRef  as any} 
+        <Button.Prev ref={buttonPrevRef  as any} 
                             color='#e31b23'
-                            onClick={() => prevButtonClickHandler()}>{'<'}</Styled.ButtonPrev>
-        <Styled.ButtonNext ref={buttonNextRef  as any} 
+                            onClick={() => prevButtonClickHandler()}>{'<'}</Button.Prev>
+        <Button.Next ref={buttonNextRef  as any} 
                             color='#e31b23'
-                            onClick={() => nextButtonClickHandler()}>{'>'}</Styled.ButtonNext>
+                            onClick={() => nextButtonClickHandler()}>{'>'}</Button.Next>
         <Styled.ImagesHolder ref={imagesHolderRef  as any} componentWidth={containerWidth} gap={props.gap}>
           {
             props.isImageElement && props.imgUrlArray ? props.imgUrlArray.map((x, index) => {

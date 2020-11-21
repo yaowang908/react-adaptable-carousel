@@ -6,18 +6,20 @@ interface ContainerProps {
   gap?: number;
   roundCorner?: number;
   minWidth?: number;
+  height?: number;
 };
 
 const Container = styled.div<ContainerProps>`
   width: 100%;
   ${props=>props.isFullWidthElement? 'min-width:100%;':''}
-  height: 100%;
+  height: ${props=>props.height+'px' || 'auto'};
   overflow: hidden;
   padding: 0;
   scroll-snap-align: start;
   ${props=>props.minWidth ? `min-width:${props.minWidth}px;` :''}
   ${props=>props.gap ? `margin: 0 0 0 ${props.gap}px;` : 'margin: 0;'}
-
+  display: grid;
+  place-item: center;
   box-sizing: border-box;
   & img {
     -webkit-user-drag: none;
@@ -25,8 +27,13 @@ const Container = styled.div<ContainerProps>`
     -moz-user-drag: none;
     -o-user-drag: none;
     user-drag: none;
-    width: 100%;
-    height: auto;
+    width: ${props=>props.height? 'auto' : '100%'};
+    margin:0 auto;
+    height: ${props=>props.height? props.height+'px' : 'auto'};
+  }
+  &>div {
+    display: grid;
+    place-items: center;
   }
   ${media.desktop} {
       
@@ -44,6 +51,7 @@ interface ImageProps {
   alt?: string;
   gap?: number;
   roundCorner?: number;
+  height?: number;
 };
 
 const Image = styled.img.attrs(props => ({
@@ -56,7 +64,7 @@ const Image = styled.img.attrs(props => ({
   -o-user-drag: none;
   user-drag: none;
   object-fit: fill;
-  height: 100%;
+  height: ${props=>props.height+'px' || 'auto'};
   scroll-snap-align: start;
   box-sizing: border-box;
   ${props=>props.roundCorner ? `border-radius:${props.roundCorner}px;` : ``}

@@ -76,40 +76,8 @@ const ImagesHolder = styled.div<ImagesHolderProps>`
   }
 `;
 
-interface buttonProps {
-  color?: string;
-};
-
-const ButtonPrev = styled.div<buttonProps>`
-    font-size: 1.5em;
-    width: 20px;
-    padding: 0 10px;
-    height: 100px;
-    font-weight: 900;
-    position: absolute;
-    z-index: 100;
-    left: 10px;
-    top: 50%;
-    margin-top: -50px;
-    cursor: pointer;
-    box-shadow: 2px 2px 6px #949494;
-    display: none;// grid
-    place-items: center;
-    ${props=>props.color ? `background-color: ${props.color}` : 'background-color: #fff'};
-    & * {
-      ${props=>props.color ? `color: ${props.color}` : 'color: #fff'};
-      filter: invert(100%);//invert text color
-    }
-`;
-
-const ButtonNext = styled(ButtonPrev)<buttonProps>`
-    right: 10px;
-    left: auto;
-`;
 
 export const Styled = {
   Container,
   ImagesHolder,
-  ButtonPrev,
-  ButtonNext,
 };
