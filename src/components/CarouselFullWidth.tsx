@@ -12,12 +12,7 @@ interface Props {
   componentHeight?: number;// if height = null, set height to auto
 };
 
-const Defaults: Props = {
-  isDivElement: false,
-}
-
 const CarouselFullWidth: React.FC<Props> = (props) => {
-  // props = {...props, ...Defaults};//set default props
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
   const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
   const [carouselPosition, setCarouselPosition] = React.useState<number>(0);
