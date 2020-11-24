@@ -21,19 +21,12 @@ interface Props {
   gap?: number; //space between items
   _ref?: React.RefObject<HTMLDivElement>;//ref is reserved, cannot use ref as prop here
 };
-// TODO: add link options
+// DONE: add link options
 const SingleElement: React.FC<Props> = (props) => {
-  // const [ isUserDragging, setIsUserDragging ] = React.useState<boolean>(false);
   
   const elementRef = React.useRef<HTMLDivElement>(null);
-
-  const onClickHandler = (link: string) => {
-    return () => {
-      return window.open(link,'_BLANK');
-    };
-  };
   
-  React.useEffect(() => {
+  React.useEffect(() => { //differentiating click and drag
     let __isUserDragging = false;
     if (null !== elementRef.current) {
       const ele = elementRef.current;
@@ -46,7 +39,7 @@ const SingleElement: React.FC<Props> = (props) => {
 
       const mouseMoveHandler = (e: MouseEvent) => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
-        console.log('move');
+        // console.log('move');
         __isUserDragging = true;
         ele.removeEventListener('mousemove', mouseMoveHandler);
       };
@@ -55,7 +48,7 @@ const SingleElement: React.FC<Props> = (props) => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
         if(__isUserDragging) {
           // user is dragging
-          console.log('drag');
+          // console.log('drag');
         } else {
           // user is clicking
           // console.log('click');
@@ -78,7 +71,6 @@ const SingleElement: React.FC<Props> = (props) => {
     
   }, [elementRef]);
 
-  
   if(props.isImageElement) {
     if(props.isFullWidthElement) {
       // console.log(props.children);
