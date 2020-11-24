@@ -8,7 +8,7 @@ import { Button } from './Button.style';
 
 interface Props {
   isDivElement: boolean;
-  imgUrlArray?: string[];
+  imgUrlArray?: {imgUrl: string, link?: string;}[];
   componentHeight?: number;// if height = null, set height to auto
 };
 
@@ -57,11 +57,11 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
       };
       const mouseUpHandler = (e: MouseEvent) => {
         e.stopPropagation();
-        console.log('Mouse up');
+        // console.log('Mouse up');
         holder.style.cursor = 'grab';
         holder.style.removeProperty('user-select');
         holder.style['scroll-snap-type' as any] = 'x mandatory';
-        console.log(holder.scrollLeft);
+        // console.log(holder.scrollLeft);
         setCarouselPosition( holder.scrollLeft );
         
         const stepsLengthArr: number[] = [];//these are the actual number to move 
@@ -78,7 +78,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
           }
         }
         setCurrentSliderIndex(__tempIndex);
-        console.log('__tempIndex: '+__tempIndex);
+        // console.log('__tempIndex: '+__tempIndex);
 
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
@@ -145,7 +145,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     const nIntervalId = setInterval(() => {
       if(isCarouselPaused) {
         //pause carousel
-        console.log('paused');
+        // console.log('paused');
       } else {
         // console.log(currentSliderIndex);
         if(currentSliderIndex === (itemAmount - 1)) {
@@ -153,6 +153,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
         } else {
           setCurrentSliderIndex(currentSliderIndex + 1);
         }
+        // TODO: when reach the end, instead of going to 0, go back 1 per step until 0 then go forward by 1 a time
       }
     }, auto_interval);
 
@@ -212,11 +213,12 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   });
   const mouseEnterHandler = () => {
     setIsCarouselPaused(true);
+    // TODO: bring up handle buttons
   };
   const mouseLeaveHandler = () => {
     setIsCarouselPaused(false);
   };
-
+// TODO: add link options
 
   return (
     <Styled.Container ref={containerRef as any} onMouseEnter = {() => mouseEnterHandler()} onMouseLeave = {() => mouseLeaveHandler()}>
@@ -228,7 +230,8 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
               return <SingleElement isDivElement={props.isDivElement} 
                                     isImageElement={true} 
                                     isFullWidthElement={true} 
-                                    imgUrl={x}
+                                    imgUrl={x.imgUrl}
+                                    link={x.link}
                                     imgAlt={''}
                                     gap={0}
                                     height={props.componentHeight}

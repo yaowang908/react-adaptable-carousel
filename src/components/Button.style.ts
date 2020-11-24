@@ -4,7 +4,7 @@ import media from '../lib/customMediaQuery';
 interface ButtonProps {
   color?: string;
 };
-
+// TODO: accept image as background to replace default style
 const Prev = styled.div<ButtonProps>`
     font-size: 1.5em;
     width: 20px;

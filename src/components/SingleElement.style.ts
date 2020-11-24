@@ -46,7 +46,7 @@ const Container = styled.div<ContainerProps>`
   }
 `;
 
-interface ImageProps {
+interface ImageProps extends React.HTMLAttributes<HTMLImageElement> {
   src?: string;
   alt?: string;
   gap?: number;

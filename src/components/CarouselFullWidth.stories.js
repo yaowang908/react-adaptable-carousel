@@ -12,15 +12,15 @@ const Template = args => <CarouselFullWidth { ...args } />;
 export const Default = Template.bind({});
 Default.args = {
   imgUrlArray: [
-    "https://via.placeholder.com/200x300.png?text=0",
-    "https://via.placeholder.com/400x300.png?text=1",
-    "https://via.placeholder.com/300x300.png?text=2",
-    "https://via.placeholder.com/200x300.png?text=3",
-    "https://via.placeholder.com/400x300.png?text=4",
-    "https://via.placeholder.com/300x300.png?text=5",
-    "https://via.placeholder.com/200x300.png?text=6",
-    "https://via.placeholder.com/400x300.png?text=7",
-    "https://via.placeholder.com/300x300.png?text=8",
+    { imgUrl: "https://via.placeholder.com/200x300.png?text=0", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/400x300.png?text=1", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/300x300.png?text=2", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/200x300.png?text=3", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/400x300.png?text=4", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/300x300.png?text=5", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/200x300.png?text=6", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/400x300.png?text=7", link: 'https://placeholder.com'},
+    { imgUrl: "https://via.placeholder.com/300x300.png?text=8", link: 'https://placeholder.com'},
   ],
   componentHeight: 400,
 };
@@ -28,15 +28,15 @@ Default.args = {
 export const AutoHeight = Template.bind({});
 AutoHeight.args = {
   imgUrlArray: [
-    "https://via.placeholder.com/1200x630.png?text=0",
-    "https://via.placeholder.com/1200x630.png?text=1",
-    "https://via.placeholder.com/1200x630.png?text=2",
-    "https://via.placeholder.com/1200x630.png?text=3",
-    "https://via.placeholder.com/1200x630.png?text=4",
-    "https://via.placeholder.com/1200x630.png?text=5",
-    "https://via.placeholder.com/1200x630.png?text=6",
-    "https://via.placeholder.com/1200x630.png?text=7",
-    "https://via.placeholder.com/1200x630.png?text=8",
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=0", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=1", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=2", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=3", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=4", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=5", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=6", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=7", link:''},
+    { imgUrl:"https://via.placeholder.com/1200x630.png?text=8", link:''},
   ],
 };
 

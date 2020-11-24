@@ -6,7 +6,7 @@ import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselQueue.style';
 
 interface Props {
-  imgUrlArray?: string[];
+  imgUrlArray?: {imgUrl: string, link?: string;}[];
   componentHeight?: number;
   isDivElement: boolean;
   roundCorner?: number;
@@ -17,7 +17,13 @@ interface Position {
   position: "left-end" | "right-end" | "middle";
 }
 
-// TODO: fixed amount children
+// TODO: fixed amount children(not exactly!!!)
+/**
+ * when imageHolder is shorter than container
+ * e.g.: only have one slide, but the container is ready to show 2
+ * solution: imageHolder occupy 100%, hold the elements as normal
+ * 
+ */
 
 const CarouselQueue: React.FC<Props> = (props) => {
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
@@ -136,7 +142,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
               return <SingleElement isDivElement={props.isDivElement} 
                                     isImageElement={true} 
                                     isFullWidthElement={false} 
-                                    imgUrl={x}
+                                    imgUrl={x.imgUrl}
+                                    link={x.link}
                                     imgAlt={''}
                                     gap={props.gap? props.gap : 0}
                                     height={props.componentHeight}
