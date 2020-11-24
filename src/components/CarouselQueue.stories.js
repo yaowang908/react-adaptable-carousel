@@ -72,4 +72,5 @@ export const DivElementSlide = args => (
 );
 DivElementSlide.args = {
   isDivElement: true,
+  gap: 12,
 };
