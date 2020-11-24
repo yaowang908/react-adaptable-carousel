@@ -12,7 +12,7 @@ interface ContainerProps {
 const Container = styled.div<ContainerProps>`
   width: 100%;
   ${props=>props.isFullWidthElement? 'min-width:100%;':''}
-  height: ${props=>props.height+'px' || 'auto'};
+  height: ${props=>props.height ? props=>props.height+'px' : 'auto'};
   overflow: hidden;
   padding: 0;
   scroll-snap-align: start;
@@ -64,7 +64,7 @@ const Image = styled.img.attrs(props => ({
   -o-user-drag: none;
   user-drag: none;
   object-fit: fill;
-  height: ${props=>props.height+'px' || 'auto'};
+  height: ${props=>props.height ? props=>props.height+'px' : 'auto'};
   scroll-snap-align: start;
   box-sizing: border-box;
   ${props=>props.roundCorner ? `border-radius:${props.roundCorner}px;` : ``}

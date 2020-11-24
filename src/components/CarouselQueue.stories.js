@@ -41,8 +41,9 @@ AutoHeight.args = {
     "https://via.placeholder.com/400x300.png?text=7",
     "https://via.placeholder.com/300x300.png?text=8",
   ],
-  componentHeight: 400,
+  componentHeight: 0,//set 0 means to set image height to auto
   isDivElement: false,
+  gap: 12,
 };
 
 export const DivElementSlide = args => (

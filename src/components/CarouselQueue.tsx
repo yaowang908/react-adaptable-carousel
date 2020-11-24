@@ -14,6 +14,8 @@ interface Props {
 };
 
 const CarouselQueue: React.FC<Props> = (props) => {
+  // TODO: set functions
+  
   return (
     <Styled.Container>
       <Styled.ImagesHolder>

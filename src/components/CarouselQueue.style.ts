@@ -26,6 +26,7 @@ interface HolderProps {
 const ImagesHolder = styled.div<HolderProps>`
   display: flex;
   overflow-x: scroll;
+  // TODO: if is divElement set to grid, then use gap
   ${media.desktop} {
       
   }
