@@ -7,6 +7,7 @@ interface ContainerProps {
 
 const Container = styled.div<ContainerProps>`
   width: 100%;
+  position: relative;
 
   ${media.desktop} {
       
@@ -26,6 +27,7 @@ interface HolderProps {
 const ImagesHolder = styled.div<HolderProps>`
   display: flex;
   overflow-x: scroll;
+  position: relative;
   ${media.desktop} {
       
   }

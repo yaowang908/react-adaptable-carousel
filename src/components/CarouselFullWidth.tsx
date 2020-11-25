@@ -23,6 +23,9 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   const [isCarouselPaused, setIsCarouselPaused] = React.useState<boolean>(false);
   const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]);
   const [scrollDirection, setScrollDirection] = React.useState<number>(1);
+  const prevButtonRef = React.useRef<HTMLButtonElement>(null);
+  const nextButtonRef = React.useRef<HTMLButtonElement>(null);
+  const [stepsLengthArr, setStepsLengthArr] = React.useState<number[]>([]);
 
   React.useEffect(() => {// handler drag move carousel
     if (null !== imagesHolderRef.current) {
@@ -179,22 +182,21 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
 
     return () => clearInterval(nIntervalId);
   },[currentSliderIndex, isCarouselPaused, itemAmount, scrollDirection]);
+  React.useEffect(() => { //set stepsLengthArr
+    const _stepsLengthArr: number[] = [];//these are the actual number to move 
+    let __position = 0;
+    _stepsLengthArr.push(__position);
+    for(let i = 0; i<itemAmount-1; i++) {
+      __position = __position + itemsWidth[i]; //__position is accumulated number not for each slide
+      _stepsLengthArr.push(__position);
+    }
+    setStepsLengthArr(_stepsLengthArr);
+  },[containerWidth, itemAmount, itemsWidth]);
   React.useEffect(() => { // move the slide automatically or by clicking the buttons. Not swap or drag
     //DONE: smooth swipe
     //take the current slide index and display it
     const holder = imagesHolderRef.current;
-    const stepsLengthArr: number[] = [];//these are the actual number to move 
-    let __position = 0;
-    // console.log('itemsWidth: '+itemsWidth);
-    // const carouselWidth = itemsWidth.reduce((acc, cur) => { return acc+cur}, 0) ; 
-    // console.log('carouselWidth: '+carouselWidth);
-    // const positionLeftLimit = carouselWidth - containerWidth;  
-    stepsLengthArr.push(__position);
-    for(let i = 0; i<itemAmount-1; i++) {
-      __position = __position + itemsWidth[i]; //__position is accumulated number not for each slide
-      stepsLengthArr.push(__position);
-    }
-
+    
     let currentPosition: number = 0;// the number to set scrollLeft
     /**
      * NOTE: only full width carousel has auto scroll feature,
@@ -204,7 +206,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
       holder.style['scroll-snap-type' as any] = 'none';
       scrollTo.left(holder, holder.scrollLeft, currentPosition, 500);
     }
-  },[containerWidth, itemsWidth, currentSliderIndex, carouselPosition, itemAmount, isCarouselPaused]);
+  },[containerWidth, itemsWidth, currentSliderIndex, itemAmount, isCarouselPaused, stepsLengthArr]);
   React.useEffect(() => { // pause auto movement when tag lose focus
     const visibilityHandler = () => {
       if(document.visibilityState === 'visible') {
@@ -222,17 +224,97 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   });
   const mouseEnterHandler = () => {
     setIsCarouselPaused(true);
-    // TODO: bring up handle buttons
+    if(prevButtonRef.current && nextButtonRef.current) {
+      prevButtonRef.current.style.display = 'grid';
+      nextButtonRef.current.style.display = 'grid';
+    }
   };
   const mouseLeaveHandler = () => {
     setIsCarouselPaused(false);
+    if(prevButtonRef.current && nextButtonRef.current) {
+      prevButtonRef.current.style.display = 'none';
+      nextButtonRef.current.style.display = 'none';
+    }
   };
-// TODO: add link options
+  React.useEffect(() => { //set prev next buttons listeners
+    if(prevButtonRef.current && nextButtonRef.current && imagesHolderRef.current) {
+      const prevButton = prevButtonRef.current;
+      const nextButton = nextButtonRef.current;
+      const holder = imagesHolderRef.current;
+      let currentPosition: number = 0;
+      const prevMouseDownHandler = (e: MouseEvent) => {
+        e.stopPropagation();
+        if(currentSliderIndex === 0) {
+          //do nothing
+        } else {
+          currentPosition = stepsLengthArr[currentSliderIndex - 1];
+          holder.style['scroll-snap-type' as any] = 'none';
+          scrollTo.left(holder, holder.scrollLeft, currentPosition, 500);
+          setCurrentSliderIndex(currentSliderIndex - 1);
+        }
+        prevButton.addEventListener('mouseup', prevMouseUpHandler);
+      };
+      const prevMouseUpHandler = (e: MouseEvent) => {
+        // setIsCarouselPaused(true);
+        prevButton.removeEventListener('mouseup', prevMouseUpHandler);
+      };
+
+      const nextMouseDownHandler = (e: MouseEvent) => {
+        e.stopPropagation();
+        if(currentSliderIndex === (itemAmount - 1)) {
+          //do nothing
+        } else {
+          // console.log('down handler => currentSliderIndex: '+currentSliderIndex);
+          currentPosition = stepsLengthArr[currentSliderIndex + 1];
+          holder.style['scroll-snap-type' as any] = 'none';
+          scrollTo.left(holder, holder.scrollLeft, currentPosition, 500);
+          setCurrentSliderIndex(currentSliderIndex + 1);
+        }
+        nextButton.addEventListener('mouseup', nextMouseUpHandler);
+      };
+      const nextMouseUpHandler = (e: MouseEvent) => {
+        // setIsCarouselPaused(true);
+        // console.log('up handler => currentSliderIndex: '+currentSliderIndex);
+        nextButton.removeEventListener('mouseup', nextMouseUpHandler);
+      };
+
+      prevButton.addEventListener('mousedown', prevMouseDownHandler);
+      nextButton.addEventListener('mousedown', nextMouseDownHandler);
+      
+      return () => {
+        prevButton.removeEventListener('mousedown', prevMouseDownHandler);
+        nextButton.removeEventListener('mousedown', nextMouseDownHandler);
+        prevButton.removeEventListener('mouseup', nextMouseUpHandler);
+        nextButton.removeEventListener('mouseup', nextMouseUpHandler);
+      }
+    }
+  }, [currentSliderIndex, itemAmount, stepsLengthArr]);
+  React.useEffect(() => {
+    // DONE: when reaching ends disable buttons
+    if(prevButtonRef.current && nextButtonRef.current) {
+      const prevButton = prevButtonRef.current;
+      const nextButton = nextButtonRef.current;
+      if(currentSliderIndex === 0) {
+        // left end, disable prev
+        prevButton.style.filter = 'grayscale(1)';
+        prevButton.style.cursor = 'not-allowed';
+      } else if(currentSliderIndex === (itemAmount-1)) {
+        //right end, disable next
+        nextButton.style.filter = 'grayscale(1)';
+        nextButton.style.cursor = 'not-allowed';
+      } else {
+        prevButton.style.filter = 'none';
+        nextButton.style.filter = 'none';
+        prevButton.style.cursor = 'pointer';
+        nextButton.style.cursor = 'pointer';
+      }
+    }
+  });
 
   return (
     <Styled.Container ref={containerRef as any} onMouseEnter = {() => mouseEnterHandler()} onMouseLeave = {() => mouseLeaveHandler()}>
-      <Button.Prev></Button.Prev>
-      <Button.Next></Button.Next>
+      <Button.Prev ref={prevButtonRef as any}>{'<'}</Button.Prev>
+      <Button.Next ref={nextButtonRef as any}>{'>'}</Button.Next>
       <Styled.ImagesHolder ref={imagesHolderRef as any}>
         {
           props.imgUrlArray ? props.imgUrlArray.map((x, index) => {

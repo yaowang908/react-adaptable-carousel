@@ -3,9 +3,7 @@
 const left = (element: HTMLDivElement,start: number, to: number, duration: number) => {
   // var start = element.scrollLeft,
   // console.log('==============================');
-  // console.log(element);
-  // console.log('start: '+ start);
-  // console.log('To: '+ to);
+  // console.log(start);
   // console.log('==============================');
 
   let   change = to - start,
