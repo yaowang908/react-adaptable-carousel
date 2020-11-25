@@ -39,7 +39,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
   // const [itemAmount, setItemAmount] = React.useState<number>(0);
   // const [isCarouselPaused, setIsCarouselPaused] = React.useState<boolean>(false);
   // const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]); 
-  // 1. drag function
+  // DONE: 1. drag function
   React.useEffect(() => {// handler drag move carousel
     if (null !== imagesHolderRef.current) {
       const holder = imagesHolderRef.current;
@@ -74,7 +74,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
       };
       const mouseUpHandler = (e: MouseEvent) => {
         e.stopPropagation();
-        console.log('Mouse up');
+        // console.log('Mouse up');
         holder.style.cursor = 'grab';
         holder.style.removeProperty('user-select');
         holder.style['scroll-snap-type' as any] = 'x mandatory';
@@ -101,7 +101,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   });
   // remove auto scroll function in Queue
-  // 2. when scroll to the end
+  // DONE: 2. when scroll to the end
   /**
    * next drag would enable a block indicate this is the end
    * when mouse up the block will snap back
@@ -131,8 +131,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
     
   },[carouselPosition]);
 
-  // TODO: 3. add link option to single element
-  
   return (
     <Styled.Container>
       <Styled.ImagesHolderBefore ref={imagesHolderBeforeRef} gap={props.gap} show={imageHolderBeforeVisibility}>{'First One'}</Styled.ImagesHolderBefore>

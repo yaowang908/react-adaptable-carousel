@@ -22,6 +22,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   const [itemAmount, setItemAmount] = React.useState<number>(0);
   const [isCarouselPaused, setIsCarouselPaused] = React.useState<boolean>(false);
   const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]);
+  const [scrollDirection, setScrollDirection] = React.useState<number>(1);
 
   React.useEffect(() => {// handler drag move carousel
     if (null !== imagesHolderRef.current) {
@@ -148,17 +149,37 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
         // console.log('paused');
       } else {
         // console.log(currentSliderIndex);
-        if(currentSliderIndex === (itemAmount - 1)) {
-          setCurrentSliderIndex(0);
-        } else {
+        if(currentSliderIndex === (itemAmount)) {
+          //  right end
+          // setCurrentSliderIndex(0);
+          setScrollDirection(-1);
+          setCurrentSliderIndex(currentSliderIndex - 1);
+        } else if(currentSliderIndex === 0) {
+          // left end
           setCurrentSliderIndex(currentSliderIndex + 1);
+          if(scrollDirection === -1) setScrollDirection(1);
+        } else {
+          // middle
+          setCurrentSliderIndex(currentSliderIndex + (scrollDirection * 1));
         }
-        // TODO: when reach the end, instead of going to 0, go back 1 per step until 0 then go forward by 1 a time
+        // DONE: when reach the end, instead of going to 0, go back 1 per step until 0 then go forward by 1 a time
+
+        /**
+         * 1. left end 
+         *    1. d = 1 => index + 1
+         *    2. d = -1 => d = 1, index +1
+         * 2. middle 
+         *    1. d = 1 => index + 1
+         *    2. d = -1 => index - 1
+         * 3. right end
+         *    1. d = 1 => d = -1, index - 1
+         *    2. (in theory but don't exit in reality) d = -1 => d = 1, index - 1
+         */
       }
     }, auto_interval);
 
     return () => clearInterval(nIntervalId);
-  },[currentSliderIndex, isCarouselPaused, itemAmount]);
+  },[currentSliderIndex, isCarouselPaused, itemAmount, scrollDirection]);
   React.useEffect(() => { // move the slide automatically or by clicking the buttons. Not swap or drag
     //DONE: smooth swipe
     //take the current slide index and display it
