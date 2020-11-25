@@ -1,14 +1,20 @@
 // https://gist.github.com/andjosh/6764939
 
-const left = (element: HTMLDivElement, to: number, duration: number) => {
-  var start = element.scrollLeft,
-        change = to - start,
+const left = (element: HTMLDivElement,start: number, to: number, duration: number) => {
+  // var start = element.scrollLeft,
+  // console.log('==============================');
+  // console.log(element);
+  // console.log('start: '+ start);
+  // console.log('To: '+ to);
+  // console.log('==============================');
+
+  let   change = to - start,
         currentTime = 0,
         increment = 20;
         
-  var animateScroll = async function(){        
+  let animateScroll = async function(){        
       currentTime += increment;
-      var val = easeInOutQuad(currentTime, start, change, duration);
+      let val = easeInOutQuad(currentTime, start, change, duration);
       element.scrollLeft = val;
       if(currentTime < duration) {
           await new Promise((resolve) => setTimeout(() => {

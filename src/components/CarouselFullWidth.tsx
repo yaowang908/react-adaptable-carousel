@@ -79,7 +79,6 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
           }
         }
         setCurrentSliderIndex(__tempIndex);
-        // console.log('__tempIndex: '+__tempIndex);
 
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
@@ -149,7 +148,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
         // console.log('paused');
       } else {
         // console.log(currentSliderIndex);
-        if(currentSliderIndex === (itemAmount)) {
+        if(currentSliderIndex === (itemAmount-1)) {
           //  right end
           // setCurrentSliderIndex(0);
           setScrollDirection(-1);
@@ -187,34 +186,23 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     const stepsLengthArr: number[] = [];//these are the actual number to move 
     let __position = 0;
     // console.log('itemsWidth: '+itemsWidth);
-    const carouselWidth = itemsWidth.reduce((acc, cur) => { return acc+cur}, 0) ; 
+    // const carouselWidth = itemsWidth.reduce((acc, cur) => { return acc+cur}, 0) ; 
     // console.log('carouselWidth: '+carouselWidth);
-    const positionLeftLimit = carouselWidth - containerWidth; //going to assign it with carouselWidth - containerWidth, but the result is missing one gap, compare to the real circumstance 
+    // const positionLeftLimit = carouselWidth - containerWidth;  
     stepsLengthArr.push(__position);
     for(let i = 0; i<itemAmount-1; i++) {
-      __position = __position + itemsWidth[i];
+      __position = __position + itemsWidth[i]; //__position is accumulated number not for each slide
       stepsLengthArr.push(__position);
     }
 
     let currentPosition: number = 0;// the number to set scrollLeft
-    let __temp = false;
-    for(let i = 0; i<currentSliderIndex; i++) {
-      if(stepsLengthArr[i] <= positionLeftLimit) {
-        currentPosition = stepsLengthArr[i];
-      } else {
-        if(__temp) {
-          currentPosition = 0;
-          setCurrentSliderIndex(0);
-        } else {
-          currentPosition = positionLeftLimit;
-          __temp = true;
-        }
-      }
-    }
-    // console.log('currentPosition: '+currentPosition);
+    /**
+     * NOTE: only full width carousel has auto scroll feature,
+     */
+    currentPosition = stepsLengthArr[currentSliderIndex];
     if(holder && !isCarouselPaused) {
-      // holder.scrollLeft = currentPosition;
-      scrollTo.left(holder, currentPosition, 1000);
+      holder.style['scroll-snap-type' as any] = 'none';
+      scrollTo.left(holder, holder.scrollLeft, currentPosition, 500);
     }
   },[containerWidth, itemsWidth, currentSliderIndex, carouselPosition, itemAmount, isCarouselPaused]);
   React.useEffect(() => { // pause auto movement when tag lose focus
