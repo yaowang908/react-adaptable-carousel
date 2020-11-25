@@ -15,7 +15,6 @@ interface Props {
 const CarouselFullWidth: React.FC<Props> = (props) => {
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
   const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
-  const [carouselPosition, setCarouselPosition] = React.useState<number>(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderRef = React.useRef<HTMLDivElement>(null);
   const [itemsWidth, setItemsWidth] = React.useState<number[]>([]);
@@ -66,7 +65,6 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
         holder.style.removeProperty('user-select');
         holder.style['scroll-snap-type' as any] = 'x mandatory';
         // console.log(holder.scrollLeft);
-        setCarouselPosition( holder.scrollLeft );
         
         const stepsLengthArr: number[] = [];//these are the actual number to move 
         let __position = 0;
@@ -101,14 +99,13 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
       //do nothing
     }
   },[containerWidth]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const resizeHandler = React.useCallback(// keep the function instance the same between renders
       debounce(()=>{
         let __containerWidth : number = containerRef.current ? Number(containerRef.current.offsetWidth.toString().replace('px', '')) : 0;
         setContainerWidth(__containerWidth);
         console.log(__containerWidth);
-      }, 500),
-      []
-  );
+      }, 500), []);
   React.useEffect(() => {//set containerWidth on window resize
     // DONE: set containerWidth on window resize
     // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
