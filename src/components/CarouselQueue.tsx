@@ -1,8 +1,8 @@
 import React from 'react';
 
 import SingleElement from './SingleElement';
-import debounce from '../lib/debounce';
-import { scrollTo } from '../lib/smoothScrollTo';
+// import debounce from '../lib/debounce';
+// import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselQueue.style';
 
 /**
@@ -45,8 +45,8 @@ interface Position {
 
 
 const CarouselQueue: React.FC<Props> = (props) => {
-  const [containerWidth, setContainerWidth] = React.useState<number>(0);
-  const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
+  // const [containerWidth, setContainerWidth] = React.useState<number>(0);
+  // const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
   const [carouselPosition, setCarouselPosition] = React.useState<Position>({position: 'left-end'});
   // const containerRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderRef = React.useRef<HTMLDivElement>(null);

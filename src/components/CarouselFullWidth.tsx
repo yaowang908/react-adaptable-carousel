@@ -201,7 +201,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     }, auto_interval);
 
     return () => clearInterval(nIntervalId);
-  },[currentSliderIndex, isCarouselPaused, itemAmount, scrollDirection]);
+  },[currentSliderIndex, isCarouselPaused, itemAmount, props.interval, scrollDirection]);
   React.useEffect(() => { //set stepsLengthArr
     const _stepsLengthArr: number[] = [];//these are the actual number to move 
     let __position = 0;
