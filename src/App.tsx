@@ -18,6 +18,17 @@ const App: React.FC = () => {
         ]
       }
       componentHeight={ 400 }
+      buttonText={{
+        isImageBg: false,
+        prev: 'https://via.placeholder.com/40x100.png?text=<',
+        next: 'https://via.placeholder.com/40x100.png?text=>'
+      }} 
+      themeColor ={{
+        button: '#961c1c', 
+        buttonText: '#fff', 
+        scrollBar: '#961c1c'
+      }}
+      interval={3000}
       isDivElement={false}
     ></CarouselFullWidth>
   );
