@@ -5,6 +5,7 @@ import debounce from '../lib/debounce';
 import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselFullWidth.style';
 import { Button } from './Button.style';
+import { tabletDelimiter } from '../lib/customMediaQuery';
 
 /**
  * @param { object } themeColor - Carousel Theme color, including prev/next buttons and scroll bar
@@ -18,6 +19,7 @@ import { Button } from './Button.style';
  * @param { boolean } [componentHeight = 'auto'] - height of the Carousel,
  * @param { boolean } isDivElement - if the children are div element
  * @param { array } [imgUrlArray] - if not div elements, imgUrlArray has to be set
+ * @param { number } [interval] - interval between slides
  */
 
 interface Props {
@@ -26,6 +28,8 @@ interface Props {
   componentHeight?: number;// if height = null, set height to auto
   themeColor: {button: string, buttonText: string, scrollBar: string};
   buttonText?: {isImageBg: boolean, prev: string, next: string};
+  interval?: number;
+  pauseCarousel?: number; //this is a param for Development
 };
 
 const CarouselFullWidth: React.FC<Props> = (props) => {
@@ -41,6 +45,9 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   const prevButtonRef = React.useRef<HTMLButtonElement>(null);
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
   const [stepsLengthArr, setStepsLengthArr] = React.useState<number[]>([]);
+
+  // DONE: adjust width when resize 
+  // NOTE: auto height module will work nicely when tablet or phone
 
   React.useEffect(() => {// handler drag move carousel
     if (null !== imagesHolderRef.current) {
@@ -155,7 +162,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     setItemsWidth(__itemsWidth);
   }, [containerWidth, itemAmount, itemRefs]);
   React.useEffect(() => {//auto increase slider index
-    const auto_interval = 2000; //interval 
+    const auto_interval = props.interval ? props.interval : 2000; //interval 
     // if is paused then pause
     // if is not paused, auto increase current slide index by 1 until reach the end then go back to 0
     const nIntervalId = setInterval(() => {
@@ -237,6 +244,9 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   });
   const mouseEnterHandler = () => {
     setIsCarouselPaused(true);
+    // DONE: hide buttons when tablet
+    let mql = window.matchMedia(`(max-width: ${tabletDelimiter}px)`);
+    if(mql.matches) return;
     if(prevButtonRef.current && nextButtonRef.current) {
       prevButtonRef.current.style.display = 'grid';
       nextButtonRef.current.style.display = 'grid';
@@ -323,7 +333,16 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
       }
     }
   });
-
+  // React.useEffect(() => { //for development purpose
+  //   const auto_interval = props.interval ? props.interval : 2000; //interval
+  //   if(props.pauseCarousel) {
+  //     setCurrentSliderIndex(props.pauseCarousel);
+  //     const nIntervalId = setInterval(() => {
+  //       setIsCarouselPaused(true);
+  //     }, auto_interval);
+  //     return () => clearInterval(nIntervalId);
+  //   }
+  // }, []);
   const buttonContent = (param: 'prev' | 'next') => {
     const tempBtn = {
       'prev': '<',

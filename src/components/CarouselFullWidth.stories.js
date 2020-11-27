@@ -32,7 +32,9 @@ Default.args = {
     button: '#961c1c', 
     buttonText: '#fff', 
     scrollBar: '#961c1c'
-  }
+  },
+  interval: 3000,
+  pauseCarousel: 7,
 };
 
 export const AutoHeight = Template.bind({});

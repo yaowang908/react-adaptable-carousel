@@ -14,6 +14,7 @@ module.exports = {
  * @param { boolean } [componentHeight = 'auto'] - height of the Carousel,
  * @param { boolean } isDivElement - if the children are div element
  * @param { array } [imgUrlArray] - if not div elements, imgUrlArray has to be set
+ * @param { number } [interval] - interval between slides
  */
   CarouselFullWidth: CarouselFullWidth,
   

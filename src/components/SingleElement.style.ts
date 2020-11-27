@@ -27,6 +27,7 @@ const Container = styled.div<ContainerProps>`
     -moz-user-drag: none;
     -o-user-drag: none;
     user-drag: none;
+    object-fit: fill;
     width: ${props=>props.height? 'auto' : '100%'};
     margin:0 auto;
     height: ${props=>props.height? props.height+'px' : 'auto'};
@@ -36,10 +37,16 @@ const Container = styled.div<ContainerProps>`
     place-items: center;
   }
   ${media.desktop} {
-      
+
   }
   ${media.tablet} {
-
+    & img {
+      width: auto;
+      max-width: 100%;
+      max-height: 100%;
+      min-height: ${props=>props.height? props.height+'px' : 'auto'};
+      height: auto;
+    }
   }
   ${media.phone} {
 

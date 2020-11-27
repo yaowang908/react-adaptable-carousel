@@ -80,5 +80,7 @@ export const DivElementSlide = args => (
 );
 DivElementSlide.args = {
   isDivElement: true,
+  componentHeight: 400,
   gap: 12,
+  divElementMinWidth: 200,
 };

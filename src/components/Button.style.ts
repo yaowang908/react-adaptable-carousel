@@ -29,6 +29,9 @@ const Prev = styled.div<ButtonProps>`
     & * {
       ${props=>props.colorTxt ? `color: ${props.colorTxt}` : 'color: #fff'};
     }
+    ${media.tablet} {
+      display: none;
+    }
 `;
 
 const Next = styled(Prev)<ButtonProps>`

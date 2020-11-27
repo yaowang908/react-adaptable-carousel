@@ -17,6 +17,7 @@ import { Styled } from './CarouselQueue.style';
  * @param { number } [roundCorner = 0] - round corner of child element
  * @param { boolean } isDivElement - if the children are div element
  * @param { array } [imgUrlArray] - if not div elements, imgUrlArray has to be set
+ * @param { number } [divElementMinWidth] - if div element, need to set divElementMinWidth
  */
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
   roundCorner?: number;
   isDivElement: boolean;
   imgUrlArray?: {imgUrl: string, link?: string;}[];
+  divElementMinWidth?: number;
 };
 
 interface Position {
@@ -40,6 +42,7 @@ interface Position {
  * solution: imageHolder occupy 100%, hold the elements as normal
  * 
  */
+
 
 const CarouselQueue: React.FC<Props> = (props) => {
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
@@ -178,6 +181,16 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   };
 
+  const setDivMinWidth = () => {
+    if(props.isDivElement) {
+      if(props.divElementMinWidth) {
+        return props.divElementMinWidth;
+      } else {
+        console.error('Div Elements must have minWidth');
+      }
+    }
+  }
+
   return (
     <Styled.Container>
       <Styled.ImagesHolderBefore ref={imagesHolderBeforeRef} 
@@ -207,7 +220,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                               isFullWidthElement={false} 
                               gap={props.gap? props.gap : 0}
                               height={props.componentHeight}
-                              minWidth={0}// full width div item don't care
+                              minWidth={setDivMinWidth()}// full width div item don't care
                               roundCorner={props.roundCorner? props.roundCorner : 0} >
                                 
                   {child}
