@@ -25,7 +25,7 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public --no-dll",
     "build-storybook": "build-storybook -s public --no-dll",
-    "publish:npm": "rm -rf dist && mkdir dist &&  babel src --out-dir dist --copy-files --ignore 'src/stories'"
+    "publish:npm": "rm -rf dist && mkdir dist &&  babel src --out-dir dist --ignore 'src/components/*.stories.js' --copy-files --no-copy-ignored"
   },
   "eslintConfig": {
     "extends": [
@@ -48,6 +48,7 @@
   "devDependencies": {
     "@babel/cli": "^7.12.8",
     "@babel/core": "^7.12.3",
+    "@babel/preset-react": "^7.12.7",
     "@storybook/addon-actions": "^6.0.28",
     "@storybook/addon-essentials": "^6.0.28",
     "@storybook/addon-links": "^6.0.28",
@@ -55,6 +56,8 @@
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.0.28",
     "@types/styled-components": "^5.1.4",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.1.6",
     "react-is": "^17.0.1"
   }
 }
