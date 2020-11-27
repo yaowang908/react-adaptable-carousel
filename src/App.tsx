@@ -1,7 +1,7 @@
 import React from 'react';
 import CarouselFullWidth from './components/CarouselFullWidth';
 
-function App() {
+const App: React.FC = () => {
   return (
     <CarouselFullWidth
       imgUrlArray={
