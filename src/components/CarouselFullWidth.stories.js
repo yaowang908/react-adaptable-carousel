@@ -23,6 +23,18 @@ Default.args = {
     { imgUrl: "https://via.placeholder.com/300x300.png?text=8", link: 'https://placeholder.com'},
   ],
   componentHeight: 400,
+  buttonText: {
+    isImageBg: false,
+    prev: 'https://via.placeholder.com/40x100.png?text=<',
+    next: 'https://via.placeholder.com/40x100.png?text=>'
+  },
+  themeColor: {
+    button: '#961c1c', 
+    buttonText: '#fff', 
+    scrollBar: '#961c1c'
+  },
+  interval: 3000,
+  pauseCarousel: 7,
 };
 
 export const AutoHeight = Template.bind({});
