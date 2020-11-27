@@ -26,6 +26,14 @@ Default.args = {
   isDivElement: false,
   gap: 12,
   roundCorner: 12,
+  themeColor: {
+    reminder: '#961c1c', 
+    reminderTxt: '#fff'
+  },
+  reminder: {
+    firstTxt: 'First One', 
+    lastTxt: ''
+  }
 };
 
 export const AutoHeight = Template.bind({});
