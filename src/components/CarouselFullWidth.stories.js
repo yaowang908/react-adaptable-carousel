@@ -4,6 +4,7 @@ import CarouselFullWidth from './CarouselFullWidth';
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   component: CarouselFullWidth,
+  decorators: [(Story) => <div style={{maxWidth: '1080px'}}><Story /></div>],
   title: 'CarouselFullWidth',
 };
 
