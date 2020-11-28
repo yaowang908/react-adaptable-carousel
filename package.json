@@ -25,7 +25,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public --no-dll",
-    "build-storybook": "rm -rf ./dist & mkdir ./dist & build-storybook -s public --no-dll -o ./dist"
+    "build-storybook": "rm -rf ./docs & mkdir ./docs & build-storybook -s public --no-dll -o ./docs"
   },
   "eslintConfig": {
     "extends": [
