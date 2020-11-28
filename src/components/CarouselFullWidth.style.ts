@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import media from '../lib/customMediaQuery';
 
 interface ContainerProps {
-
 };
 
 const Container = styled.div<ContainerProps>`
@@ -21,7 +20,7 @@ const Container = styled.div<ContainerProps>`
 `;
 
 interface HolderProps {
-
+  colorScrollbar?: string;
 };
 
 const ImagesHolder = styled.div<HolderProps>`
@@ -42,12 +41,13 @@ const ImagesHolder = styled.div<HolderProps>`
   }
   
   &::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    // box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px ${props=>props.colorScrollbar ? `${props.colorScrollbar}4d` : 'rgba(0, 0, 0, 0.3)'};
   }
   
   &::-webkit-scrollbar-thumb {
-    background-color: darkgrey;
-    outline: 1px solid slategrey;
+    background-color: ${props=>props.colorScrollbar ? props.colorScrollbar : 'darkgrey' };
+    // outline: 1px solid slategrey;
   }
 `;
 

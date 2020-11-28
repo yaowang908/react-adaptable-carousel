@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import media from '../lib/customMediaQuery';
 
 interface ContainerProps {
@@ -57,6 +57,8 @@ const ImagesHolder = styled.div<HolderProps>`
 interface ImagesHolderBeforeProps {
   gap?: number;
   show: boolean;
+  color?: string;
+  colorBg?: string;
 };
 
 const ImagesHolderBefore = styled.div<ImagesHolderBeforeProps>`
@@ -68,8 +70,8 @@ const ImagesHolderBefore = styled.div<ImagesHolderBeforeProps>`
     width: 30px;
     height: 100%;
     border-radius: ${props=>props.gap ? props.gap/2 : 0}px;
-    background-color: #00000078;
-    color: #fff;
+    background-color: ${props=>props.colorBg ? `${props.colorBg}78` : '#00000078'};
+    color: ${props=>props.color ? props.color : '#fff'};
     display: grid;
     // display: ${props=>props.show ? 'grid':'none'};
     opacity: ${props=>props.show ? '100':'0'};

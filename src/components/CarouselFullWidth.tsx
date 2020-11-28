@@ -5,11 +5,31 @@ import debounce from '../lib/debounce';
 import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselFullWidth.style';
 import { Button } from './Button.style';
+import { tabletDelimiter } from '../lib/customMediaQuery';
+
+/**
+ * @param { object } themeColor - Carousel Theme color, including prev/next buttons and scroll bar
+ *  @param { string } themeColor.button - button color, hex color code
+ *  @param { string } themeColor.buttonText - button Text Color, hex color code
+ *  @param { string } themeColor.scrollBar - scrollbar color, hex color code
+ * @param { object } [buttonText] - buttons text
+ *  @param { boolean } [buttonText.isImageBg = false] - if take image as background, image size should be 40 x 100
+ *  @param { string } [buttonText.prev = '<'] - prev button text / img src
+ *  @param { string } [buttonText.next = '>'] - next button text / img src
+ * @param { boolean } [componentHeight = 'auto'] - height of the Carousel,
+ * @param { boolean } isDivElement - if the children are div element
+ * @param { array } [imgUrlArray] - if not div elements, imgUrlArray has to be set
+ * @param { number } [interval] - interval between slides
+ */
 
 interface Props {
   isDivElement: boolean;
   imgUrlArray?: {imgUrl: string, link?: string;}[];
   componentHeight?: number;// if height = null, set height to auto
+  themeColor: {button: string, buttonText: string, scrollBar: string};
+  buttonText?: {isImageBg: boolean, prev: string, next: string};
+  interval?: number;
+  pauseCarousel?: number; //this is a param for Development
 };
 
 const CarouselFullWidth: React.FC<Props> = (props) => {
@@ -25,6 +45,9 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   const prevButtonRef = React.useRef<HTMLButtonElement>(null);
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
   const [stepsLengthArr, setStepsLengthArr] = React.useState<number[]>([]);
+
+  // DONE: adjust width when resize 
+  // NOTE: auto height module will work nicely when tablet or phone
 
   React.useEffect(() => {// handler drag move carousel
     if (null !== imagesHolderRef.current) {
@@ -139,7 +162,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     setItemsWidth(__itemsWidth);
   }, [containerWidth, itemAmount, itemRefs]);
   React.useEffect(() => {//auto increase slider index
-    const auto_interval = 2000; //interval 
+    const auto_interval = props.interval ? props.interval : 2000; //interval 
     // if is paused then pause
     // if is not paused, auto increase current slide index by 1 until reach the end then go back to 0
     const nIntervalId = setInterval(() => {
@@ -178,7 +201,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     }, auto_interval);
 
     return () => clearInterval(nIntervalId);
-  },[currentSliderIndex, isCarouselPaused, itemAmount, scrollDirection]);
+  },[currentSliderIndex, isCarouselPaused, itemAmount, props.interval, scrollDirection]);
   React.useEffect(() => { //set stepsLengthArr
     const _stepsLengthArr: number[] = [];//these are the actual number to move 
     let __position = 0;
@@ -221,6 +244,9 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   });
   const mouseEnterHandler = () => {
     setIsCarouselPaused(true);
+    // DONE: hide buttons when tablet
+    let mql = window.matchMedia(`(max-width: ${tabletDelimiter}px)`);
+    if(mql.matches) return;
     if(prevButtonRef.current && nextButtonRef.current) {
       prevButtonRef.current.style.display = 'grid';
       nextButtonRef.current.style.display = 'grid';
@@ -307,12 +333,66 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
       }
     }
   });
+  // React.useEffect(() => { //for development purpose
+  //   const auto_interval = props.interval ? props.interval : 2000; //interval
+  //   if(props.pauseCarousel) {
+  //     setCurrentSliderIndex(props.pauseCarousel);
+  //     const nIntervalId = setInterval(() => {
+  //       setIsCarouselPaused(true);
+  //     }, auto_interval);
+  //     return () => clearInterval(nIntervalId);
+  //   }
+  // }, []);
+  const buttonContent = (param: 'prev' | 'next') => {
+    const tempBtn = {
+      'prev': '<',
+      'next': '>'
+    };
+    if(props.buttonText) {
+      if(props.buttonText.isImageBg && props.buttonText[param].length >= 4) {
+        return <img src={props.buttonText[param]} alt={param}/>
+      } else {
+        return tempBtn[param];
+      }
+    } else {
+      return tempBtn[param];
+    }
+  };
+
+  const setColor = (param: 'buttonText' | 'button' | 'scrollBar') => {
+    const tempColor = {
+      'buttonText': '#fff',
+      'button': '#961c1c',
+      'scrollBar': 'darkgrey'
+    };
+
+    if (props.themeColor && props.themeColor[param]) {
+      if (/^#([0-9A-F]{3}){1,2}$/i.test(props.themeColor[param])) {
+        //valid hex color
+        return props.themeColor[param];
+      } else {
+        console.error(`themeColor.${param} need to be valid hex color code`);
+        return tempColor[param];
+      }
+    } else {
+      return tempColor[param];
+    }
+  };
 
   return (
     <Styled.Container ref={containerRef as any} onMouseEnter = {() => mouseEnterHandler()} onMouseLeave = {() => mouseLeaveHandler()}>
-      <Button.Prev ref={prevButtonRef as any}>{'<'}</Button.Prev>
-      <Button.Next ref={nextButtonRef as any}>{'>'}</Button.Next>
-      <Styled.ImagesHolder ref={imagesHolderRef as any}>
+      <Button.Prev ref={prevButtonRef as any} 
+                  imageButton={props.buttonText?.isImageBg? props.buttonText.isImageBg : false }
+                  colorTxt={setColor('buttonText')}
+                  colorBg={setColor('button')}
+                  >{buttonContent('prev')}</Button.Prev>
+      <Button.Next ref={nextButtonRef as any} 
+                  imageButton={props.buttonText?.isImageBg? props.buttonText.isImageBg : false }
+                  colorTxt={setColor('buttonText')}
+                  colorBg={setColor('button')}
+                  >{buttonContent('next')}</Button.Next>
+      <Styled.ImagesHolder ref={imagesHolderRef as any} 
+                            colorScrollbar={setColor('scrollBar')}>
         {
           props.imgUrlArray ? props.imgUrlArray.map((x, index) => {
               return <SingleElement isDivElement={props.isDivElement} 
