@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from 'react';
 
 import { Styled } from './SingleElement.style';
@@ -12,52 +13,62 @@ interface Props {
   link?: string;
 
   isFullWidthElement?: boolean;
-  
-  isDivElement:boolean;
+
+  isDivElement: boolean;
   children?: JSX.Element[] | JSX.Element;
 
-  roundCorner?: number;//only work when full-width is disabled 
-  minWidth?: number;//if child element is div, must set a minWidth for child container
-  gap?: number; //space between items
-  _ref?: React.RefObject<HTMLDivElement>;//ref is reserved, cannot use ref as prop here
-};
+  roundCorner?: number; // only work when full-width is disabled
+  minWidth?: number; // if child element is div, must set a minWidth for child container
+  gap?: number; // space between items
+  _ref?: React.RefObject<HTMLDivElement>; // ref is reserved, cannot use ref as prop here
+}
 // DONE: add link options
 const SingleElement: React.FC<Props> = (props) => {
-  
   const elementRef = React.useRef<HTMLDivElement>(null);
-  
-  React.useEffect(() => { //differentiating click and drag
+  const {
+    isImageElement,
+    isFullWidthElement,
+    imgUrl,
+    imgAlt,
+    height,
+    link,
+    isDivElement,
+    children,
+    roundCorner,
+    minWidth,
+    gap,
+    _ref,
+  } = props;
+
+  React.useEffect(() => {
+    // differentiating click and drag
     let __isUserDragging = false;
-    if (null !== elementRef.current) {
+    if (elementRef.current !== null) {
       const ele = elementRef.current;
-      const mouseDownHandler = (e: MouseEvent) => {
+      const mouseDownHandler = () => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
         ele.addEventListener('mousemove', mouseMoveHandler);
         ele.addEventListener('mouseup', mouseUpHandler);
         __isUserDragging = false;
       };
 
-      const mouseMoveHandler = (e: MouseEvent) => {
+      const mouseMoveHandler = () => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
         // console.log('move');
         __isUserDragging = true;
         ele.removeEventListener('mousemove', mouseMoveHandler);
       };
 
-      const mouseUpHandler = (e: MouseEvent) => {
+      const mouseUpHandler = () => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
-        if(__isUserDragging) {
+        if (__isUserDragging) {
           // user is dragging
           // console.log('drag');
+        } else if (link) {
+          window.open(link, '_BLANK');
         } else {
-          // user is clicking
-          // console.log('click');
-          if(props.link) {
-            window.open(props.link,'_BLANK');
-          } else {
-            console.log('No link provided!');
-            // console.log(props.link);
-          }
+          console.error('No link provided!');
+          // console.log(link);
         }
       };
 
@@ -68,36 +79,53 @@ const SingleElement: React.FC<Props> = (props) => {
         ele.removeEventListener('mouseup', mouseUpHandler);
       };
     }
-    
+    return () => {};
   }, [elementRef]);
 
-  if(props.isImageElement) {
-    if(props.isFullWidthElement) {
-      // console.log(props.children);
+  if (isImageElement) {
+    if (isFullWidthElement) {
+      // console.log(children);
       return (
-        <Styled.Container isFullWidthElement={props.isFullWidthElement} height={props.height} gap={props.gap} ref={props._ref}>
-          <Styled.Image src={props.imgUrl} alt={props.imgAlt} height={props.height} ref={elementRef as any}/>
+        <Styled.Container
+          isFullWidthElement={isFullWidthElement}
+          height={height}
+          gap={gap}
+          ref={_ref}
+        >
+          <Styled.Image
+            src={imgUrl}
+            alt={imgAlt}
+            height={height}
+            ref={elementRef as any}
+          />
         </Styled.Container>
-      );
-    } else {
-      return (
-        <Styled.Image src={props.imgUrl} alt={props.imgAlt} height={props.height} gap={props.gap} roundCorner={props.roundCorner} ref={mergeRefs(props._ref, elementRef)}/>
       );
     }
-  } else if(props.isDivElement && props.children) {
-      return (
-        <Styled.Container isFullWidthElement={props.isFullWidthElement} height={props.height} gap={props.gap} minWidth={props.minWidth} ref={props._ref}>
-          {props.children}
-        </Styled.Container>
-      )
-  } else {
     return (
-      <>
-        {/* return empty when the pattern is not matched */}
-      </>
+      <Styled.Image
+        src={imgUrl}
+        alt={imgAlt}
+        height={height}
+        gap={gap}
+        roundCorner={roundCorner}
+        ref={mergeRefs(_ref, elementRef)}
+      />
     );
   }
-
+  if (isDivElement && children) {
+    return (
+      <Styled.Container
+        isFullWidthElement={isFullWidthElement}
+        height={height}
+        gap={gap}
+        minWidth={minWidth}
+        ref={_ref}
+      >
+        {children}
+      </Styled.Container>
+    );
+  }
+  return <>{/* return empty when the pattern is not matched */}</>;
 };
 
 export default SingleElement;

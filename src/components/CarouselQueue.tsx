@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import React from 'react';
 
 import SingleElement from './SingleElement';
@@ -21,18 +22,18 @@ import { Styled } from './CarouselQueue.style';
  */
 
 interface Props {
-  themeColor: {reminder: string, reminderTxt: string};
-  reminder: {firstTxt: string, lastTxt: string};
+  themeColor: { reminder: string; reminderTxt: string };
+  reminder: { firstTxt: string; lastTxt: string };
   componentHeight?: number;
   gap: number; // gap is necessary
   roundCorner?: number;
   isDivElement: boolean;
-  imgUrlArray?: {imgUrl: string, link?: string;}[];
+  imgUrlArray?: { imgUrl: string; link?: string }[];
   divElementMinWidth?: number;
-};
+}
 
 interface Position {
-  position: "left-end" | "right-end" | "middle";
+  position: 'left-end' | 'right-end' | 'middle';
 }
 
 // TODO: fixed amount children(not exactly!!!)
@@ -40,40 +41,60 @@ interface Position {
  * when imageHolder is shorter than container
  * e.g.: only have one slide, but the container is ready to show 2
  * solution: imageHolder occupy 100%, hold the elements as normal
- * 
+ *
  */
-
 
 const CarouselQueue: React.FC<Props> = (props) => {
   // const [containerWidth, setContainerWidth] = React.useState<number>(0);
   // const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
-  const [carouselPosition, setCarouselPosition] = React.useState<Position>({position: 'left-end'});
+  const [carouselPosition, setCarouselPosition] = React.useState<Position>({
+    position: 'left-end',
+  });
   // const containerRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderBeforeRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderAfterRef = React.useRef<HTMLDivElement>(null);
-  const [imageHolderBeforeVisibility, setImageHolderBeforeVisibility] = React.useState<boolean>(false);
-  const [imageHolderAfterVisibility, setImageHolderAfterVisibility] = React.useState<boolean>(false);
+  const [
+    imageHolderBeforeVisibility,
+    setImageHolderBeforeVisibility,
+  ] = React.useState<boolean>(false);
+  const [
+    imageHolderAfterVisibility,
+    setImageHolderAfterVisibility,
+  ] = React.useState<boolean>(false);
+
+  const {
+    themeColor,
+    reminder,
+    componentHeight,
+    gap,
+    roundCorner,
+    isDivElement,
+    imgUrlArray,
+    divElementMinWidth,
+    children,
+  } = props;
   // const [itemsWidth, setItemsWidth] = React.useState<number[]>([]);
   // const [itemAmount, setItemAmount] = React.useState<number>(0);
   // const [isCarouselPaused, setIsCarouselPaused] = React.useState<boolean>(false);
-  // const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]); 
+  // const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]);
   // DONE: 1. drag function
-  React.useEffect(() => {// handler drag move carousel
-    if (null !== imagesHolderRef.current) {
+  React.useEffect(() => {
+    // handler drag move carousel
+    if (imagesHolderRef.current !== null) {
       const holder = imagesHolderRef.current;
       holder.style.cursor = 'grab';
-      let pos = { top:0, left:0, x:0, y:0};
+      let pos = { top: 0, left: 0, x: 0, y: 0 };
       const mouseDownHandler = (e: MouseEvent) => {
         e.stopPropagation();
         // console.log('Mouse down');
         holder.style.cursor = 'grabbing';
         holder.style.userSelect = 'none';
         holder.style.removeProperty('scroll-snap-type');
-        holder.style.margin='0';//scroll snap will conflict with preset margin 
+        holder.style.margin = '0'; // scroll snap will conflict with preset margin
 
         pos = {
-          left:holder.scrollLeft,
+          left: holder.scrollLeft,
           top: holder.scrollTop,
           x: e.clientX,
           y: e.clientY,
@@ -81,7 +102,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
         holder.addEventListener('mousemove', mouseMoveHandler);
         holder.addEventListener('mouseup', mouseUpHandler);
-      }
+      };
       const mouseMoveHandler = (e: MouseEvent) => {
         e.stopPropagation();
         // console.log('Mouse move');
@@ -100,12 +121,12 @@ const CarouselQueue: React.FC<Props> = (props) => {
         // console.log('ScrollLeft: '+holder.scrollLeft);
         // console.log('width: '+holder.offsetWidth);
         // console.log('ScrollWidth: '+holder.scrollWidth);
-        if((holder.scrollWidth - holder.offsetWidth) <= holder.scrollLeft ) {
-          setCarouselPosition( {position: 'right-end'} );
-        } else if (holder.scrollLeft <= props.gap) {
-          setCarouselPosition( {position: 'left-end'} );
+        if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
+          setCarouselPosition({ position: 'right-end' });
+        } else if (holder.scrollLeft <= gap) {
+          setCarouselPosition({ position: 'left-end' });
         } else {
-          setCarouselPosition( {position: 'middle'} );
+          setCarouselPosition({ position: 'middle' });
         }
 
         holder.removeEventListener('mousemove', mouseMoveHandler);
@@ -125,19 +146,20 @@ const CarouselQueue: React.FC<Props> = (props) => {
    * next drag would enable a block indicate this is the end
    * when mouse up the block will snap back
    */
-  React.useEffect(() => {// both end reminder
+  React.useEffect(() => {
+    // both end reminder
     const _before = imagesHolderBeforeRef.current;
     const _after = imagesHolderAfterRef.current;
     // console.log('ScrollLeft: '+holder.scrollLeft);
     // console.log('width: '+holder.offsetWidth);
     // console.log('ScrollWidth: '+holder.scrollWidth);
-    if(_before && _after) {
-      if(carouselPosition.position === 'left-end') {
+    if (_before && _after) {
+      if (carouselPosition.position === 'left-end') {
         setImageHolderBeforeVisibility(true);
         setTimeout(() => {
           setImageHolderBeforeVisibility(false);
         }, 2000);
-      } else if (carouselPosition.position === 'right-end'){
+      } else if (carouselPosition.position === 'right-end') {
         setImageHolderAfterVisibility(true);
         setTimeout(() => {
           setImageHolderAfterVisibility(false);
@@ -147,96 +169,132 @@ const CarouselQueue: React.FC<Props> = (props) => {
         setImageHolderBeforeVisibility(false);
       }
     }
-    
-  },[carouselPosition]);
+  }, [carouselPosition]);
 
   const setColor = (param: 'reminder' | 'reminderTxt') => {
     const tempColor = {
-      'reminder': '#000000',
-      'reminderTxt': '#fff',
+      reminder: '#000000',
+      reminderTxt: '#fff',
     };
 
-    if (props.themeColor && props.themeColor[param]) {
-      if (/^#([0-9A-F]{3}){1,2}$/i.test(props.themeColor[param])) {
-        //valid hex color
-        return props.themeColor[param];
-      } else {
-        console.error(`themeColor.${param} need to be valid hex color code`);
-        return tempColor[param];
+    if (themeColor && themeColor[param]) {
+      if (/^#([0-9A-F]{3}){1,2}$/i.test(themeColor[param])) {
+        // valid hex color
+        return themeColor[param];
       }
-    } else {
+      console.error(`themeColor.${param} need to be valid hex color code`);
       return tempColor[param];
     }
+    return tempColor[param];
   };
 
   const reminderContent = (param: 'firstTxt' | 'lastTxt') => {
     const tempBtn = {
-      'firstTxt': 'First One',
-      'lastTxt': 'Last One'
+      firstTxt: 'First One',
+      lastTxt: 'Last One',
     };
-    if(props.reminder && props.reminder[param]) {
-      return props.reminder[param];
-    } else {
-      return tempBtn[param];
+    if (reminder && reminder[param]) {
+      return reminder[param];
     }
+    return tempBtn[param];
   };
 
   const setDivMinWidth = () => {
-    if(props.isDivElement) {
-      if(props.divElementMinWidth) {
-        return props.divElementMinWidth;
-      } else {
-        console.error('Div Elements must have minWidth');
+    if (isDivElement) {
+      if (divElementMinWidth) {
+        return divElementMinWidth;
       }
+      console.error('Div Elements must have minWidth');
     }
-  }
+  };
 
+  if (imgUrlArray) {
+    return (
+      <Styled.Container>
+        <Styled.ImagesHolderBefore
+          ref={imagesHolderBeforeRef}
+          gap={gap}
+          show={imageHolderBeforeVisibility}
+          color={setColor('reminderTxt')}
+          colorBg={setColor('reminder')}
+        >
+          {reminderContent('firstTxt')}
+        </Styled.ImagesHolderBefore>
+        <Styled.ImagesHolder ref={imagesHolderRef} gap={gap}>
+          {imgUrlArray.map((x, index) => {
+            return (
+              <SingleElement
+                isDivElement={isDivElement}
+                isImageElement
+                isFullWidthElement={false}
+                imgUrl={x.imgUrl}
+                link={x.link}
+                imgAlt=""
+                gap={gap || 0}
+                height={componentHeight}
+                roundCorner={roundCorner || 0}
+                key={index}
+              />
+            );
+          })}
+        </Styled.ImagesHolder>
+        <Styled.ImagesHolderAfter
+          ref={imagesHolderAfterRef}
+          gap={gap}
+          show={imageHolderAfterVisibility}
+          color={setColor('reminderTxt')}
+          colorBg={setColor('reminder')}
+        >
+          {reminderContent('lastTxt')}
+        </Styled.ImagesHolderAfter>
+      </Styled.Container>
+    );
+  }
   return (
     <Styled.Container>
-      <Styled.ImagesHolderBefore ref={imagesHolderBeforeRef} 
-                                  gap={props.gap} 
-                                  show={imageHolderBeforeVisibility} 
-                                  color={setColor('reminderTxt')} 
-                                  colorBg={setColor('reminder')}
-                                  >{reminderContent('firstTxt')}</Styled.ImagesHolderBefore>
-      <Styled.ImagesHolder ref={imagesHolderRef} gap={props.gap}>
-        {
-          props.imgUrlArray ? props.imgUrlArray.map((x, index) => {
-              return <SingleElement isDivElement={props.isDivElement} 
-                                    isImageElement={true} 
-                                    isFullWidthElement={false} 
-                                    imgUrl={x.imgUrl}
-                                    link={x.link}
-                                    imgAlt={''}
-                                    gap={props.gap? props.gap : 0}
-                                    height={props.componentHeight}
-                                    roundCorner={props.roundCorner? props.roundCorner : 0}
-                                    key={index}
-                      ></SingleElement>
-            }) : (props.isDivElement && props.children ? React.Children.map(props.children as any, (child: React.ReactElement, index: number) => {
-              return (
-                <SingleElement isDivElement={props.isDivElement} 
-                              isImageElement={false} 
-                              isFullWidthElement={false} 
-                              gap={props.gap? props.gap : 0}
-                              height={props.componentHeight}
-                              minWidth={setDivMinWidth()}// full width div item don't care
-                              roundCorner={props.roundCorner? props.roundCorner : 0} >
-                                
-                  {child}
-                </SingleElement>
-              )
-            }):'Please set imgUrlArray or props.children')
-        }
+      <Styled.ImagesHolderBefore
+        ref={imagesHolderBeforeRef}
+        gap={gap}
+        show={imageHolderBeforeVisibility}
+        color={setColor('reminderTxt')}
+        colorBg={setColor('reminder')}
+      >
+        {reminderContent('firstTxt')}
+      </Styled.ImagesHolderBefore>
+      <Styled.ImagesHolder ref={imagesHolderRef} gap={gap}>
+        {isDivElement && children
+          ? React.Children.map(
+              children as any,
+              (child: React.ReactElement, index: number) => {
+                return (
+                  <SingleElement
+                    isDivElement={isDivElement}
+                    key={index}
+                    isImageElement={false}
+                    isFullWidthElement={false}
+                    gap={gap || 0}
+                    height={componentHeight}
+                    minWidth={setDivMinWidth()} // full width div item don't care
+                    roundCorner={roundCorner || 0}
+                  >
+                    {child}
+                  </SingleElement>
+                );
+              }
+            )
+          : 'Please set imgUrlArray or children'}
       </Styled.ImagesHolder>
-      <Styled.ImagesHolderAfter ref={imagesHolderAfterRef} 
-                                gap={props.gap} 
-                                show={imageHolderAfterVisibility}
-                                color={setColor('reminderTxt')} 
-                                colorBg={setColor('reminder')}
-                                >{reminderContent("lastTxt")}</Styled.ImagesHolderAfter>
+      <Styled.ImagesHolderAfter
+        ref={imagesHolderAfterRef}
+        gap={gap}
+        show={imageHolderAfterVisibility}
+        color={setColor('reminderTxt')}
+        colorBg={setColor('reminder')}
+      >
+        {reminderContent('lastTxt')}
+      </Styled.ImagesHolderAfter>
     </Styled.Container>
   );
-}
+};
 
-export default CarouselQueue
+export default CarouselQueue;

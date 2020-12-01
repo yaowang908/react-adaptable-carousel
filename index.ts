@@ -11,7 +11,7 @@ module.exports = {
  *  @param { boolean } [buttonText.isImageBg = false] - if take image as background, image size should be 40 x 100
  *  @param { string } [buttonText.prev = '<'] - prev button text / img src
  *  @param { string } [buttonText.next = '>'] - next button text / img src
- * @param { boolean } [componentHeight = 'auto'] - height of the Carousel,
+ * @param { number } [componentHeight = 'auto'] - height of the Carousel,
  * @param { boolean } isDivElement - if the children are div element
  * @param { array } [imgUrlArray] - if not div elements, imgUrlArray has to be set
  * @param { number } [interval] - interval between slides
