@@ -1,4 +1,4 @@
-/* eslint-disable consistent-return */
+/* eslint-disable no-else-return */
 import React from 'react';
 
 import SingleElement from './SingleElement';
@@ -138,6 +138,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
       };
+    } else {
+      return () => {};
     }
   });
   // remove auto scroll function in Queue
@@ -203,8 +205,12 @@ const CarouselQueue: React.FC<Props> = (props) => {
     if (isDivElement) {
       if (divElementMinWidth) {
         return divElementMinWidth;
+      } else {
+        console.error('Div Elements must have minWidth');
+        return undefined;
       }
-      console.error('Div Elements must have minWidth');
+    } else {
+      return undefined;
     }
   };
 

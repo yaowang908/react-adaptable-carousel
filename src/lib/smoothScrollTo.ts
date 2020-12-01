@@ -26,7 +26,7 @@ const left = (
       await new Promise((resolve) =>
         setTimeout(() => {
           animateScroll();
-          resolve();
+          resolve(0);
         }, increment)
       );
       // setTimeout(animateScroll, increment);
