@@ -9,13 +9,14 @@
     "type": "git",
     "url": "git+https://github.com/yaowang908/react-adaptable-carousel.git"
   },
+  "author":"Yao Wang",
   "keywords": [
     "react",
     "typescript",
     "versatile",
     "adaptable"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/yaowang908/react-adaptable-carousel/issues"
   },
