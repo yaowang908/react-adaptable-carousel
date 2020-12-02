@@ -45,8 +45,9 @@ Default.args = {
       link: 'https://placeholder.com',
     },
     {
-      url: 'https://via.placeholder.com/300x300.png?text=8',
-      link: 'https://placeholder.com',
+      url: 'https://youtu.be/kjZ2ZbPNtA4',
+      link: '',
+      isVideo: true,
     },
   ],
   componentHeight: 400,
