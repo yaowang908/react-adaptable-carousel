@@ -1,18 +1,4 @@
 # React Adaptable Carousel
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Modules
-
-### `CarouselFullWidth`
-
-Handles full width elements
-
-### `CarouselQueue`
-
-Handles non-full-width elements
-
-# React Adaptable Carousel
 > A simple and easy to use carousel.
 
 [![NPM Version][npm-image]][https://www.npmjs.com/package/react-adaptable-carousel]
