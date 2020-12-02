@@ -18,13 +18,13 @@ import { tabletDelimiter } from '../lib/customMediaQuery';
  *  @param { string } [buttonText.next = '>'] - next button text / img src
  * @param { number } [componentHeight = 'auto'] - height of the Carousel,
  * @param { boolean } isDivElement - if the children are div element
- * @param { array } [imgUrlArray] - if not div elements, imgUrlArray has to be set
+ * @param { array } [urlArray] - if not div elements, urlArray has to be set
  * @param { number } [interval] - interval between slides
  */
 
 interface Props {
   isDivElement: boolean;
-  imgUrlArray?: { imgUrl: string; link?: string }[];
+  urlArray?: { url: string; link?: string; isVideo?: boolean }[];
   componentHeight?: number; // if height = null, set height to auto
   themeColor: { button: string; buttonText: string; scrollBar: string };
   buttonText?: { isImageBg: boolean; prev: string; next: string };
@@ -53,7 +53,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   const {
     themeColor,
     isDivElement,
-    imgUrlArray,
+    urlArray,
     componentHeight,
     interval,
     children,
@@ -166,12 +166,12 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   }, [containerWidth, resizeHandler]);
   React.useEffect(() => {
     // set item amount
-    if (!isDivElement && imgUrlArray) {
-      setItemAmount(imgUrlArray?.length);
+    if (!isDivElement && urlArray) {
+      setItemAmount(urlArray?.length);
     } else if (isDivElement) {
       setItemAmount(React.Children.count(children));
     }
-  }, [isDivElement, imgUrlArray, children]);
+  }, [isDivElement, urlArray, children]);
   React.useEffect(() => {
     // init item refs
     setItemRefs((itemRefs) =>
@@ -431,7 +431,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     return tempColor[param];
   };
 
-  if (imgUrlArray) {
+  if (urlArray) {
     return (
       <Styled.Container
         ref={containerRef as any}
@@ -458,13 +458,14 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
           ref={imagesHolderRef as any}
           colorScrollbar={setColor('scrollBar')}
         >
-          {imgUrlArray.map((x, index) => {
+          {urlArray.map((x, index) => {
             return (
               <SingleElement
                 isDivElement={isDivElement}
                 isImageElement
+                isVideoElement={x.isVideo ? x.isVideo : false}
                 isFullWidthElement
-                imgUrl={x.imgUrl}
+                url={x.url}
                 link={x.link}
                 imgAlt=""
                 gap={0}
@@ -512,6 +513,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
                 return (
                   <SingleElement
                     isDivElement={isDivElement}
+                    isVideoElement={false}
                     isImageElement={false}
                     isFullWidthElement
                     gap={0}
@@ -525,7 +527,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
                 );
               }
             )
-          : 'Please set imgUrlArray or children'}
+          : 'Please set urlArray or children'}
       </Styled.ImagesHolder>
     </Styled.Container>
   );

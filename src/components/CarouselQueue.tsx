@@ -17,7 +17,7 @@ import { Styled } from './CarouselQueue.style';
  * @param { number } gap - space between children
  * @param { number } [roundCorner = 0] - round corner of child element
  * @param { boolean } isDivElement - if the children are div element
- * @param { array } [imgUrlArray] - if not div elements, imgUrlArray has to be set
+ * @param { array } [urlArray] - if not div elements, urlArray has to be set
  * @param { number } [divElementMinWidth] - if div element, need to set divElementMinWidth
  */
 
@@ -28,7 +28,7 @@ interface Props {
   gap: number; // gap is necessary
   roundCorner?: number;
   isDivElement: boolean;
-  imgUrlArray?: { imgUrl: string; link?: string }[];
+  urlArray?: { url: string; link?: string; isVideo?: boolean }[];
   divElementMinWidth?: number;
 }
 
@@ -70,7 +70,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     gap,
     roundCorner,
     isDivElement,
-    imgUrlArray,
+    urlArray,
     divElementMinWidth,
     children,
   } = props;
@@ -214,7 +214,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   };
 
-  if (imgUrlArray) {
+  if (urlArray) {
     return (
       <Styled.Container>
         <Styled.ImagesHolderBefore
@@ -227,13 +227,14 @@ const CarouselQueue: React.FC<Props> = (props) => {
           {reminderContent('firstTxt')}
         </Styled.ImagesHolderBefore>
         <Styled.ImagesHolder ref={imagesHolderRef} gap={gap}>
-          {imgUrlArray.map((x, index) => {
+          {urlArray.map((x, index) => {
             return (
               <SingleElement
                 isDivElement={isDivElement}
                 isImageElement
+                isVideoElement={x.isVideo ? x.isVideo : false}
                 isFullWidthElement={false}
-                imgUrl={x.imgUrl}
+                url={x.url}
                 link={x.link}
                 imgAlt=""
                 gap={gap || 0}
@@ -288,7 +289,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 );
               }
             )
-          : 'Please set imgUrlArray or children'}
+          : 'Please set urlArray or children'}
       </Styled.ImagesHolder>
       <Styled.ImagesHolderAfter
         ref={imagesHolderAfterRef}

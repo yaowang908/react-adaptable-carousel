@@ -1,12 +1,14 @@
 /* eslint-disable no-undef */
 import React from 'react';
+import ReactPlayer from 'react-player/lazy';
 
 import { Styled } from './SingleElement.style';
 import mergeRefs from '../lib/mergeRefs';
 
 interface Props {
   isImageElement: boolean;
-  imgUrl?: string;
+  isVideoElement?: boolean;
+  url?: string;
   imgAlt?: string;
   height?: number;
 
@@ -27,8 +29,9 @@ const SingleElement: React.FC<Props> = (props) => {
   const elementRef = React.useRef<HTMLDivElement>(null);
   const {
     isImageElement,
+    isVideoElement,
     isFullWidthElement,
-    imgUrl,
+    url,
     imgAlt,
     height,
     link,
@@ -82,6 +85,19 @@ const SingleElement: React.FC<Props> = (props) => {
     return () => {};
   }, [elementRef]);
 
+  if (isVideoElement) {
+    return (
+      <Styled.Container
+        isFullWidthElement={isFullWidthElement}
+        height={height}
+        gap={gap}
+        minWidth={minWidth}
+        ref={_ref}
+      >
+        <ReactPlayer url={url} width="100%" height="100%" />
+      </Styled.Container>
+    );
+  }
   if (isImageElement) {
     if (isFullWidthElement) {
       // console.log(children);
@@ -93,7 +109,7 @@ const SingleElement: React.FC<Props> = (props) => {
           ref={_ref}
         >
           <Styled.Image
-            src={imgUrl}
+            src={url}
             alt={imgAlt}
             height={height}
             ref={elementRef as any}
@@ -103,7 +119,7 @@ const SingleElement: React.FC<Props> = (props) => {
     }
     return (
       <Styled.Image
-        src={imgUrl}
+        src={url}
         alt={imgAlt}
         height={height}
         gap={gap}
