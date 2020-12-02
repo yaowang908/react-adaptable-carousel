@@ -1,6 +1,6 @@
 {
   "name": "react-adaptable-carousel",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": false,
   "description": "This is a react.js based TypeScript module, offers two types of carousel, normal and queue. Features includes auto-scroll, hover pause, drag/swipe.",
   "main": "dist/index.js",
@@ -99,7 +99,7 @@
     "test": "node scripts/test.js",
     "storybook": "start-storybook -p 6006 -s public --no-dll",
     "build-storybook": "rm -rf ./docs & mkdir ./docs & build-storybook -s public --no-dll -o ./docs",
-    "prepublish": "tsc --build \"./tsconfig.json\"",
+    "prepublish": "rm -rf ./dist & mkdir ./dist & tsc --build \"./tsconfig.json\"",
     "lint": "eslint src --ext .tsx,.ts",
     "lint:fix": "eslint --fix src --ext .tsx,.ts"
   },
