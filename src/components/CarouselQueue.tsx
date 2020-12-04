@@ -5,15 +5,25 @@ import SingleElement from './SingleElement';
 // import debounce from '../lib/debounce';
 // import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselQueue.style';
+import { Button } from './Button.style';
+import { tabletDelimiter } from '../lib/customMediaQuery';
 
 /**
  * @param { object } themeColor - Carousel Theme color, including prev/next buttons and scroll bar
  *  @param { string } themeColor.reminder - reminder color
  *  @param { string } themeColor.reminderTxt - reminder Text Color
  * @param { object } [reminder] - both ends reminder
+ *  @param { boolean } [showReminder = true] - whether to show reminder
  *  @param { string } [reminder.firstTxt = 'First One'] - text on the reminder for first one, default first one
  *  @param { string } [reminder.lastTxt = 'Last One'] - text on the reminder for last one, default last one
  * @param { boolean } [componentHeight = 'auto'] - height of the Carousel,
+ * @param { object } [buttonText] - buttons text
+ *  @param { boolean } [showButton = true] - whether show buttons
+ *  @param { number } [buttonWidth = 20] - button width
+ *  @param { number } [buttonHeight = 100] - button height
+ *  @param { boolean } [buttonText.isImageBg = false] - whether take image as background, image size should be 40 x 100
+ *  @param { string } [buttonText.prev = '<'] - prev button text / img src
+ *  @param { string } [buttonText.next = '>'] - next button text / img src
  * @param { number } gap - space between children
  * @param { number } [roundCorner = 0] - round corner of child element
  * @param { boolean } isDivElement - if the children are div element
@@ -23,7 +33,15 @@ import { Styled } from './CarouselQueue.style';
 
 interface Props {
   themeColor: { reminder: string; reminderTxt: string };
-  reminder: { firstTxt: string; lastTxt: string };
+  reminder: { showReminder: boolean; firstTxt: string; lastTxt: string };
+  buttonText?: {
+    showButton: boolean;
+    buttonWidth: number;
+    buttonHeight: number;
+    isImageBg: boolean;
+    prev: string;
+    next: string;
+  };
   componentHeight?: number;
   gap: number; // gap is necessary
   roundCorner?: number;
@@ -62,10 +80,13 @@ const CarouselQueue: React.FC<Props> = (props) => {
     imageHolderAfterVisibility,
     setImageHolderAfterVisibility,
   ] = React.useState<boolean>(false);
+  const prevButtonRef = React.useRef<HTMLButtonElement>(null);
+  const nextButtonRef = React.useRef<HTMLButtonElement>(null);
 
   const {
     themeColor,
     reminder,
+    buttonText,
     componentHeight,
     gap,
     roundCorner,
@@ -173,10 +194,58 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   }, [carouselPosition]);
 
+  const mouseEnterHandler = () => {
+    // DONE: hide buttons when tablet
+    const mql = window.matchMedia(`(max-width: ${tabletDelimiter}px)`);
+    if (mql.matches) return;
+    if (prevButtonRef.current && nextButtonRef.current) {
+      prevButtonRef.current.style.display = 'grid';
+      nextButtonRef.current.style.display = 'grid';
+    }
+  };
+  const mouseLeaveHandler = () => {
+    if (prevButtonRef.current && nextButtonRef.current) {
+      prevButtonRef.current.style.display = 'none';
+      nextButtonRef.current.style.display = 'none';
+    }
+  };
+
+  const buttonContent = (param: 'prev' | 'next') => {
+    const tempBtn = {
+      prev: '<',
+      next: '>',
+    };
+    if (buttonText) {
+      if (buttonText.isImageBg && buttonText[param].length >= 4) {
+        return <img src={buttonText[param]} alt={param} />;
+      }
+      return tempBtn[param];
+    }
+    return tempBtn[param];
+  };
+
   const setColor = (param: 'reminder' | 'reminderTxt') => {
     const tempColor = {
       reminder: '#000000',
       reminderTxt: '#fff',
+    };
+
+    if (themeColor && themeColor[param]) {
+      if (/^#([0-9A-F]{3}){1,2}$/i.test(themeColor[param])) {
+        // valid hex color
+        return themeColor[param];
+      }
+      console.error(`themeColor.${param} need to be valid hex color code`);
+      return tempColor[param];
+    }
+    return tempColor[param];
+  };
+
+  const setButtonColor = (param: 'buttonText' | 'button' | 'scrollBar') => {
+    const tempColor = {
+      buttonText: '#fff',
+      button: '#961c1c',
+      scrollBar: 'darkgrey',
     };
 
     if (themeColor && themeColor[param]) {
@@ -216,16 +285,49 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   if (urlArray) {
     return (
-      <Styled.Container>
-        <Styled.ImagesHolderBefore
-          ref={imagesHolderBeforeRef}
-          gap={gap}
-          show={imageHolderBeforeVisibility}
-          color={setColor('reminderTxt')}
-          colorBg={setColor('reminder')}
-        >
-          {reminderContent('firstTxt')}
-        </Styled.ImagesHolderBefore>
+      <Styled.Container
+        onMouseEnter={() => mouseEnterHandler()}
+        onMouseLeave={() => mouseLeaveHandler()}
+      >
+        {buttonText?.showButton ? (
+          <>
+            <Button.Prev
+              ref={prevButtonRef as any}
+              imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+              colorTxt={setButtonColor('buttonText')}
+              colorBg={setButtonColor('button')}
+              buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+              buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+            >
+              {buttonContent('prev')}
+            </Button.Prev>
+            <Button.Next
+              ref={nextButtonRef as any}
+              imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+              colorTxt={setButtonColor('buttonText')}
+              colorBg={setButtonColor('button')}
+              buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+              buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+            >
+              {buttonContent('next')}
+            </Button.Next>
+          </>
+        ) : (
+          <></>
+        )}
+        {reminder?.showReminder ? (
+          <Styled.ImagesHolderBefore
+            ref={imagesHolderBeforeRef}
+            gap={gap}
+            show={imageHolderBeforeVisibility}
+            color={setColor('reminderTxt')}
+            colorBg={setColor('reminder')}
+          >
+            {reminderContent('firstTxt')}
+          </Styled.ImagesHolderBefore>
+        ) : (
+          <></>
+        )}
         <Styled.ImagesHolder ref={imagesHolderRef} gap={gap}>
           {urlArray.map((x, index) => {
             return (
@@ -233,6 +335,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 isDivElement={isDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
+                minWidth={x.isVideo ? 400 : 0}
                 isFullWidthElement={false}
                 url={x.url}
                 link={x.link}
@@ -245,29 +348,66 @@ const CarouselQueue: React.FC<Props> = (props) => {
             );
           })}
         </Styled.ImagesHolder>
-        <Styled.ImagesHolderAfter
-          ref={imagesHolderAfterRef}
-          gap={gap}
-          show={imageHolderAfterVisibility}
-          color={setColor('reminderTxt')}
-          colorBg={setColor('reminder')}
-        >
-          {reminderContent('lastTxt')}
-        </Styled.ImagesHolderAfter>
+        {reminder?.showReminder ? (
+          <Styled.ImagesHolderAfter
+            ref={imagesHolderAfterRef}
+            gap={gap}
+            show={imageHolderAfterVisibility}
+            color={setColor('reminderTxt')}
+            colorBg={setColor('reminder')}
+          >
+            {reminderContent('lastTxt')}
+          </Styled.ImagesHolderAfter>
+        ) : (
+          <></>
+        )}
       </Styled.Container>
     );
   }
   return (
-    <Styled.Container>
-      <Styled.ImagesHolderBefore
-        ref={imagesHolderBeforeRef}
-        gap={gap}
-        show={imageHolderBeforeVisibility}
-        color={setColor('reminderTxt')}
-        colorBg={setColor('reminder')}
-      >
-        {reminderContent('firstTxt')}
-      </Styled.ImagesHolderBefore>
+    <Styled.Container
+      onMouseEnter={() => mouseEnterHandler()}
+      onMouseLeave={() => mouseLeaveHandler()}
+    >
+      {buttonText?.showButton ? (
+        <>
+          <Button.Prev
+            ref={prevButtonRef as any}
+            imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+            colorTxt={setButtonColor('buttonText')}
+            colorBg={setButtonColor('button')}
+            buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+            buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+          >
+            {buttonContent('prev')}
+          </Button.Prev>
+          <Button.Next
+            ref={nextButtonRef as any}
+            imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+            colorTxt={setButtonColor('buttonText')}
+            colorBg={setButtonColor('button')}
+            buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+            buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+          >
+            {buttonContent('next')}
+          </Button.Next>
+        </>
+      ) : (
+        <></>
+      )}
+      {reminder?.showReminder ? (
+        <Styled.ImagesHolderBefore
+          ref={imagesHolderBeforeRef}
+          gap={gap}
+          show={imageHolderBeforeVisibility}
+          color={setColor('reminderTxt')}
+          colorBg={setColor('reminder')}
+        >
+          {reminderContent('firstTxt')}
+        </Styled.ImagesHolderBefore>
+      ) : (
+        <></>
+      )}
       <Styled.ImagesHolder ref={imagesHolderRef} gap={gap}>
         {isDivElement && children
           ? React.Children.map(
@@ -291,15 +431,19 @@ const CarouselQueue: React.FC<Props> = (props) => {
             )
           : 'Please set urlArray or children'}
       </Styled.ImagesHolder>
-      <Styled.ImagesHolderAfter
-        ref={imagesHolderAfterRef}
-        gap={gap}
-        show={imageHolderAfterVisibility}
-        color={setColor('reminderTxt')}
-        colorBg={setColor('reminder')}
-      >
-        {reminderContent('lastTxt')}
-      </Styled.ImagesHolderAfter>
+      {reminder?.showReminder ? (
+        <Styled.ImagesHolderAfter
+          ref={imagesHolderAfterRef}
+          gap={gap}
+          show={imageHolderAfterVisibility}
+          color={setColor('reminderTxt')}
+          colorBg={setColor('reminder')}
+        >
+          {reminderContent('lastTxt')}
+        </Styled.ImagesHolderAfter>
+      ) : (
+        <></>
+      )}
     </Styled.Container>
   );
 };

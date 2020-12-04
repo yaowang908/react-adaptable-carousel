@@ -41,7 +41,7 @@ Default.args = {
       link: 'https://placeholder.com',
     },
     {
-      url: 'https://via.placeholder.com/400x300.png?text=7',
+      url: 'https://via.placeholder.com/400x1200.png?text=7',
       link: 'https://placeholder.com',
     },
     {
@@ -59,6 +59,7 @@ Default.args = {
     reminderTxt: '#fff',
   },
   reminder: {
+    showReminder: true,
     firstTxt: 'First One',
     lastTxt: '',
   },
@@ -80,6 +81,19 @@ AutoHeight.args = {
   componentHeight: 0, // set 0 means to set image height to auto
   isDivElement: false,
   gap: 12,
+  reminder: {
+    showReminder: false,
+  },
+  buttonText: {
+    showButton: true,
+    buttonWidth: 40,
+    buttonHeight: 80,
+    isImageBg: true,
+    prev:
+      'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainsliderprevious.png',
+    next:
+      'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainslidernext.png',
+  },
 };
 
 export const DivElementSlide = (args) => (
