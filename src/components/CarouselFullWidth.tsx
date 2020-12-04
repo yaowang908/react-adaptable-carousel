@@ -161,28 +161,49 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     }
   }, [containerWidth]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const resizeHandler = React.useCallback(
+/ const resizeHandler = React.useCallback(
+  //   // keep the function instance the same between renders
+  //   debounce(() => {
+  //     const __containerWidth: number = containerRef.current
+  //       ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
+  //       : 0;
+  //     setContainerWidth(__containerWidth);
+  //     // console.log(__containerWidth);
+  //   }, 500),
+  //   []
+  // );
+  const resizeHandler = (isMounted) => {
     // keep the function instance the same between renders
-    debounce(() => {
-      const __containerWidth: number = containerRef.current
-        ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
-        : 0;
-      setContainerWidth(__containerWidth);
-      // console.log(__containerWidth);
-    }, 500),
-    []
-  );
+    return debounce(() => {
+      if (isMounted) {
+        const __containerWidth: number = containerRef.current
+          ? Number(
+              containerRef.current.offsetWidth.toString().replace('px', '')
+            )
+          : 0;
+        setContainerWidth(__containerWidth);
+        // console.log(__containerWidth);
+      }
+    }, 500);
+  };
   React.useEffect(() => {
     // set containerWidth on window resize
     // DONE: set containerWidth on window resize
-    // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
+    // //Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
+
+    // https://stackoverflow.com/questions/53949393/cant-perform-a-react-state-update-on-an-unmounted-component
+    // solve Can't perform a React state update on an unmounted component
+    let isMounted = true;
     const _containerWidth: number = containerRef.current
       ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
       : 0;
     setContainerWidth(_containerWidth);
-    window.addEventListener('resize', resizeHandler);
-    return () => window.removeEventListener('resize', resizeHandler);
-  }, [containerWidth, resizeHandler]);
+    window.addEventListener('resize', resizeHandler(isMounted));
+    return () => {
+      isMounted = false;
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
   React.useEffect(() => {
     // set item amount
     if (!isDivElement && urlArray) {

@@ -118,6 +118,22 @@ export const DivElementSlide = (args) => (
       <div>Cat image 3</div>
       <img src="https://via.placeholder.com/200x300.png?text=5" alt="cat 3" />
     </div>
+    <div>
+      <div>Cat image 3</div>
+      <img src="https://via.placeholder.com/200x300.png?text=4" alt="cat 3" />
+    </div>
+    <div>
+      <div>Cat image 3</div>
+      <img src="https://via.placeholder.com/200x300.png?text=5" alt="cat 3" />
+    </div>
+    <div>
+      <div>Cat image 3</div>
+      <img src="https://via.placeholder.com/200x300.png?text=4" alt="cat 3" />
+    </div>
+    <div>
+      <div>Cat image 3</div>
+      <img src="https://via.placeholder.com/200x300.png?text=5" alt="cat 3" />
+    </div>
   </CarouselQueue>
 );
 DivElementSlide.args = {

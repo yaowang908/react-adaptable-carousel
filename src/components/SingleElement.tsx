@@ -3,9 +3,10 @@ import React from 'react';
 import ReactPlayer from 'react-player/lazy';
 
 import { Styled } from './SingleElement.style';
-import mergeRefs from '../lib/mergeRefs';
+// import mergeRefs from '../lib/mergeRefs';
 
 interface Props {
+  className?: string;
   isImageElement: boolean;
   isVideoElement?: boolean;
   url?: string;
@@ -28,6 +29,7 @@ interface Props {
 const SingleElement: React.FC<Props> = (props) => {
   const elementRef = React.useRef<HTMLDivElement>(null);
   const {
+    className,
     isImageElement,
     isVideoElement,
     isFullWidthElement,
@@ -46,8 +48,8 @@ const SingleElement: React.FC<Props> = (props) => {
   React.useEffect(() => {
     // differentiating click and drag
     let __isUserDragging = false;
-    if (elementRef.current !== null) {
-      const ele = elementRef.current;
+    const ele = elementRef?.current || _ref?.current;
+    if (ele !== null && ele) {
       const mouseDownHandler = () => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
         ele.addEventListener('mousemove', mouseMoveHandler);
@@ -57,7 +59,7 @@ const SingleElement: React.FC<Props> = (props) => {
 
       const mouseMoveHandler = () => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
-        // console.log('move');
+        console.log('move');
         __isUserDragging = true;
         ele.removeEventListener('mousemove', mouseMoveHandler);
       };
@@ -66,8 +68,9 @@ const SingleElement: React.FC<Props> = (props) => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
         if (__isUserDragging) {
           // user is dragging
-          // console.log('drag');
+          console.log('drag');
         } else if (link) {
+          console.log(link);
           window.open(link, '_BLANK');
         } else {
           console.error('No link provided!');
@@ -83,11 +86,12 @@ const SingleElement: React.FC<Props> = (props) => {
       };
     }
     return () => {};
-  }, [elementRef]);
+  }, [elementRef, _ref]);
 
   if (isVideoElement) {
     return (
       <Styled.Container
+        className={className || ''}
         isFullWidthElement={isFullWidthElement}
         height={height}
         gap={gap}
@@ -103,6 +107,7 @@ const SingleElement: React.FC<Props> = (props) => {
       // console.log(children);
       return (
         <Styled.Container
+          className={className || ''}
           isFullWidthElement={isFullWidthElement}
           height={height}
           gap={gap}
@@ -119,18 +124,20 @@ const SingleElement: React.FC<Props> = (props) => {
     }
     return (
       <Styled.Image
+        className={className || ''}
         src={url}
         alt={imgAlt}
         height={height}
         gap={gap}
         roundCorner={roundCorner}
-        ref={mergeRefs(_ref, elementRef)}
+        ref={_ref as any}
       />
     );
   }
   if (isDivElement && children) {
     return (
       <Styled.Container
+        className={className || ''}
         isFullWidthElement={isFullWidthElement}
         height={height}
         gap={gap}

@@ -2,7 +2,7 @@
 import React from 'react';
 
 import SingleElement from './SingleElement';
-// import debounce from '../lib/debounce';
+import debounce from '../lib/debounce';
 // import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselQueue.style';
 import { Button } from './Button.style';
@@ -82,6 +82,10 @@ const CarouselQueue: React.FC<Props> = (props) => {
   ] = React.useState<boolean>(false);
   const prevButtonRef = React.useRef<HTMLButtonElement>(null);
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
+  const slidesRef = React.useRef<Array<HTMLElement | null>>([]);
+  const [slidesPosition, setSlidesPosition] = React.useState<
+    Array<[number | undefined, number | undefined]>
+  >();
 
   const {
     themeColor,
@@ -95,10 +99,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     divElementMinWidth,
     children,
   } = props;
-  // const [itemsWidth, setItemsWidth] = React.useState<number[]>([]);
-  // const [itemAmount, setItemAmount] = React.useState<number>(0);
-  // const [isCarouselPaused, setIsCarouselPaused] = React.useState<boolean>(false);
-  // const [itemRefs, setItemRefs] = React.useState<React.RefObject<HTMLDivElement>[]>([]);
+
   // DONE: 1. drag function
   React.useEffect(() => {
     // handler drag move carousel
@@ -193,6 +194,150 @@ const CarouselQueue: React.FC<Props> = (props) => {
       }
     }
   }, [carouselPosition]);
+
+  React.useEffect(() => {
+    // DONE: when reaching ends disable buttons
+    if (prevButtonRef.current && nextButtonRef.current) {
+      const prevButton = prevButtonRef.current;
+      const nextButton = nextButtonRef.current;
+      if (carouselPosition.position === 'left-end') {
+        // left end, disable prev
+        prevButton.style.filter = 'grayscale(1)';
+        prevButton.style.cursor = 'not-allowed';
+      } else if (carouselPosition.position === 'right-end') {
+        // right end, disable next
+        nextButton.style.filter = 'grayscale(1)';
+        nextButton.style.cursor = 'not-allowed';
+      } else {
+        prevButton.style.filter = 'none';
+        nextButton.style.filter = 'none';
+        prevButton.style.cursor = 'pointer';
+        nextButton.style.cursor = 'pointer';
+      }
+    }
+  }, [carouselPosition]);
+
+  React.useEffect(() => {
+    // initialize slidesRef
+    let _tempLength = 0;
+    _tempLength = urlArray?.length || 0;
+    if (isDivElement) _tempLength = React.Children.toArray(children).length;
+    slidesRef.current = slidesRef.current.slice(0, _tempLength);
+  }, [urlArray, children]);
+
+  const getSlidesPosition = () => {
+    // slidesPositions [left, width]
+    const _slidesPositions: Array<
+      [number | undefined, number | undefined]
+    > = [];
+    slidesRef.current.map((x) => {
+      _slidesPositions.push([x?.offsetLeft, x?.offsetWidth]);
+      return <></>;
+    });
+    setSlidesPosition(_slidesPositions);
+    return _slidesPositions;
+  };
+
+  // const resizeHandler = React.useCallback(
+  //   // keep the function instance the same between renders
+  //   debounce(() => {
+  //     getSlidesPosition();
+  //     // console.log(__containerWidth);
+  //   }, 500),
+  //   []
+  // );
+  const resizeHandler = (isMounted) => {
+    return debounce(() => {
+      if (isMounted) getSlidesPosition();
+      // console.log(__containerWidth);
+    }, 500);
+  };
+
+  React.useEffect(() => {
+    // set slidesPosition on window resize
+    // DONE: set containerWidth on window resize
+    // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
+
+    // https://stackoverflow.com/questions/53949393/cant-perform-a-react-state-update-on-an-unmounted-component
+    // solve Can't perform a React state update on an unmounted component
+    let isMounted = true;
+    window.addEventListener('resize', resizeHandler(isMounted));
+    return () => {
+      isMounted = false;
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, [resizeHandler]);
+
+  // React.useEffect(() => {
+  //   getSlidesPosition();
+  // }, []);
+
+  React.useEffect(() => {
+    // handle prev button
+    if (prevButtonRef.current !== null && imagesHolderRef.current !== null) {
+      const prevButton = prevButtonRef.current;
+      const holder = imagesHolderRef.current;
+      const mouseDownHandler = (e: MouseEvent) => {
+        e.stopPropagation();
+        // const __slidesPositions = getSlidesPosition();
+        console.dir(slidesRef.current[0]);
+        console.dir(slidesPosition);
+        console.dir(holder.scrollLeft);
+        if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
+          setCarouselPosition({ position: 'right-end' });
+          // keep moving
+        } else if (holder.scrollLeft <= gap) {
+          setCarouselPosition({ position: 'left-end' });
+          // reaching left end, do nothing
+        } else {
+          setCarouselPosition({ position: 'middle' });
+          // keep moving
+        }
+      };
+      prevButton.addEventListener('mousedown', mouseDownHandler);
+      return () => {
+        prevButton.removeEventListener('mousedown', mouseDownHandler);
+      };
+    } else {
+      return () => {};
+    }
+  });
+  React.useEffect(() => {
+    // handle next button
+    if (nextButtonRef.current !== null && imagesHolderRef.current !== null) {
+      const nextButton = nextButtonRef.current;
+      const holder = imagesHolderRef.current;
+      const mouseDownHandler = (e: MouseEvent) => {
+        e.stopPropagation();
+        console.dir(slidesRef.current[0]);
+        console.dir(holder.scrollLeft);
+        if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
+          setCarouselPosition({ position: 'right-end' });
+          // reaching right end, do nothing
+        } else if (holder.scrollLeft <= gap) {
+          setCarouselPosition({ position: 'left-end' });
+          // keep moving
+        } else {
+          setCarouselPosition({ position: 'middle' });
+          // keep moving
+        }
+      };
+      nextButton.addEventListener('mousedown', mouseDownHandler);
+      return () => {
+        nextButton.removeEventListener('mousedown', mouseDownHandler);
+      };
+    } else {
+      return () => {};
+    }
+  });
+
+  React.useEffect(() => {
+    /** TODO:
+     * slides position : slidesPosition<[left, width]>
+     * when click button, move to prev or next slide
+     * set imagesHolder offsetLeft
+     */
+  });
 
   const mouseEnterHandler = () => {
     // DONE: hide buttons when tablet
@@ -332,6 +477,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
           {urlArray.map((x, index) => {
             return (
               <SingleElement
+                className="cq_slide"
                 isDivElement={isDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
@@ -344,6 +490,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 height={componentHeight}
                 roundCorner={roundCorner || 0}
                 key={index}
+                _ref={slidesRef.current[index] as any}
               />
             );
           })}
@@ -415,6 +562,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
               (child: React.ReactElement, index: number) => {
                 return (
                   <SingleElement
+                    className="cq_slide"
                     isDivElement={isDivElement}
                     key={index}
                     isImageElement={false}
@@ -423,6 +571,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                     height={componentHeight}
                     minWidth={setDivMinWidth()} // full width div item don't care
                     roundCorner={roundCorner || 0}
+                    _ref={slidesRef.current[index] as any}
                   >
                     {child}
                   </SingleElement>
