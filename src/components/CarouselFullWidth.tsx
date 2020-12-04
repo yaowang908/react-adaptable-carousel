@@ -159,19 +159,8 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     } else {
       // do nothing
     }
-  }, [containerWidth]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const resizeHandler = React.useCallback(
-  //   // keep the function instance the same between renders
-  //   debounce(() => {
-  //     const __containerWidth: number = containerRef.current
-  //       ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
-  //       : 0;
-  //     setContainerWidth(__containerWidth);
-  //     // console.log(__containerWidth);
-  //   }, 500),
-  //   []
-  // );
+  }, []);
+
   const resizeHandler = (isMounted) => {
     // keep the function instance the same between renders
     return debounce(() => {

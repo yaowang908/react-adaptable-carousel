@@ -55,6 +55,7 @@ const SingleElement: React.FC<Props> = (props) => {
         ele.addEventListener('mousemove', mouseMoveHandler);
         ele.addEventListener('mouseup', mouseUpHandler);
         __isUserDragging = false;
+        console.log('down');
       };
 
       const mouseMoveHandler = () => {

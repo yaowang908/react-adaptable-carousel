@@ -103,6 +103,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
   // DONE: 1. drag function
   React.useEffect(() => {
     // handler drag move carousel
+    let isMounted = true;
     if (imagesHolderRef.current !== null) {
       const holder = imagesHolderRef.current;
       holder.style.cursor = 'grab';
@@ -144,10 +145,10 @@ const CarouselQueue: React.FC<Props> = (props) => {
         // console.log('width: '+holder.offsetWidth);
         // console.log('ScrollWidth: '+holder.scrollWidth);
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
-          setCarouselPosition({ position: 'right-end' });
+          if (isMounted) setCarouselPosition({ position: 'right-end' });
         } else if (holder.scrollLeft <= gap) {
-          setCarouselPosition({ position: 'left-end' });
-        } else {
+          if (isMounted) setCarouselPosition({ position: 'left-end' });
+        } else if (isMounted) {
           setCarouselPosition({ position: 'middle' });
         }
 
@@ -156,6 +157,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
       };
       holder.addEventListener('mousedown', mouseDownHandler);
       return () => {
+        isMounted = false;
         holder.removeEventListener('mousedown', mouseDownHandler);
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
@@ -163,7 +165,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     } else {
       return () => {};
     }
-  });
+  }, []);
   // remove auto scroll function in Queue
   // DONE: 2. when scroll to the end
   /**
@@ -266,7 +268,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
       isMounted = false;
       window.removeEventListener('resize', resizeHandler);
     };
-  }, [resizeHandler]);
+  }, []);
 
   // React.useEffect(() => {
   //   getSlidesPosition();
@@ -274,6 +276,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     // handle prev button
+    let isMounted = true;
     if (prevButtonRef.current !== null && imagesHolderRef.current !== null) {
       const prevButton = prevButtonRef.current;
       const holder = imagesHolderRef.current;
@@ -284,26 +287,28 @@ const CarouselQueue: React.FC<Props> = (props) => {
         console.dir(slidesPosition);
         console.dir(holder.scrollLeft);
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
-          setCarouselPosition({ position: 'right-end' });
+          if (isMounted) setCarouselPosition({ position: 'right-end' });
           // keep moving
         } else if (holder.scrollLeft <= gap) {
-          setCarouselPosition({ position: 'left-end' });
+          if (isMounted) setCarouselPosition({ position: 'left-end' });
           // reaching left end, do nothing
-        } else {
+        } else if (isMounted) {
           setCarouselPosition({ position: 'middle' });
           // keep moving
         }
       };
       prevButton.addEventListener('mousedown', mouseDownHandler);
       return () => {
+        isMounted = false;
         prevButton.removeEventListener('mousedown', mouseDownHandler);
       };
     } else {
       return () => {};
     }
-  });
+  }, []);
   React.useEffect(() => {
     // handle next button
+    let isMounted = true;
     if (nextButtonRef.current !== null && imagesHolderRef.current !== null) {
       const nextButton = nextButtonRef.current;
       const holder = imagesHolderRef.current;
@@ -312,24 +317,25 @@ const CarouselQueue: React.FC<Props> = (props) => {
         console.dir(slidesRef.current[0]);
         console.dir(holder.scrollLeft);
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
-          setCarouselPosition({ position: 'right-end' });
+          if (isMounted) setCarouselPosition({ position: 'right-end' });
           // reaching right end, do nothing
         } else if (holder.scrollLeft <= gap) {
-          setCarouselPosition({ position: 'left-end' });
+          if (isMounted) setCarouselPosition({ position: 'left-end' });
           // keep moving
-        } else {
+        } else if (isMounted) {
           setCarouselPosition({ position: 'middle' });
           // keep moving
         }
       };
       nextButton.addEventListener('mousedown', mouseDownHandler);
       return () => {
+        isMounted = false;
         nextButton.removeEventListener('mousedown', mouseDownHandler);
       };
     } else {
       return () => {};
     }
-  });
+  }, []);
 
   React.useEffect(() => {
     /** TODO:
@@ -477,7 +483,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
           {urlArray.map((x, index) => {
             return (
               <SingleElement
-                className="cq_slide"
                 isDivElement={isDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
@@ -562,7 +567,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
               (child: React.ReactElement, index: number) => {
                 return (
                   <SingleElement
-                    className="cq_slide"
                     isDivElement={isDivElement}
                     key={index}
                     isImageElement={false}
