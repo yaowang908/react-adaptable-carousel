@@ -64,6 +64,9 @@ Default.args = {
   ],
   componentHeight: 400,
   buttonText: {
+    showButton: true,
+    buttonWidth: 20,
+    buttonHeight: 100,
     isImageBg: false,
     prev: 'https://via.placeholder.com/40x100.png?text=<',
     next: 'https://via.placeholder.com/40x100.png?text=>',
@@ -95,6 +98,17 @@ AutoHeight.args = {
       isVideo: true,
     },
   ],
+  componentHeight: 0,
+  buttonText: {
+    showButton: true,
+    buttonWidth: 40,
+    buttonHeight: 80,
+    isImageBg: true,
+    prev:
+      'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainsliderprevious.png',
+    next:
+      'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainslidernext.png',
+  },
 };
 
 export const DivElementSlide = (args) => (
@@ -125,4 +139,7 @@ DivElementSlide.args = {
   isItemFullWidth: true,
   isDivElement: true,
   componentHeight: 400,
+  buttonText: {
+    showButton: false,
+  },
 };

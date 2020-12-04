@@ -8,13 +8,15 @@ interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   imageButton?: boolean;
   imgBtnPrevSrc?: string;
   imgBtnNextSrc?: string;
+  buttonWidth: number;
+  buttonHeight: number;
 }
 // DONE: accept image as background to replace default style
 const Prev = styled.div<ButtonProps>`
   font-size: 1.5em;
-  width: 20px;
+  width: ${(props) => `${props.buttonWidth}px` || '20px'};
   padding: ${(props) => (props.imageButton ? '0' : '0 10px')};
-  height: 100px;
+  height: ${(props) => `${props.buttonHeight}px` || '100px'};
   font-weight: 900;
   position: absolute;
   z-index: 100;
@@ -32,6 +34,9 @@ const Prev = styled.div<ButtonProps>`
   ${(props) => (props.colorTxt ? `color: ${props.colorTxt}` : 'color: #fff')};
   & * {
     ${(props) => (props.colorTxt ? `color: ${props.colorTxt}` : 'color: #fff')};
+  }
+  & img {
+    ${(props) => (props.imageButton ? 'border: 1px solid white' : '')};
   }
   ${media.tablet} {
     display: none;

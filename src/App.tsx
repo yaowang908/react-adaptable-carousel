@@ -45,6 +45,9 @@ const App: React.FC = () => {
       ]}
       componentHeight={400}
       buttonText={{
+        showButton: true,
+        buttonWidth: 20,
+        buttonHeight: 100,
         isImageBg: false,
         prev: 'https://via.placeholder.com/40x100.png?text=<',
         next: 'https://via.placeholder.com/40x100.png?text=>',

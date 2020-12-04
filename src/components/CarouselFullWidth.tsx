@@ -13,11 +13,14 @@ import { tabletDelimiter } from '../lib/customMediaQuery';
  *  @param { string } themeColor.buttonText - button Text Color, hex color code
  *  @param { string } themeColor.scrollBar - scrollbar color, hex color code
  * @param { object } [buttonText] - buttons text
- *  @param { boolean } [buttonText.isImageBg = false] - if take image as background, image size should be 40 x 100
+ *  @param { boolean } [showButton = true] - whether show buttons
+ *  @param { number } [buttonWidth = 20] - button width
+ *  @param { number } [buttonHeight = 100] - button height
+ *  @param { boolean } [buttonText.isImageBg = false] - whether take image as background, image size should be 40 x 100
  *  @param { string } [buttonText.prev = '<'] - prev button text / img src
  *  @param { string } [buttonText.next = '>'] - next button text / img src
- * @param { number } [componentHeight = 'auto'] - height of the Carousel,
- * @param { boolean } isDivElement - if the children are div element
+ * @param { number } [componentHeight = 0] - height of the Carousel, if 0, height will set to auto,
+ * @param { boolean } isDivElement - whether the children are div element
  * @param { array } [urlArray] - if not div elements, urlArray has to be set
  * @param { number } [interval] - interval between slides
  */
@@ -27,7 +30,14 @@ interface Props {
   urlArray?: { url: string; link?: string; isVideo?: boolean }[];
   componentHeight?: number; // if height = null, set height to auto
   themeColor: { button: string; buttonText: string; scrollBar: string };
-  buttonText?: { isImageBg: boolean; prev: string; next: string };
+  buttonText?: {
+    showButton: boolean;
+    buttonWidth: number;
+    buttonHeight: number;
+    isImageBg: boolean;
+    prev: string;
+    next: string;
+  };
   interval?: number;
   pauseCarousel?: number; // this is a param for Development
 }
@@ -59,6 +69,15 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     children,
     buttonText,
   } = props;
+
+  // set default value
+  // if (buttonText && buttonText.showButton == null) buttonText.showButton = true;
+  // if (buttonText && buttonText.buttonWidth == null) buttonText.buttonWidth = 20;
+  // if (buttonText && buttonText.buttonHeight == null)
+  //   buttonText.buttonHeight = 100;
+  // if (buttonText && buttonText.isImageBg == null) buttonText.isImageBg = false;
+  // if (buttonText && buttonText.prev == null) buttonText.prev = '<';
+  // if (buttonText && buttonText.next == null) buttonText.next = '>';
 
   // DONE: adjust width when resize
   // NOTE: auto height module will work nicely when tablet or phone
@@ -438,22 +457,33 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
         onMouseEnter={() => mouseEnterHandler()}
         onMouseLeave={() => mouseLeaveHandler()}
       >
-        <Button.Prev
-          ref={prevButtonRef as any}
-          imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
-          colorTxt={setColor('buttonText')}
-          colorBg={setColor('button')}
-        >
-          {buttonContent('prev')}
-        </Button.Prev>
-        <Button.Next
-          ref={nextButtonRef as any}
-          imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
-          colorTxt={setColor('buttonText')}
-          colorBg={setColor('button')}
-        >
-          {buttonContent('next')}
-        </Button.Next>
+        {buttonText?.showButton ? (
+          <>
+            <Button.Prev
+              ref={prevButtonRef as any}
+              imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+              colorTxt={setColor('buttonText')}
+              colorBg={setColor('button')}
+              buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+              buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+            >
+              {buttonContent('prev')}
+            </Button.Prev>
+            <Button.Next
+              ref={nextButtonRef as any}
+              imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+              colorTxt={setColor('buttonText')}
+              colorBg={setColor('button')}
+              buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+              buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+            >
+              {buttonContent('next')}
+            </Button.Next>
+          </>
+        ) : (
+          <></>
+        )}
+
         <Styled.ImagesHolder
           ref={imagesHolderRef as any}
           colorScrollbar={setColor('scrollBar')}
@@ -486,22 +516,32 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
       onMouseEnter={() => mouseEnterHandler()}
       onMouseLeave={() => mouseLeaveHandler()}
     >
-      <Button.Prev
-        ref={prevButtonRef as any}
-        imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
-        colorTxt={setColor('buttonText')}
-        colorBg={setColor('button')}
-      >
-        {buttonContent('prev')}
-      </Button.Prev>
-      <Button.Next
-        ref={nextButtonRef as any}
-        imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
-        colorTxt={setColor('buttonText')}
-        colorBg={setColor('button')}
-      >
-        {buttonContent('next')}
-      </Button.Next>
+      {buttonText?.showButton ? (
+        <>
+          <Button.Prev
+            ref={prevButtonRef as any}
+            imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+            colorTxt={setColor('buttonText')}
+            colorBg={setColor('button')}
+            buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+            buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+          >
+            {buttonContent('prev')}
+          </Button.Prev>
+          <Button.Next
+            ref={nextButtonRef as any}
+            imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+            colorTxt={setColor('buttonText')}
+            colorBg={setColor('button')}
+            buttonWidth={buttonText ? buttonText.buttonWidth : 20}
+            buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+          >
+            {buttonContent('next')}
+          </Button.Next>
+        </>
+      ) : (
+        <></>
+      )}
       <Styled.ImagesHolder
         ref={imagesHolderRef as any}
         colorScrollbar={setColor('scrollBar')}
