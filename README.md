@@ -128,10 +128,8 @@ const App = () => {
       buttonWidth: 40,
       buttonHeight: 80,
       isImageBg: true,
-      prev:
-        'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainsliderprevious.png',
-      next:
-        'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainslidernext.png',
+      prev: 'https://via.placeholder.com/40x80.png?text=<',
+      next: 'https://via.placeholder.com/40x80.png?text=>',
     },
   };
   return (
