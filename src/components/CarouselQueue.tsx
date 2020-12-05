@@ -259,7 +259,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
       _slidesPositions.push([x?.current?.offsetLeft, x?.current?.offsetWidth]);
       return <></>;
     });
-    console.log(_slidesPositions);
+    // console.log(_slidesPositions);
     return _slidesPositions;
   };
 
