@@ -1,8 +1,9 @@
 /* eslint-disable no-else-return */
 import React from 'react';
+import _ from 'lodash';
 
 import SingleElement from './SingleElement';
-import debounce from '../lib/debounce';
+// import debounce from '../lib/debounce';
 // import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselQueue.style';
 import { Button } from './Button.style';
@@ -258,28 +259,28 @@ const CarouselQueue: React.FC<Props> = (props) => {
       _slidesPositions.push([x?.current?.offsetLeft, x?.current?.offsetWidth]);
       return <></>;
     });
-    // console.log(_slidesPositions);
+    console.log(_slidesPositions);
     return _slidesPositions;
   };
 
-  const resizeHandler = React.useCallback(
-    debounce(() => {
-      setSlidesPosition(getSlidesPosition());
-      // console.log(__containerWidth);
-    }, 500),
-    []
-  );
+  const resizeHandler = _.debounce(() => {
+    setSlidesPosition(getSlidesPosition());
+  }, 500);
 
   React.useEffect(() => {
     // set slidesPosition on window resize
     // DONE: set containerWidth on window resize
     // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
-    setSlidesPosition(getSlidesPosition());
+    // setSlidesPosition(getSlidesPosition());
     window.addEventListener('resize', resizeHandler);
     return () => {
       window.removeEventListener('resize', resizeHandler);
     };
   }, [slideRefs]);
+
+  React.useEffect(() => {
+    setSlidesPosition(getSlidesPosition());
+  }, [currentFirstIndex, slideRefs]);
 
   React.useEffect(() => {
     // get current first card's index

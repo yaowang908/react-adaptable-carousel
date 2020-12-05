@@ -1,7 +1,8 @@
 import React from 'react';
+import _ from 'lodash';
 
 import SingleElement from './SingleElement';
-import debounce from '../lib/debounce';
+// import debounce from '../lib/debounce';
 import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselFullWidth.style';
 import { Button } from './Button.style';
@@ -176,17 +177,25 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   //     }
   //   }, 500);
   // };
-  const resizeHandler = React.useCallback(
-    // keep the function instance the same between renders
-    debounce(() => {
-      const __containerWidth: number = containerRef.current
-        ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
-        : 0;
-      setContainerWidth(__containerWidth);
-      // console.log(__containerWidth);
-    }, 500),
-    []
-  );
+  // const resizeHandler = React.useCallback(
+  //   // keep the function instance the same between renders
+  //   debounce(() => {
+  //     const __containerWidth: number = containerRef.current
+  //       ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
+  //       : 0;
+  //     setContainerWidth(__containerWidth);
+  //     // console.log(__containerWidth);
+  //   }, 500),
+  //   []
+  // );
+
+  const resizeHandler = _.debounce(() => {
+    const __containerWidth: number = containerRef.current
+      ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
+      : 0;
+    setContainerWidth(__containerWidth);
+    // console.log(__containerWidth);
+  }, 500);
   React.useEffect(() => {
     // set containerWidth on window resize
     // DONE: set containerWidth on window resize
