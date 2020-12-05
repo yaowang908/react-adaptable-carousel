@@ -71,7 +71,7 @@ const SingleElement: React.FC<Props> = (props) => {
           // user is dragging
           // console.log('drag');
         } else if (link) {
-          console.log(link);
+          // console.log(link);
           window.open(link, '_BLANK');
         } else {
           console.error('No link provided!');
