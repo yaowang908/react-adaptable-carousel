@@ -55,12 +55,12 @@ const SingleElement: React.FC<Props> = (props) => {
         ele.addEventListener('mousemove', mouseMoveHandler);
         ele.addEventListener('mouseup', mouseUpHandler);
         __isUserDragging = false;
-        console.log('down');
+        // console.log('down');
       };
 
       const mouseMoveHandler = () => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
-        console.log('move');
+        // console.log('move');
         __isUserDragging = true;
         ele.removeEventListener('mousemove', mouseMoveHandler);
       };
@@ -69,7 +69,7 @@ const SingleElement: React.FC<Props> = (props) => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
         if (__isUserDragging) {
           // user is dragging
-          console.log('drag');
+          // console.log('drag');
         } else if (link) {
           console.log(link);
           window.open(link, '_BLANK');

@@ -141,4 +141,17 @@ DivElementSlide.args = {
   componentHeight: 400,
   gap: 12,
   divElementMinWidth: 200,
+  reminder: {
+    showReminder: false,
+  },
+  buttonText: {
+    showButton: true,
+    buttonWidth: 40,
+    buttonHeight: 80,
+    isImageBg: true,
+    prev:
+      'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainsliderprevious.png',
+    next:
+      'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainslidernext.png',
+  },
 };

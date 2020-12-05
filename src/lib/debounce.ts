@@ -28,6 +28,7 @@ const debounce = (func: Function, wait: number) => {
     // Restart the debounce waiting period.
     // setTimeout returns a truthy value (it differs in web vs Node)
     timeout = setTimeout(later, wait);
+    return timeout;
   };
 };
 

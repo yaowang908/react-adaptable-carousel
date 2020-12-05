@@ -6,6 +6,7 @@ import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselFullWidth.style';
 import { Button } from './Button.style';
 import { tabletDelimiter } from '../lib/customMediaQuery';
+// import { useDebouncedEffect } from '../lib/useDebouncedEffect';
 
 /**
  * @param { object } themeColor - Carousel Theme color, including prev/next buttons and scroll bar
@@ -161,20 +162,31 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     }
   }, []);
 
-  const resizeHandler = (isMounted) => {
+  // const resizeHandler = (isMounted) => {
+  //   // keep the function instance the same between renders
+  //   return debounce(() => {
+  //     if (isMounted) {
+  //       const __containerWidth: number = containerRef.current
+  //         ? Number(
+  //             containerRef.current.offsetWidth.toString().replace('px', '')
+  //           )
+  //         : 0;
+  //       setContainerWidth(__containerWidth);
+  //       // console.log(__containerWidth);
+  //     }
+  //   }, 500);
+  // };
+  const resizeHandler = React.useCallback(
     // keep the function instance the same between renders
-    return debounce(() => {
-      if (isMounted) {
-        const __containerWidth: number = containerRef.current
-          ? Number(
-              containerRef.current.offsetWidth.toString().replace('px', '')
-            )
-          : 0;
-        setContainerWidth(__containerWidth);
-        // console.log(__containerWidth);
-      }
-    }, 500);
-  };
+    debounce(() => {
+      const __containerWidth: number = containerRef.current
+        ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
+        : 0;
+      setContainerWidth(__containerWidth);
+      // console.log(__containerWidth);
+    }, 500),
+    []
+  );
   React.useEffect(() => {
     // set containerWidth on window resize
     // DONE: set containerWidth on window resize
@@ -182,14 +194,14 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
 
     // https://stackoverflow.com/questions/53949393/cant-perform-a-react-state-update-on-an-unmounted-component
     // solve Can't perform a React state update on an unmounted component
-    let isMounted = true;
+    // let isMounted = true;
     const _containerWidth: number = containerRef.current
       ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
       : 0;
     setContainerWidth(_containerWidth);
-    window.addEventListener('resize', resizeHandler(isMounted));
+    window.addEventListener('resize', resizeHandler);
     return () => {
-      isMounted = false;
+      // isMounted = false;
       window.removeEventListener('resize', resizeHandler);
     };
   }, []);

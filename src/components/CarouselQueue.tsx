@@ -82,10 +82,14 @@ const CarouselQueue: React.FC<Props> = (props) => {
   ] = React.useState<boolean>(false);
   const prevButtonRef = React.useRef<HTMLButtonElement>(null);
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
-  const slidesRef = React.useRef<Array<HTMLElement | null>>([]);
+  const [slideRefs, setSlideRefs] = React.useState<
+    React.RefObject<HTMLDivElement>[]
+  >([]);
   const [slidesPosition, setSlidesPosition] = React.useState<
     Array<[number | undefined, number | undefined]>
   >();
+  const [currentFirstIndex, setCurrentFirstIndex] = React.useState(0);
+  const [holderScrollLeft, setHolderScrollLeft] = React.useState(0);
 
   const {
     themeColor,
@@ -103,7 +107,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
   // DONE: 1. drag function
   React.useEffect(() => {
     // handler drag move carousel
-    let isMounted = true;
     if (imagesHolderRef.current !== null) {
       const holder = imagesHolderRef.current;
       holder.style.cursor = 'grab';
@@ -145,19 +148,31 @@ const CarouselQueue: React.FC<Props> = (props) => {
         // console.log('width: '+holder.offsetWidth);
         // console.log('ScrollWidth: '+holder.scrollWidth);
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
-          if (isMounted) setCarouselPosition({ position: 'right-end' });
+          setCarouselPosition({ position: 'right-end' });
         } else if (holder.scrollLeft <= gap) {
-          if (isMounted) setCarouselPosition({ position: 'left-end' });
-        } else if (isMounted) {
+          setCarouselPosition({ position: 'left-end' });
+        } else {
           setCarouselPosition({ position: 'middle' });
         }
-
+        setHolderScrollLeft(holder.scrollLeft);
+        const _tempIndexArray = slidesPosition
+          ?.map((x, index) => {
+            if (x[0] === holder.scrollLeft) {
+              return index;
+            }
+            if (index === 0 && holder.scrollLeft === 0) {
+              return 0;
+            }
+            return null;
+          })
+          .filter((x) => x !== null);
+        const _currentFirstIndex = _tempIndexArray ? _tempIndexArray[0] : 0;
+        if (_currentFirstIndex) setCurrentFirstIndex(_currentFirstIndex);
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
       };
       holder.addEventListener('mousedown', mouseDownHandler);
       return () => {
-        isMounted = false;
         holder.removeEventListener('mousedown', mouseDownHandler);
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
@@ -165,7 +180,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     } else {
       return () => {};
     }
-  }, []);
+  }, [slidesPosition]);
   // remove auto scroll function in Queue
   // DONE: 2. when scroll to the end
   /**
@@ -220,130 +235,146 @@ const CarouselQueue: React.FC<Props> = (props) => {
   }, [carouselPosition]);
 
   React.useEffect(() => {
-    // initialize slidesRef
+    // initialize slideRefs
     let _tempLength = 0;
     _tempLength = urlArray?.length || 0;
     if (isDivElement) _tempLength = React.Children.toArray(children).length;
-    slidesRef.current = slidesRef.current.slice(0, _tempLength);
-  }, [urlArray, children]);
+    setSlideRefs((slideRefs) =>
+      Array(_tempLength)
+        .fill(0)
+        .map(
+          (_, i) =>
+            slideRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>()
+        )
+    );
+  }, []);
 
   const getSlidesPosition = () => {
     // slidesPositions [left, width]
     const _slidesPositions: Array<
       [number | undefined, number | undefined]
     > = [];
-    slidesRef.current.map((x) => {
-      _slidesPositions.push([x?.offsetLeft, x?.offsetWidth]);
+    slideRefs.map((x) => {
+      _slidesPositions.push([x?.current?.offsetLeft, x?.current?.offsetWidth]);
       return <></>;
     });
-    setSlidesPosition(_slidesPositions);
+    // console.log(_slidesPositions);
     return _slidesPositions;
   };
 
-  // const resizeHandler = React.useCallback(
-  //   // keep the function instance the same between renders
-  //   debounce(() => {
-  //     getSlidesPosition();
-  //     // console.log(__containerWidth);
-  //   }, 500),
-  //   []
-  // );
-  const resizeHandler = (isMounted) => {
-    return debounce(() => {
-      if (isMounted) getSlidesPosition();
+  const resizeHandler = React.useCallback(
+    debounce(() => {
+      setSlidesPosition(getSlidesPosition());
       // console.log(__containerWidth);
-    }, 500);
-  };
+    }, 500),
+    []
+  );
 
   React.useEffect(() => {
     // set slidesPosition on window resize
     // DONE: set containerWidth on window resize
     // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
-
-    // https://stackoverflow.com/questions/53949393/cant-perform-a-react-state-update-on-an-unmounted-component
-    // solve Can't perform a React state update on an unmounted component
-    let isMounted = true;
-    window.addEventListener('resize', resizeHandler(isMounted));
+    setSlidesPosition(getSlidesPosition());
+    window.addEventListener('resize', resizeHandler);
     return () => {
-      isMounted = false;
       window.removeEventListener('resize', resizeHandler);
     };
+  }, [slideRefs]);
+
+  React.useEffect(() => {
+    // get current first card's index
+    const _tempIndexArray = slidesPosition
+      ?.map((x, index) => {
+        if (x[0] === holderScrollLeft) {
+          return index;
+        }
+        if (index === 0 && holderScrollLeft === 0) {
+          return 0;
+        }
+        return null;
+      })
+      .filter((x) => x !== null);
+    const _currentFirstIndex = _tempIndexArray ? _tempIndexArray[0] : 0;
+    if (_currentFirstIndex) setCurrentFirstIndex(_currentFirstIndex);
   }, []);
 
-  // React.useEffect(() => {
-  //   getSlidesPosition();
-  // }, []);
+  React.useEffect(() => {
+    // set holder scroll left base on index
+    const holder = imagesHolderRef.current;
+    if (slidesPosition && slidesPosition[currentFirstIndex] && holder) {
+      const targetScrollLeft = slidesPosition[currentFirstIndex][0];
+      if (targetScrollLeft) holder.scrollLeft = targetScrollLeft;
+      setHolderScrollLeft(holder.scrollLeft);
+    }
+    // console.log('set holder scroll left base on index');
+  }, [currentFirstIndex]);
 
   React.useEffect(() => {
     // handle prev button
-    let isMounted = true;
     if (prevButtonRef.current !== null && imagesHolderRef.current !== null) {
       const prevButton = prevButtonRef.current;
       const holder = imagesHolderRef.current;
       const mouseDownHandler = (e: MouseEvent) => {
         e.stopPropagation();
-        // const __slidesPositions = getSlidesPosition();
-        console.dir(slidesRef.current[0]);
-        console.dir(slidesPosition);
-        console.dir(holder.scrollLeft);
+        let _currentFirstIndex = currentFirstIndex;
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
-          if (isMounted) setCarouselPosition({ position: 'right-end' });
+          setCarouselPosition({ position: 'right-end' });
           // keep moving
-        } else if (holder.scrollLeft <= gap) {
-          if (isMounted) setCarouselPosition({ position: 'left-end' });
+          _currentFirstIndex -= 1;
+        } else if (_currentFirstIndex === 0) {
+          setCarouselPosition({ position: 'left-end' });
           // reaching left end, do nothing
-        } else if (isMounted) {
+        } else {
           setCarouselPosition({ position: 'middle' });
           // keep moving
+          _currentFirstIndex -= 1;
+          if (_currentFirstIndex === 0)
+            setCarouselPosition({ position: 'left-end' });
         }
+        setCurrentFirstIndex(_currentFirstIndex);
       };
       prevButton.addEventListener('mousedown', mouseDownHandler);
       return () => {
-        isMounted = false;
         prevButton.removeEventListener('mousedown', mouseDownHandler);
       };
     } else {
       return () => {};
     }
-  }, []);
+  }, [slideRefs, slidesPosition, currentFirstIndex]);
   React.useEffect(() => {
     // handle next button
-    let isMounted = true;
     if (nextButtonRef.current !== null && imagesHolderRef.current !== null) {
       const nextButton = nextButtonRef.current;
       const holder = imagesHolderRef.current;
-      const mouseDownHandler = (e: MouseEvent) => {
+      const clickHandler = (e: MouseEvent) => {
         e.stopPropagation();
-        console.dir(slidesRef.current[0]);
-        console.dir(holder.scrollLeft);
-        if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
-          if (isMounted) setCarouselPosition({ position: 'right-end' });
+        // console.log(`currentFirstIndex: ${currentFirstIndex}`);
+        let _currentFirstIndex = currentFirstIndex;
+        if (holder.scrollLeft >= holder.scrollWidth - holder.offsetWidth) {
+          setCarouselPosition({ position: 'right-end' });
           // reaching right end, do nothing
-        } else if (holder.scrollLeft <= gap) {
-          if (isMounted) setCarouselPosition({ position: 'left-end' });
+          // console.dir('right-end');
+        } else if (_currentFirstIndex === 0) {
           // keep moving
-        } else if (isMounted) {
+          _currentFirstIndex += 1;
+          setCarouselPosition({ position: 'middle' });
+        } else {
+          // console.dir('middle');
           setCarouselPosition({ position: 'middle' });
           // keep moving
+          _currentFirstIndex += 1;
         }
+        // console.log(`_currentFirstIndex: ${_currentFirstIndex}`);
+        setCurrentFirstIndex(_currentFirstIndex);
       };
-      nextButton.addEventListener('mousedown', mouseDownHandler);
+      nextButton.addEventListener('click', clickHandler);
       return () => {
-        isMounted = false;
-        nextButton.removeEventListener('mousedown', mouseDownHandler);
+        nextButton.removeEventListener('click', clickHandler);
       };
     } else {
       return () => {};
     }
-  }, []);
-
-  React.useEffect(() => {
-    /** TODO:
-     * slides position : slidesPosition<[left, width]>
-     * when click button, move to prev or next slide
-     * set imagesHolder offsetLeft
-     */
-  });
+  }, [slideRefs, slidesPosition, currentFirstIndex]);
 
   const mouseEnterHandler = () => {
     // DONE: hide buttons when tablet
@@ -360,7 +391,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
       nextButtonRef.current.style.display = 'none';
     }
   };
-
   const buttonContent = (param: 'prev' | 'next') => {
     const tempBtn = {
       prev: '<',
@@ -374,7 +404,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
     return tempBtn[param];
   };
-
   const setColor = (param: 'reminder' | 'reminderTxt') => {
     const tempColor = {
       reminder: '#000000',
@@ -391,7 +420,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
     return tempColor[param];
   };
-
   const setButtonColor = (param: 'buttonText' | 'button' | 'scrollBar') => {
     const tempColor = {
       buttonText: '#fff',
@@ -409,7 +437,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
     return tempColor[param];
   };
-
   const reminderContent = (param: 'firstTxt' | 'lastTxt') => {
     const tempBtn = {
       firstTxt: 'First One',
@@ -420,7 +447,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
     return tempBtn[param];
   };
-
   const setDivMinWidth = () => {
     if (isDivElement) {
       if (divElementMinWidth) {
@@ -495,7 +521,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 height={componentHeight}
                 roundCorner={roundCorner || 0}
                 key={index}
-                _ref={slidesRef.current[index] as any}
+                _ref={slideRefs[index] as any}
               />
             );
           })}
@@ -575,7 +601,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                     height={componentHeight}
                     minWidth={setDivMinWidth()} // full width div item don't care
                     roundCorner={roundCorner || 0}
-                    _ref={slidesRef.current[index] as any}
+                    _ref={slideRefs[index] as any}
                   >
                     {child}
                   </SingleElement>
