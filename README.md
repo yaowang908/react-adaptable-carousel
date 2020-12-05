@@ -78,46 +78,60 @@ const App = () => {
 
 This module will show multiple slides per screen, base on the real size of the slides. This module currently don't take video url.
 
-[Live Example](https://www.yaow.me/react-adaptable-carousel/?path=/story/carousel-queue--default)
+[Live Example](https://www.yaow.me/react-adaptable-carousel/?path=/story/carousel-queue--auto-height)
 
 ```sh
 import { CarouselQueue } from 'react-adaptable-carousel';
 /**
-  * @param { object } themeColor - Carousel Theme color, including prev/next buttons and scroll bar
-  *  @param { string } themeColor.reminder - reminder color
-  *  @param { string } themeColor.reminderTxt - reminder Text Color
-  * @param { object } [reminder] - both ends reminder
-  *  @param { string } [reminder.firstTxt = 'First One'] - text on the reminder for first one, default first one
-  *  @param { string } [reminder.lastTxt = 'Last One'] - text on the reminder for last one, default last one
-  * @param { boolean } [componentHeight = 'auto'] - height of the Carousel,
-  * @param { number } gap - space between children
-  * @param { number } [roundCorner = 0] - round corner of child element
-  * @param { boolean } isDivElement - if the children are div element
-  * @param { array } [urlArray] - if not div elements, urlArray has to be set
-  */
+ * @param { object } themeColor - Carousel Theme color, including prev/next buttons and scroll bar
+ *  @param { string } themeColor.reminder - reminder color
+ *  @param { string } themeColor.reminderTxt - reminder Text Color
+ * @param { object } [reminder] - both ends reminder
+ *  @param { boolean } [showReminder = true] - whether to show reminder
+ *  @param { string } [reminder.firstTxt = 'First One'] - text on the reminder for first one, default first one
+ *  @param { string } [reminder.lastTxt = 'Last One'] - text on the reminder for last one, default last one
+ * @param { boolean } [componentHeight = 'auto'] - height of the Carousel,
+ * @param { object } [buttonText] - buttons text
+ *  @param { boolean } [showButton = true] - whether show buttons
+ *  @param { number } [buttonWidth = 20] - button width
+ *  @param { number } [buttonHeight = 100] - button height
+ *  @param { boolean } [buttonText.isImageBg = false] - whether take image as background, image size should be 40 x 100
+ *  @param { string } [buttonText.prev = '<'] - prev button text / img src
+ *  @param { string } [buttonText.next = '>'] - next button text / img src
+ * @param { number } gap - space between children
+ * @param { number } [roundCorner = 0] - round corner of child element
+ * @param { boolean } isDivElement - if the children are div element
+ * @param { array } [urlArray] - if not div elements, urlArray has to be set
+ * @param { number } [divElementMinWidth] - if div element, need to set divElementMinWidth
+ */
 const App = () => {
   const args = {
     urlArray: [
-      {
-        url: 'https://via.placeholder.com/200x300.png?text=0',
-        link: 'https://placeholder.com',
-      },
-      {
-        url: 'https://via.placeholder.com/200x300.png?text=1',
-        link: 'https://placeholder.com',
-      },
+      { url: 'https://via.placeholder.com/200x300.png?text=0', link: '' },
+      { url: 'https://via.placeholder.com/400x300.png?text=1', link: '' },
+      { url: 'https://via.placeholder.com/300x300.png?text=2', link: '' },
+      { url: 'https://via.placeholder.com/200x300.png?text=3', link: '' },
+      { url: 'https://via.placeholder.com/400x300.png?text=4', link: '' },
+      { url: 'https://via.placeholder.com/300x300.png?text=5', link: '' },
+      { url: 'https://via.placeholder.com/200x300.png?text=6', link: '' },
+      { url: 'https://via.placeholder.com/400x300.png?text=7', link: '' },
+      { url: 'https://via.placeholder.com/300x300.png?text=8', link: '' },
     ],
-    componentHeight: 400,
+    componentHeight: 0, // set 0 means to set image height to auto
     isDivElement: false,
     gap: 12,
-    roundCorner: 12,
-    themeColor: {
-      reminder: '#961c1c',
-      reminderTxt: '#fff',
-    },
     reminder: {
-      firstTxt: 'First One',
-      lastTxt: '',
+      showReminder: false,
+    },
+    buttonText: {
+      showButton: true,
+      buttonWidth: 40,
+      buttonHeight: 80,
+      isImageBg: true,
+      prev:
+        'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainsliderprevious.png',
+      next:
+        'https://www.chinainstitute.org/site/wp-content/uploads/2020/11/mainslidernext.png',
     },
   };
   return (
