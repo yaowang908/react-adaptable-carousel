@@ -44,7 +44,15 @@ interface Props {
   pauseCarousel?: number; // this is a param for Development
 }
 
-const CarouselFullWidth: React.FC<Props> = (props) => {
+const CarouselFullWidth: React.FC<Props> = ({
+  themeColor: _themeColor,
+  isDivElement: _isDivElement,
+  urlArray: _urlArray,
+  componentHeight: _componentHeight,
+  interval: _interval,
+  children: _children,
+  buttonText: _buttonText,
+}) => {
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
   const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -62,24 +70,44 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
   const [stepsLengthArr, setStepsLengthArr] = React.useState<number[]>([]);
 
-  const {
-    themeColor,
-    isDivElement,
-    urlArray,
-    componentHeight,
-    interval,
-    children,
-    buttonText,
-  } = props;
+  // const {
+  //   themeColor,
+  //   isDivElement,
+  //   urlArray,
+  //   componentHeight,
+  //   interval,
+  //   children,
+  //   buttonText,
+  // } = props;
 
-  // set default value
-  // if (buttonText && buttonText.showButton == null) buttonText.showButton = true;
-  // if (buttonText && buttonText.buttonWidth == null) buttonText.buttonWidth = 20;
-  // if (buttonText && buttonText.buttonHeight == null)
-  //   buttonText.buttonHeight = 100;
-  // if (buttonText && buttonText.isImageBg == null) buttonText.isImageBg = false;
-  // if (buttonText && buttonText.prev == null) buttonText.prev = '<';
-  // if (buttonText && buttonText.next == null) buttonText.next = '>';
+  const [themeColor, setThemeColor] = React.useState(_themeColor);
+  const [isDivElement, setIsDivElement] = React.useState(_isDivElement);
+  const [urlArray, setUrlArray] = React.useState(_urlArray);
+  const [componentHeight, setComponentHeight] = React.useState(
+    _componentHeight
+  );
+  const [interval, setThisInterval] = React.useState(_interval);
+  const [children, setChildren] = React.useState(_children);
+  const [buttonText, setButtonText] = React.useState(_buttonText);
+
+  // set new state when get new prop
+  React.useEffect(() => {
+    if (_themeColor) setThemeColor(_themeColor);
+    if (_isDivElement) setIsDivElement(_isDivElement);
+    if (_urlArray) setUrlArray(_urlArray);
+    if (_componentHeight) setComponentHeight(_componentHeight);
+    if (_interval) setThisInterval(_interval);
+    if (_children) setChildren(_children);
+    if (_buttonText) setButtonText(_buttonText);
+  }, [
+    _themeColor,
+    _isDivElement,
+    _urlArray,
+    _componentHeight,
+    _interval,
+    _children,
+    _buttonText,
+  ]);
 
   // DONE: adjust width when resize
   // NOTE: auto height module will work nicely when tablet or phone
@@ -161,33 +189,7 @@ const CarouselFullWidth: React.FC<Props> = (props) => {
     } else {
       // do nothing
     }
-  }, []);
-
-  // const resizeHandler = (isMounted) => {
-  //   // keep the function instance the same between renders
-  //   return debounce(() => {
-  //     if (isMounted) {
-  //       const __containerWidth: number = containerRef.current
-  //         ? Number(
-  //             containerRef.current.offsetWidth.toString().replace('px', '')
-  //           )
-  //         : 0;
-  //       setContainerWidth(__containerWidth);
-  //       // console.log(__containerWidth);
-  //     }
-  //   }, 500);
-  // };
-  // const resizeHandler = React.useCallback(
-  //   // keep the function instance the same between renders
-  //   debounce(() => {
-  //     const __containerWidth: number = containerRef.current
-  //       ? Number(containerRef.current.offsetWidth.toString().replace('px', ''))
-  //       : 0;
-  //     setContainerWidth(__containerWidth);
-  //     // console.log(__containerWidth);
-  //   }, 500),
-  //   []
-  // );
+  }, [urlArray]);
 
   const resizeHandler = _.debounce(() => {
     const __containerWidth: number = containerRef.current

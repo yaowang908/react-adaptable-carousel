@@ -105,6 +105,35 @@ const CarouselQueue: React.FC<Props> = (props) => {
     children,
   } = props;
 
+  const [thisUrlArray, setThisUrlArray] = React.useState(urlArray);
+  const [thisThemeColor, setThisThemeColor] = React.useState(themeColor);
+  const [thisReminder, setThisReminder] = React.useState(reminder);
+  const [thisButtonText, setThisButtonText] = React.useState(buttonText);
+  const [thisComponentHeight, setThisComponentHeight] = React.useState(
+    componentHeight
+  );
+  const [thisGap, setThisGap] = React.useState(gap);
+  const [thisRoundCorner, setThisRoundCorner] = React.useState(roundCorner);
+  const [thisIsDivElement, setThisIsDivElement] = React.useState(isDivElement);
+  const [thisDivElementMinWidth, setThisDivElementMinWidth] = React.useState(
+    divElementMinWidth
+  );
+  const [thisChildren, setThisChildren] = React.useState(children);
+
+  // set new state when get new prop
+  React.useEffect(() => {
+    if (props.urlArray) setThisUrlArray(props.urlArray);
+    if (props.themeColor) setThisThemeColor(props.themeColor);
+    if (props.reminder) setThisReminder(props.reminder);
+    if (props.buttonText) setThisButtonText(props.buttonText);
+    if (props.componentHeight) setThisComponentHeight(props.componentHeight);
+    if (props.gap) setThisGap(props.gap);
+    if (props.roundCorner) setThisRoundCorner(props.roundCorner);
+    if (props.isDivElement) setThisIsDivElement(props.isDivElement);
+    if (props.divElementMinWidth)
+      setThisDivElementMinWidth(props.divElementMinWidth);
+    if (props.children) setThisChildren(props.children);
+  }, [props]);
   // DONE: 1. drag function
   React.useEffect(() => {
     // handler drag move carousel
@@ -150,7 +179,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
         // console.log('ScrollWidth: '+holder.scrollWidth);
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
           setCarouselPosition({ position: 'right-end' });
-        } else if (holder.scrollLeft <= gap) {
+        } else if (holder.scrollLeft <= thisGap) {
           setCarouselPosition({ position: 'left-end' });
         } else {
           setCarouselPosition({ position: 'middle' });
@@ -238,8 +267,9 @@ const CarouselQueue: React.FC<Props> = (props) => {
   React.useEffect(() => {
     // initialize slideRefs
     let _tempLength = 0;
-    _tempLength = urlArray?.length || 0;
-    if (isDivElement) _tempLength = React.Children.toArray(children).length;
+    _tempLength = thisUrlArray?.length || 0;
+    if (thisIsDivElement)
+      _tempLength = React.Children.toArray(thisChildren).length;
     setSlideRefs((slideRefs) =>
       Array(_tempLength)
         .fill(0)
@@ -248,7 +278,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
             slideRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>()
         )
     );
-  }, []);
+  }, [thisUrlArray]);
 
   const getSlidesPosition = () => {
     // slidesPositions [left, width]
@@ -280,7 +310,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     setSlidesPosition(getSlidesPosition());
-  }, [currentFirstIndex, slideRefs]);
+  }, [currentFirstIndex, slideRefs, thisUrlArray]);
 
   React.useEffect(() => {
     // get current first card's index
@@ -397,9 +427,9 @@ const CarouselQueue: React.FC<Props> = (props) => {
       prev: '<',
       next: '>',
     };
-    if (buttonText) {
-      if (buttonText.isImageBg && buttonText[param].length >= 4) {
-        return <img src={buttonText[param]} alt={param} />;
+    if (thisButtonText) {
+      if (thisButtonText.isImageBg && thisButtonText[param].length >= 4) {
+        return <img src={thisButtonText[param]} alt={param} />;
       }
       return tempBtn[param];
     }
@@ -411,10 +441,10 @@ const CarouselQueue: React.FC<Props> = (props) => {
       reminderTxt: '#fff',
     };
 
-    if (themeColor && themeColor[param]) {
-      if (/^#([0-9A-F]{3}){1,2}$/i.test(themeColor[param])) {
+    if (thisThemeColor && thisThemeColor[param]) {
+      if (/^#([0-9A-F]{3}){1,2}$/i.test(thisThemeColor[param])) {
         // valid hex color
-        return themeColor[param];
+        return thisThemeColor[param];
       }
       console.error(`themeColor.${param} need to be valid hex color code`);
       return tempColor[param];
@@ -428,10 +458,10 @@ const CarouselQueue: React.FC<Props> = (props) => {
       scrollBar: 'darkgrey',
     };
 
-    if (themeColor && themeColor[param]) {
-      if (/^#([0-9A-F]{3}){1,2}$/i.test(themeColor[param])) {
+    if (thisThemeColor && thisThemeColor[param]) {
+      if (/^#([0-9A-F]{3}){1,2}$/i.test(thisThemeColor[param])) {
         // valid hex color
-        return themeColor[param];
+        return thisThemeColor[param];
       }
       console.error(`themeColor.${param} need to be valid hex color code`);
       return tempColor[param];
@@ -443,15 +473,15 @@ const CarouselQueue: React.FC<Props> = (props) => {
       firstTxt: 'First One',
       lastTxt: 'Last One',
     };
-    if (reminder && reminder[param]) {
-      return reminder[param];
+    if (thisReminder && thisReminder[param]) {
+      return thisReminder[param];
     }
     return tempBtn[param];
   };
   const setDivMinWidth = () => {
-    if (isDivElement) {
-      if (divElementMinWidth) {
-        return divElementMinWidth;
+    if (thisIsDivElement) {
+      if (thisDivElementMinWidth) {
+        return thisDivElementMinWidth;
       } else {
         console.error('Div Elements must have minWidth');
         return undefined;
@@ -461,31 +491,35 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   };
 
-  if (urlArray) {
+  if (thisUrlArray) {
     return (
       <Styled.Container
         onMouseEnter={() => mouseEnterHandler()}
         onMouseLeave={() => mouseLeaveHandler()}
       >
-        {buttonText?.showButton ? (
+        {thisButtonText?.showButton ? (
           <>
             <Button.Prev
               ref={prevButtonRef as any}
-              imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+              imageButton={
+                thisButtonText?.isImageBg ? thisButtonText.isImageBg : false
+              }
               colorTxt={setButtonColor('buttonText')}
               colorBg={setButtonColor('button')}
-              buttonWidth={buttonText ? buttonText.buttonWidth : 20}
-              buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+              buttonWidth={thisButtonText ? thisButtonText.buttonWidth : 20}
+              buttonHeight={thisButtonText ? thisButtonText.buttonHeight : 100}
             >
               {buttonContent('prev')}
             </Button.Prev>
             <Button.Next
               ref={nextButtonRef as any}
-              imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+              imageButton={
+                thisButtonText?.isImageBg ? thisButtonText.isImageBg : false
+              }
               colorTxt={setButtonColor('buttonText')}
               colorBg={setButtonColor('button')}
-              buttonWidth={buttonText ? buttonText.buttonWidth : 20}
-              buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+              buttonWidth={thisButtonText ? thisButtonText.buttonWidth : 20}
+              buttonHeight={thisButtonText ? thisButtonText.buttonHeight : 100}
             >
               {buttonContent('next')}
             </Button.Next>
@@ -493,10 +527,10 @@ const CarouselQueue: React.FC<Props> = (props) => {
         ) : (
           <></>
         )}
-        {reminder?.showReminder ? (
+        {thisReminder?.showReminder ? (
           <Styled.ImagesHolderBefore
             ref={imagesHolderBeforeRef}
-            gap={gap}
+            gap={thisGap}
             show={imageHolderBeforeVisibility}
             color={setColor('reminderTxt')}
             colorBg={setColor('reminder')}
@@ -506,11 +540,11 @@ const CarouselQueue: React.FC<Props> = (props) => {
         ) : (
           <></>
         )}
-        <Styled.ImagesHolder ref={imagesHolderRef} gap={gap}>
-          {urlArray.map((x, index) => {
+        <Styled.ImagesHolder ref={imagesHolderRef} gap={thisGap}>
+          {thisUrlArray.map((x, index) => {
             return (
               <SingleElement
-                isDivElement={isDivElement}
+                isDivElement={thisIsDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
                 minWidth={x.isVideo ? 400 : 0}
@@ -518,19 +552,19 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 url={x.url}
                 link={x.link}
                 imgAlt=""
-                gap={gap || 0}
-                height={componentHeight}
-                roundCorner={roundCorner || 0}
+                gap={thisGap || 0}
+                height={thisComponentHeight}
+                roundCorner={thisRoundCorner || 0}
                 key={index}
                 _ref={slideRefs[index] as any}
               />
             );
           })}
         </Styled.ImagesHolder>
-        {reminder?.showReminder ? (
+        {thisReminder?.showReminder ? (
           <Styled.ImagesHolderAfter
             ref={imagesHolderAfterRef}
-            gap={gap}
+            gap={thisGap}
             show={imageHolderAfterVisibility}
             color={setColor('reminderTxt')}
             colorBg={setColor('reminder')}
@@ -548,25 +582,29 @@ const CarouselQueue: React.FC<Props> = (props) => {
       onMouseEnter={() => mouseEnterHandler()}
       onMouseLeave={() => mouseLeaveHandler()}
     >
-      {buttonText?.showButton ? (
+      {thisButtonText?.showButton ? (
         <>
           <Button.Prev
             ref={prevButtonRef as any}
-            imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+            imageButton={
+              thisButtonText?.isImageBg ? thisButtonText.isImageBg : false
+            }
             colorTxt={setButtonColor('buttonText')}
             colorBg={setButtonColor('button')}
-            buttonWidth={buttonText ? buttonText.buttonWidth : 20}
-            buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+            buttonWidth={thisButtonText ? thisButtonText.buttonWidth : 20}
+            buttonHeight={thisButtonText ? thisButtonText.buttonHeight : 100}
           >
             {buttonContent('prev')}
           </Button.Prev>
           <Button.Next
             ref={nextButtonRef as any}
-            imageButton={buttonText?.isImageBg ? buttonText.isImageBg : false}
+            imageButton={
+              thisButtonText?.isImageBg ? thisButtonText.isImageBg : false
+            }
             colorTxt={setButtonColor('buttonText')}
             colorBg={setButtonColor('button')}
-            buttonWidth={buttonText ? buttonText.buttonWidth : 20}
-            buttonHeight={buttonText ? buttonText.buttonHeight : 100}
+            buttonWidth={thisButtonText ? thisButtonText.buttonWidth : 20}
+            buttonHeight={thisButtonText ? thisButtonText.buttonHeight : 100}
           >
             {buttonContent('next')}
           </Button.Next>
@@ -574,10 +612,10 @@ const CarouselQueue: React.FC<Props> = (props) => {
       ) : (
         <></>
       )}
-      {reminder?.showReminder ? (
+      {thisReminder?.showReminder ? (
         <Styled.ImagesHolderBefore
           ref={imagesHolderBeforeRef}
-          gap={gap}
+          gap={thisGap}
           show={imageHolderBeforeVisibility}
           color={setColor('reminderTxt')}
           colorBg={setColor('reminder')}
@@ -587,21 +625,21 @@ const CarouselQueue: React.FC<Props> = (props) => {
       ) : (
         <></>
       )}
-      <Styled.ImagesHolder ref={imagesHolderRef} gap={gap}>
-        {isDivElement && children
+      <Styled.ImagesHolder ref={imagesHolderRef} gap={thisGap}>
+        {thisIsDivElement && thisChildren
           ? React.Children.map(
-              children as any,
+              thisChildren as any,
               (child: React.ReactElement, index: number) => {
                 return (
                   <SingleElement
-                    isDivElement={isDivElement}
+                    isDivElement={thisIsDivElement}
                     key={index}
                     isImageElement={false}
                     isFullWidthElement={false}
-                    gap={gap || 0}
-                    height={componentHeight}
+                    gap={thisGap || 0}
+                    height={thisComponentHeight}
                     minWidth={setDivMinWidth()} // full width div item don't care
-                    roundCorner={roundCorner || 0}
+                    roundCorner={thisRoundCorner || 0}
                     _ref={slideRefs[index] as any}
                   >
                     {child}
@@ -609,12 +647,12 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 );
               }
             )
-          : 'Please set urlArray or children'}
+          : 'Please set thisUrlArray or children'}
       </Styled.ImagesHolder>
-      {reminder?.showReminder ? (
+      {thisReminder?.showReminder ? (
         <Styled.ImagesHolderAfter
           ref={imagesHolderAfterRef}
-          gap={gap}
+          gap={thisGap}
           show={imageHolderAfterVisibility}
           color={setColor('reminderTxt')}
           colorBg={setColor('reminder')}
