@@ -105,24 +105,51 @@ const CarouselQueue: React.FC<Props> = (props) => {
     children,
   } = props;
 
-  const [thisUrlArray, setThisUrlArray] = React.useState(urlArray);
-  const [thisThemeColor, setThisThemeColor] = React.useState(themeColor);
-  const [thisReminder, setThisReminder] = React.useState(reminder);
-  const [thisButtonText, setThisButtonText] = React.useState(buttonText);
+  const [thisUrlArray, setThisUrlArray] = React.useState(
+    urlArray || [{ url: '', link: '', isVideo: false }]
+  );
+  const [thisThemeColor, setThisThemeColor] = React.useState(
+    themeColor || { reminder: '', reminderTxt: '' }
+  );
+  const [thisReminder, setThisReminder] = React.useState(
+    reminder || {
+      showReminder: true,
+      firstTxt: 'First One',
+      lastTxt: 'Last One',
+    }
+  );
+  const [thisButtonText, setThisButtonText] = React.useState(
+    buttonText || {
+      showButton: false,
+      buttonWidth: 20,
+      buttonHeight: 40,
+      isImageBg: false,
+      prev: '<',
+      next: '>',
+    }
+  );
   const [thisComponentHeight, setThisComponentHeight] = React.useState(
-    componentHeight
+    componentHeight || 0
   );
   const [thisGap, setThisGap] = React.useState(gap);
-  const [thisRoundCorner, setThisRoundCorner] = React.useState(roundCorner);
-  const [thisIsDivElement, setThisIsDivElement] = React.useState(isDivElement);
+  const [thisRoundCorner, setThisRoundCorner] = React.useState(
+    roundCorner || 12
+  );
+  const [thisIsDivElement, setThisIsDivElement] = React.useState(
+    isDivElement || false
+  );
   const [thisDivElementMinWidth, setThisDivElementMinWidth] = React.useState(
-    divElementMinWidth
+    divElementMinWidth || 200
   );
   const [thisChildren, setThisChildren] = React.useState(children);
 
   // set new state when get new prop
   React.useEffect(() => {
-    if (props.urlArray) setThisUrlArray(props.urlArray);
+    console.dir('called reset props');
+    if (props.urlArray) {
+      setThisUrlArray(props.urlArray);
+      console.dir(props.urlArray);
+    }
     if (props.themeColor) setThisThemeColor(props.themeColor);
     if (props.reminder) setThisReminder(props.reminder);
     if (props.buttonText) setThisButtonText(props.buttonText);
@@ -134,9 +161,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
       setThisDivElementMinWidth(props.divElementMinWidth);
     if (props.children) setThisChildren(props.children);
   }, [props]);
-  // DONE: 1. drag function
+  // handler drag move carousel
   React.useEffect(() => {
-    // handler drag move carousel
     if (imagesHolderRef.current !== null) {
       const holder = imagesHolderRef.current;
       holder.style.cursor = 'grab';
@@ -211,14 +237,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
       return () => {};
     }
   }, [slidesPosition]);
-  // remove auto scroll function in Queue
-  // DONE: 2. when scroll to the end
-  /**
-   * next drag would enable a block indicate this is the end
-   * when mouse up the block will snap back
-   */
+  // both end reminder
   React.useEffect(() => {
-    // both end reminder
     const _before = imagesHolderBeforeRef.current;
     const _after = imagesHolderAfterRef.current;
     // console.log('ScrollLeft: '+holder.scrollLeft);
@@ -242,8 +262,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   }, [carouselPosition]);
 
+  // when reaching ends disable buttons
   React.useEffect(() => {
-    // DONE: when reaching ends disable buttons
     if (prevButtonRef.current && nextButtonRef.current) {
       const prevButton = prevButtonRef.current;
       const nextButton = nextButtonRef.current;
@@ -264,8 +284,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   }, [carouselPosition]);
 
+  // initialize slideRefs
   React.useEffect(() => {
-    // initialize slideRefs
     let _tempLength = 0;
     _tempLength = thisUrlArray?.length || 0;
     if (thisIsDivElement)
@@ -297,9 +317,9 @@ const CarouselQueue: React.FC<Props> = (props) => {
     setSlidesPosition(getSlidesPosition());
   }, 500);
 
+  // set slidesPosition on window resize
   React.useEffect(() => {
-    // set slidesPosition on window resize
-    // DONE: set containerWidth on window resize
+    // set containerWidth on window resize
     // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
     // setSlidesPosition(getSlidesPosition());
     window.addEventListener('resize', resizeHandler);
@@ -312,8 +332,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
     setSlidesPosition(getSlidesPosition());
   }, [currentFirstIndex, slideRefs, thisUrlArray]);
 
+  // get current first card's index
   React.useEffect(() => {
-    // get current first card's index
     const _tempIndexArray = slidesPosition
       ?.map((x, index) => {
         if (x[0] === holderScrollLeft) {
@@ -329,8 +349,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
     if (_currentFirstIndex) setCurrentFirstIndex(_currentFirstIndex);
   }, []);
 
+  // set holder scroll left base on index
   React.useEffect(() => {
-    // set holder scroll left base on index
     const holder = imagesHolderRef.current;
     if (slidesPosition && slidesPosition[currentFirstIndex] && holder) {
       const targetScrollLeft = slidesPosition[currentFirstIndex][0];
@@ -340,8 +360,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
     // console.log('set holder scroll left base on index');
   }, [currentFirstIndex]);
 
+  // handle prev button
   React.useEffect(() => {
-    // handle prev button
     if (prevButtonRef.current !== null && imagesHolderRef.current !== null) {
       const prevButton = prevButtonRef.current;
       const holder = imagesHolderRef.current;
@@ -372,8 +392,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
       return () => {};
     }
   }, [slideRefs, slidesPosition, currentFirstIndex]);
+  // handle next button
   React.useEffect(() => {
-    // handle next button
     if (nextButtonRef.current !== null && imagesHolderRef.current !== null) {
       const nextButton = nextButtonRef.current;
       const holder = imagesHolderRef.current;

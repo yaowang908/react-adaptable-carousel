@@ -63,6 +63,14 @@ Default.args = {
     firstTxt: 'First One',
     lastTxt: '',
   },
+  buttonText: {
+    showButton: false,
+    buttonWidth: 40,
+    buttonHeight: 80,
+    isImageBg: true,
+    prev: 'https://via.placeholder.com/40x80.png?text=<',
+    next: 'https://via.placeholder.com/40x80.png?text=>',
+  },
 };
 
 export const AutoHeight = Template.bind({});

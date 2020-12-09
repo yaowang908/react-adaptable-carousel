@@ -26,24 +26,87 @@ interface Props {
   _ref?: React.RefObject<HTMLDivElement>; // ref is reserved, cannot use ref as prop here
 }
 // DONE: add link options
-const SingleElement: React.FC<Props> = (props) => {
+const SingleElement: React.FC<Props> = ({
+  className: _className,
+  isImageElement: _isImageElement,
+  isVideoElement: _isVideoElement,
+  isFullWidthElement: _isFullWidthElement,
+  url: _url,
+  imgAlt: _imgAlt,
+  height: _height,
+  link: _link,
+  isDivElement: _isDivElement,
+  children: _children,
+  roundCorner: _roundCorner,
+  minWidth: _minWidth,
+  gap: _gap,
+  _ref: __ref,
+}) => {
   const elementRef = React.useRef<HTMLDivElement>(null);
-  const {
-    className,
-    isImageElement,
-    isVideoElement,
-    isFullWidthElement,
-    url,
-    imgAlt,
-    height,
-    link,
-    isDivElement,
-    children,
-    roundCorner,
-    minWidth,
-    gap,
-    _ref,
-  } = props;
+  // const {
+  //   className,
+  //   isImageElement,
+  //   isVideoElement,
+  //   isFullWidthElement,
+  //   url,
+  //   imgAlt,
+  //   height,
+  //   link,
+  //   isDivElement,
+  //   children,
+  //   roundCorner,
+  //   minWidth,
+  //   gap,
+  //   _ref,
+  // } = props;
+  const [className, setClassName] = React.useState(_className);
+  const [isImageElement, setIsImageElement] = React.useState(_isImageElement);
+  const [isVideoElement, setIsVideoElement] = React.useState(_isVideoElement);
+  const [isFullWidthElement, setIsFullWidthElement] = React.useState(
+    _isFullWidthElement
+  );
+  const [url, setUrl] = React.useState(_url);
+  const [imgAlt, setImgAlt] = React.useState(_imgAlt);
+  const [height, setHeight] = React.useState(_height);
+  const [link, setLink] = React.useState(_link);
+  const [isDivElement, setIsDivElement] = React.useState(_isDivElement);
+  const [children, setChildren] = React.useState(_children);
+  const [roundCorner, setRoundCorner] = React.useState(_roundCorner);
+  const [minWidth, setMinWidth] = React.useState(_minWidth);
+  const [gap, setGap] = React.useState(_gap);
+  const [_ref, set_ref] = React.useState(__ref);
+
+  React.useEffect(() => {
+    if (_className) setClassName(_className);
+    if (_isImageElement) setIsImageElement(_isImageElement);
+    if (_isVideoElement) setIsVideoElement(_isVideoElement);
+    if (_isFullWidthElement) setIsFullWidthElement(_isFullWidthElement);
+    if (_url) setUrl(_url);
+    if (_imgAlt) setImgAlt(_imgAlt);
+    if (_height) setHeight(_height);
+    if (_link) setLink(_link);
+    if (_isDivElement) setIsDivElement(_isDivElement);
+    if (_children) setChildren(_children);
+    if (_roundCorner) setRoundCorner(_roundCorner);
+    if (_minWidth) setMinWidth(_minWidth);
+    if (_gap) setGap(_gap);
+    if (__ref) set_ref(__ref);
+  }, [
+    _className,
+    _isImageElement,
+    _isVideoElement,
+    _isFullWidthElement,
+    _url,
+    _imgAlt,
+    _height,
+    _link,
+    _isDivElement,
+    _children,
+    _roundCorner,
+    _minWidth,
+    _gap,
+    __ref,
+  ]);
 
   React.useEffect(() => {
     // differentiating click and drag
@@ -87,7 +150,7 @@ const SingleElement: React.FC<Props> = (props) => {
       };
     }
     return () => {};
-  }, [elementRef, _ref]);
+  }, [elementRef, _ref, link]);
 
   if (isVideoElement) {
     return (
