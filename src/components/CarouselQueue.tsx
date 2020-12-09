@@ -69,7 +69,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
   const [carouselPosition, setCarouselPosition] = React.useState<Position>({
     position: 'left-end',
   });
-  // const containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderBeforeRef = React.useRef<HTMLDivElement>(null);
   const imagesHolderAfterRef = React.useRef<HTMLDivElement>(null);
@@ -145,11 +145,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   // set new state when get new prop
   React.useEffect(() => {
-    console.dir('called reset props');
-    if (props.urlArray) {
-      setThisUrlArray(props.urlArray);
-      console.dir(props.urlArray);
-    }
+    if (props.urlArray) setThisUrlArray(props.urlArray);
     if (props.themeColor) setThisThemeColor(props.themeColor);
     if (props.reminder) setThisReminder(props.reminder);
     if (props.buttonText) setThisButtonText(props.buttonText);
@@ -427,6 +423,18 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   }, [slideRefs, slidesPosition, currentFirstIndex]);
 
+  // disable buttons when imageHolder is shorter than container
+  React.useEffect(() => {
+    const containerWidth = containerRef.current?.offsetWidth;
+    const currentSlidesPosition = getSlidesPosition();
+    const slideContentWidth = slidesPosition;
+    console.dir(containerWidth);
+    console.dir(slideContentWidth);
+    console.dir(currentSlidesPosition);
+    console.dir(slideRefs);
+    setSlidesPosition(currentSlidesPosition);
+  }, [slideRefs]);
+
   const mouseEnterHandler = () => {
     // DONE: hide buttons when tablet
     const mql = window.matchMedia(`(max-width: ${tabletDelimiter}px)`);
@@ -511,11 +519,12 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   };
 
-  if (thisUrlArray) {
+  if (thisUrlArray[0].url) {
     return (
       <Styled.Container
         onMouseEnter={() => mouseEnterHandler()}
         onMouseLeave={() => mouseLeaveHandler()}
+        ref={containerRef}
       >
         {thisButtonText?.showButton ? (
           <>
@@ -601,6 +610,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     <Styled.Container
       onMouseEnter={() => mouseEnterHandler()}
       onMouseLeave={() => mouseLeaveHandler()}
+      ref={containerRef}
     >
       {thisButtonText?.showButton ? (
         <>

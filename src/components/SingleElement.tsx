@@ -26,39 +26,24 @@ interface Props {
   _ref?: React.RefObject<HTMLDivElement>; // ref is reserved, cannot use ref as prop here
 }
 // DONE: add link options
-const SingleElement: React.FC<Props> = ({
-  className: _className,
-  isImageElement: _isImageElement,
-  isVideoElement: _isVideoElement,
-  isFullWidthElement: _isFullWidthElement,
-  url: _url,
-  imgAlt: _imgAlt,
-  height: _height,
-  link: _link,
-  isDivElement: _isDivElement,
-  children: _children,
-  roundCorner: _roundCorner,
-  minWidth: _minWidth,
-  gap: _gap,
-  _ref: __ref,
-}) => {
+const SingleElement: React.FC<Props> = (props) => {
   const elementRef = React.useRef<HTMLDivElement>(null);
-  // const {
-  //   className,
-  //   isImageElement,
-  //   isVideoElement,
-  //   isFullWidthElement,
-  //   url,
-  //   imgAlt,
-  //   height,
-  //   link,
-  //   isDivElement,
-  //   children,
-  //   roundCorner,
-  //   minWidth,
-  //   gap,
-  //   _ref,
-  // } = props;
+  const {
+    className: _className,
+    isImageElement: _isImageElement,
+    isVideoElement: _isVideoElement,
+    isFullWidthElement: _isFullWidthElement,
+    url: _url,
+    imgAlt: _imgAlt,
+    height: _height,
+    link: _link,
+    isDivElement: _isDivElement,
+    roundCorner: _roundCorner,
+    minWidth: _minWidth,
+    gap: _gap,
+    _ref: __ref,
+    children: _children,
+  } = props;
   const [className, setClassName] = React.useState(_className);
   const [isImageElement, setIsImageElement] = React.useState(_isImageElement);
   const [isVideoElement, setIsVideoElement] = React.useState(_isVideoElement);

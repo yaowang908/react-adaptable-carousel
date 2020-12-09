@@ -159,3 +159,24 @@ DivElementSlide.args = {
     next: 'https://via.placeholder.com/40x80.png?text=>',
   },
 };
+
+export const ShortContent = Template.bind({});
+ShortContent.args = {
+  urlArray: [
+    { url: 'https://via.placeholder.com/200x300.png?text=0', link: '' },
+  ],
+  componentHeight: 0, // set 0 means to set image height to auto
+  isDivElement: false,
+  gap: 12,
+  reminder: {
+    showReminder: false,
+  },
+  buttonText: {
+    showButton: true,
+    buttonWidth: 40,
+    buttonHeight: 80,
+    isImageBg: true,
+    prev: 'https://via.placeholder.com/40x80.png?text=<',
+    next: 'https://via.placeholder.com/40x80.png?text=>',
+  },
+}
