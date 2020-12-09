@@ -5,7 +5,7 @@ module.exports = {
   webpackFinal: async config => {
         config.module.rules.push({
           test: /\.(ts|tsx)$/,
-          include: path.resolve(__dirname, "../src/components"),
+          include: path.resolve(__dirname, "../src"),
           use: [
               // There is also a second option in documentation to use babel instead of ts-loader which should also work
               {
@@ -23,9 +23,9 @@ module.exports = {
         return config
       },
   "addons": [
-    '@storybook/addon-docs'
-    // "@storybook/addon-links",
-    // "@storybook/addon-essentials",
-    // "@storybook/preset-create-react-app"
+    '@storybook/addon-docs',
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/preset-create-react-app"
   ]
 }
