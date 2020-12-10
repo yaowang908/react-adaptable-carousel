@@ -425,13 +425,14 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   // disable buttons when imageHolder is shorter than container
   React.useEffect(() => {
-    const containerWidth = containerRef.current?.offsetWidth;
+    // TODO:
+    // const containerWidth = containerRef.current?.offsetWidth;
     const currentSlidesPosition = getSlidesPosition();
-    const slideContentWidth = slidesPosition;
-    console.dir(containerWidth);
-    console.dir(slideContentWidth);
-    console.dir(currentSlidesPosition);
-    console.dir(slideRefs);
+    // const slideContentWidth = slidesPosition;
+    // console.dir(containerWidth);
+    // console.dir(slideContentWidth);
+    // console.dir(currentSlidesPosition);
+    // console.dir(slideRefs);
     setSlidesPosition(currentSlidesPosition);
   }, [slideRefs]);
 

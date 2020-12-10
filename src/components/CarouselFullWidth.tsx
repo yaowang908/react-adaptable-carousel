@@ -70,16 +70,6 @@ const CarouselFullWidth: React.FC<Props> = ({
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
   const [stepsLengthArr, setStepsLengthArr] = React.useState<number[]>([]);
 
-  // const {
-  //   themeColor,
-  //   isDivElement,
-  //   urlArray,
-  //   componentHeight,
-  //   interval,
-  //   children,
-  //   buttonText,
-  // } = props;
-
   const [themeColor, setThemeColor] = React.useState(_themeColor);
   const [isDivElement, setIsDivElement] = React.useState(_isDivElement);
   const [urlArray, setUrlArray] = React.useState(_urlArray);
@@ -112,8 +102,8 @@ const CarouselFullWidth: React.FC<Props> = ({
   // DONE: adjust width when resize
   // NOTE: auto height module will work nicely when tablet or phone
 
+  // handler drag move carousel
   React.useEffect(() => {
-    // handler drag move carousel
     if (imagesHolderRef.current !== null) {
       const holder = imagesHolderRef.current;
       holder.style.cursor = 'grab';
@@ -180,8 +170,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
     return () => {};
   });
+  // set container width
   React.useEffect(() => {
-    // set container width
     if (containerRef.current) {
       setContainerWidth(
         Number(containerRef.current.offsetWidth.toString().replace('px', ''))
@@ -198,8 +188,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     setContainerWidth(__containerWidth);
     // console.log(__containerWidth);
   }, 500);
+  // set containerWidth on window resize
   React.useEffect(() => {
-    // set containerWidth on window resize
     // DONE: set containerWidth on window resize
     // //Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
 
@@ -216,16 +206,16 @@ const CarouselFullWidth: React.FC<Props> = ({
       window.removeEventListener('resize', resizeHandler);
     };
   }, []);
+  // set item amount
   React.useEffect(() => {
-    // set item amount
     if (!isDivElement && urlArray) {
       setItemAmount(urlArray?.length);
     } else if (isDivElement) {
       setItemAmount(React.Children.count(children));
     }
   }, [isDivElement, urlArray, children]);
+  // init item refs
   React.useEffect(() => {
-    // init item refs
     setItemRefs((itemRefs) =>
       Array(itemAmount)
         .fill(0)
@@ -235,22 +225,13 @@ const CarouselFullWidth: React.FC<Props> = ({
         )
     );
   }, [itemAmount]);
+  // get all items width
   React.useEffect(() => {
-    // get all items width
-    const __itemsWidth: number[] = Array(itemAmount)
-      .fill(0)
-      .map((_, i) => {
-        if (itemRefs[i]) {
-          const _cur = itemRefs[i].current;
-          return Number(_cur?.offsetWidth.toString().replace('px', ''));
-        }
-        // console.error('1');
-        return 0;
-      });
+    const __itemsWidth: number[] = Array(itemAmount).fill(containerWidth);
     setItemsWidth(__itemsWidth);
   }, [containerWidth, itemAmount, itemRefs]);
+  // auto increase slider index
   React.useEffect(() => {
-    // auto increase slider index
     const auto_interval = interval || 2000; // interval
     // if is paused then pause
     // if is not paused, auto increase current slide index by 1 until reach the end then go back to 0
@@ -294,8 +275,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     interval,
     scrollDirection,
   ]);
+  // set stepsLengthArr
   React.useEffect(() => {
-    // set stepsLengthArr
     const _stepsLengthArr: number[] = []; // these are the actual number to move
     let __position = 0;
     _stepsLengthArr.push(__position);
