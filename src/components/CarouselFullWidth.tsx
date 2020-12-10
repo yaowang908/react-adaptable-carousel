@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import SingleElement from './SingleElement';
+import SingleElementForwardRef from './SingleElement';
 // import debounce from '../lib/debounce';
 import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselFullWidth.style';
@@ -112,8 +112,8 @@ const CarouselFullWidth: React.FC<Props> = ({
   // DONE: adjust width when resize
   // NOTE: auto height module will work nicely when tablet or phone
 
+  // handler drag move carousel
   React.useEffect(() => {
-    // handler drag move carousel
     if (imagesHolderRef.current !== null) {
       const holder = imagesHolderRef.current;
       holder.style.cursor = 'grab';
@@ -180,8 +180,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
     return () => {};
   });
+  // set container width
   React.useEffect(() => {
-    // set container width
     if (containerRef.current) {
       setContainerWidth(
         Number(containerRef.current.offsetWidth.toString().replace('px', ''))
@@ -198,8 +198,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     setContainerWidth(__containerWidth);
     // console.log(__containerWidth);
   }, 500);
+  // set containerWidth on window resize
   React.useEffect(() => {
-    // set containerWidth on window resize
     // DONE: set containerWidth on window resize
     // //Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
 
@@ -216,16 +216,16 @@ const CarouselFullWidth: React.FC<Props> = ({
       window.removeEventListener('resize', resizeHandler);
     };
   }, []);
+  // set item amount
   React.useEffect(() => {
-    // set item amount
     if (!isDivElement && urlArray) {
       setItemAmount(urlArray?.length);
     } else if (isDivElement) {
       setItemAmount(React.Children.count(children));
     }
   }, [isDivElement, urlArray, children]);
+  // init item refs
   React.useEffect(() => {
-    // init item refs
     setItemRefs((itemRefs) =>
       Array(itemAmount)
         .fill(0)
@@ -235,22 +235,27 @@ const CarouselFullWidth: React.FC<Props> = ({
         )
     );
   }, [itemAmount]);
+  // get all items width
   React.useEffect(() => {
-    // get all items width
     const __itemsWidth: number[] = Array(itemAmount)
       .fill(0)
       .map((_, i) => {
         if (itemRefs[i]) {
           const _cur = itemRefs[i].current;
+          console.dir(itemRefs[i]);
+          console.log(
+            `itemRefs[i]: ${itemRefs[i]}, itemsRefs[i].current: ${itemRefs[i].current?.offsetWidth}`
+          );
           return Number(_cur?.offsetWidth.toString().replace('px', ''));
         }
         // console.error('1');
         return 0;
       });
+    // console.dir(__itemsWidth);
     setItemsWidth(__itemsWidth);
   }, [containerWidth, itemAmount, itemRefs]);
+  // auto increase slider index
   React.useEffect(() => {
-    // auto increase slider index
     const auto_interval = interval || 2000; // interval
     // if is paused then pause
     // if is not paused, auto increase current slide index by 1 until reach the end then go back to 0
@@ -294,8 +299,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     interval,
     scrollDirection,
   ]);
+  // set stepsLengthArr
   React.useEffect(() => {
-    // set stepsLengthArr
     const _stepsLengthArr: number[] = []; // these are the actual number to move
     let __position = 0;
     _stepsLengthArr.push(__position);
@@ -305,8 +310,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
     setStepsLengthArr(_stepsLengthArr);
   }, [containerWidth, itemAmount, itemsWidth]);
+  // move the slide automatically or by clicking the buttons. Not swap or drag
   React.useEffect(() => {
-    // move the slide automatically or by clicking the buttons. Not swap or drag
     // DONE: smooth swipe
     // take the current slide index and display it
     const holder = imagesHolderRef.current;
@@ -317,6 +322,7 @@ const CarouselFullWidth: React.FC<Props> = ({
      */
     currentPosition = stepsLengthArr[currentSliderIndex];
     if (holder && !isCarouselPaused) {
+      // console.log(stepsLengthArr);
       holder.style['scroll-snap-type' as any] = 'none';
       scrollTo.left(holder, holder.scrollLeft, currentPosition, 500);
     }
@@ -328,8 +334,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     isCarouselPaused,
     stepsLengthArr,
   ]);
+  // pause auto movement when tag lose focus
   React.useEffect(() => {
-    // pause auto movement when tag lose focus
     const visibilityHandler = () => {
       if (document.visibilityState === 'visible') {
         // console.log("focus");
@@ -361,8 +367,8 @@ const CarouselFullWidth: React.FC<Props> = ({
       nextButtonRef.current.style.display = 'none';
     }
   };
+  // set prev next buttons listeners
   React.useEffect(() => {
-    // set prev next buttons listeners
     if (
       prevButtonRef.current &&
       nextButtonRef.current &&
@@ -420,8 +426,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
     return () => {};
   }, [currentSliderIndex, itemAmount, stepsLengthArr]);
+  // when reaching ends disable buttons
   React.useEffect(() => {
-    // DONE: when reaching ends disable buttons
     if (prevButtonRef.current && nextButtonRef.current) {
       const prevButton = prevButtonRef.current;
       const nextButton = nextButtonRef.current;
@@ -523,7 +529,7 @@ const CarouselFullWidth: React.FC<Props> = ({
         >
           {urlArray.map((x, index) => {
             return (
-              <SingleElement
+              <SingleElementForwardRef
                 isDivElement={isDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
@@ -535,7 +541,7 @@ const CarouselFullWidth: React.FC<Props> = ({
                 height={componentHeight}
                 roundCorner={0}
                 key={index}
-                _ref={itemRefs[index] as any}
+                ref={itemRefs[index]}
               />
             );
           })}
@@ -584,7 +590,7 @@ const CarouselFullWidth: React.FC<Props> = ({
               children as any,
               (child: React.ReactElement, index: number) => {
                 return (
-                  <SingleElement
+                  <SingleElementForwardRef
                     isDivElement={isDivElement}
                     isVideoElement={false}
                     isImageElement={false}
@@ -592,11 +598,11 @@ const CarouselFullWidth: React.FC<Props> = ({
                     gap={0}
                     height={componentHeight}
                     minWidth={0} // full width div item don't care
-                    _ref={itemRefs[index] as any}
                     roundCorner={0}
+                    ref={itemRefs[index]}
                   >
                     {child}
-                  </SingleElement>
+                  </SingleElementForwardRef>
                 );
               }
             )

@@ -2,7 +2,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import SingleElement from './SingleElement';
+import SingleElementForwardRef from './SingleElement';
 // import debounce from '../lib/debounce';
 // import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselQueue.style';
@@ -426,13 +426,22 @@ const CarouselQueue: React.FC<Props> = (props) => {
   // disable buttons when imageHolder is shorter than container
   React.useEffect(() => {
     const containerWidth = containerRef.current?.offsetWidth;
-    const currentSlidesPosition = getSlidesPosition();
-    const slideContentWidth = slidesPosition;
-    console.dir(containerWidth);
-    console.dir(slideContentWidth);
-    console.dir(currentSlidesPosition);
-    console.dir(slideRefs);
-    setSlidesPosition(currentSlidesPosition);
+    if (slideRefs[0] && slideRefs[0].current) {
+      const currentSlidesPosition = getSlidesPosition();
+      // const slideContentWidth = slidesPosition;
+      console.dir(containerWidth);
+      // console.dir(slideContentWidth);
+      console.dir(currentSlidesPosition);
+      console.dir(slideRefs[0]);
+      setSlidesPosition(currentSlidesPosition);
+    } else {
+      console.log('slideRefs:');
+      console.dir(slideRefs);
+      console.log('slideRefs[0]:');
+      console.dir(slideRefs[0]);
+      console.log('slideRefs[0].current:');
+      console.dir(slideRefs[0]?.current);
+    }
   }, [slideRefs]);
 
   const mouseEnterHandler = () => {
@@ -572,7 +581,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
         <Styled.ImagesHolder ref={imagesHolderRef} gap={thisGap}>
           {thisUrlArray.map((x, index) => {
             return (
-              <SingleElement
+              <SingleElementForwardRef
                 isDivElement={thisIsDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
@@ -585,7 +594,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 height={thisComponentHeight}
                 roundCorner={thisRoundCorner || 0}
                 key={index}
-                _ref={slideRefs[index] as any}
+                ref={slideRefs[index]}
               />
             );
           })}
@@ -661,7 +670,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
               thisChildren as any,
               (child: React.ReactElement, index: number) => {
                 return (
-                  <SingleElement
+                  <SingleElementForwardRef
                     isDivElement={thisIsDivElement}
                     key={index}
                     isImageElement={false}
@@ -670,10 +679,10 @@ const CarouselQueue: React.FC<Props> = (props) => {
                     height={thisComponentHeight}
                     minWidth={setDivMinWidth()} // full width div item don't care
                     roundCorner={thisRoundCorner || 0}
-                    _ref={slideRefs[index] as any}
+                    ref={slideRefs[index]}
                   >
                     {child}
-                  </SingleElement>
+                  </SingleElementForwardRef>
                 );
               }
             )

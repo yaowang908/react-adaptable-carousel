@@ -179,4 +179,4 @@ ShortContent.args = {
     prev: 'https://via.placeholder.com/40x80.png?text=<',
     next: 'https://via.placeholder.com/40x80.png?text=>',
   },
-}
+};

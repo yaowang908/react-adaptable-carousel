@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React from 'react';
+import * as React from 'react';
 import ReactPlayer from 'react-player/lazy';
 
 import { Styled } from './SingleElement.style';
@@ -7,7 +7,7 @@ import { Styled } from './SingleElement.style';
 
 interface Props {
   className?: string;
-  isImageElement: boolean;
+  isImageElement?: boolean;
   isVideoElement?: boolean;
   url?: string;
   imgAlt?: string;
@@ -17,16 +17,35 @@ interface Props {
 
   isFullWidthElement?: boolean;
 
-  isDivElement: boolean;
+  isDivElement?: boolean;
   children?: JSX.Element[] | JSX.Element;
 
   roundCorner?: number; // only work when full-width is disabled
   minWidth?: number; // if child element is div, must set a minWidth for child container
   gap?: number; // space between items
-  _ref?: React.RefObject<HTMLDivElement>; // ref is reserved, cannot use ref as prop here
+  _ref?: React.Ref<HTMLDivElement>; // ref is reserved, cannot use ref as prop here
 }
+
+const defaultProps: Props = {
+  className: '',
+  isImageElement: true,
+  isDivElement: false,
+  isVideoElement: false,
+  url: '',
+  imgAlt: '',
+  height: 0,
+  link: '',
+  isFullWidthElement: false,
+  children: <></>,
+  roundCorner: 0,
+  minWidth: 0,
+  gap: 0,
+  _ref: null,
+};
 // DONE: add link options
 const SingleElement: React.FC<Props> = (props) => {
+  // const SingleElement: React.FunctionComponent<Props> = React.forwardRef(
+  // (props: Props, ref: React.Ref<HTMLElement>) => {
   const elementRef = React.useRef<HTMLDivElement>(null);
   const {
     className: _className,
@@ -59,7 +78,9 @@ const SingleElement: React.FC<Props> = (props) => {
   const [roundCorner, setRoundCorner] = React.useState(_roundCorner);
   const [minWidth, setMinWidth] = React.useState(_minWidth);
   const [gap, setGap] = React.useState(_gap);
-  const [_ref, set_ref] = React.useState(__ref);
+  const [_ref, set_ref] = React.useState<React.Ref<HTMLDivElement> | undefined>(
+    __ref
+  );
 
   React.useEffect(() => {
     if (_className) setClassName(_className);
@@ -96,12 +117,14 @@ const SingleElement: React.FC<Props> = (props) => {
   React.useEffect(() => {
     // differentiating click and drag
     let __isUserDragging = false;
-    const ele = elementRef?.current || _ref?.current;
-    if (ele !== null && ele) {
+    // const ele = elementRef?.current || _ref?.current;
+    const _ele = elementRef || _ref;
+    if (_ele !== null && _ele) {
+      const ele = _ele.current;
       const mouseDownHandler = () => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
-        ele.addEventListener('mousemove', mouseMoveHandler);
-        ele.addEventListener('mouseup', mouseUpHandler);
+        ele?.addEventListener('mousemove', mouseMoveHandler);
+        ele?.addEventListener('mouseup', mouseUpHandler);
         __isUserDragging = false;
         // console.log('down');
       };
@@ -110,7 +133,7 @@ const SingleElement: React.FC<Props> = (props) => {
         // e.stopPropagation(); //disable stopPropagation to allow parent component working
         // console.log('move');
         __isUserDragging = true;
-        ele.removeEventListener('mousemove', mouseMoveHandler);
+        ele?.removeEventListener('mousemove', mouseMoveHandler);
       };
 
       const mouseUpHandler = () => {
@@ -127,11 +150,11 @@ const SingleElement: React.FC<Props> = (props) => {
         }
       };
 
-      ele.addEventListener('mousedown', mouseDownHandler);
+      ele?.addEventListener('mousedown', mouseDownHandler);
       return () => {
-        ele.removeEventListener('mousedown', mouseDownHandler);
-        ele.removeEventListener('mousemove', mouseMoveHandler);
-        ele.removeEventListener('mouseup', mouseUpHandler);
+        ele?.removeEventListener('mousedown', mouseDownHandler);
+        ele?.removeEventListener('mousemove', mouseMoveHandler);
+        ele?.removeEventListener('mouseup', mouseUpHandler);
       };
     }
     return () => {};
@@ -145,7 +168,7 @@ const SingleElement: React.FC<Props> = (props) => {
         height={height}
         gap={gap}
         minWidth={minWidth}
-        ref={_ref}
+        ref={_ref as any}
       >
         <ReactPlayer url={url} width="100%" height="100%" />
       </Styled.Container>
@@ -160,7 +183,7 @@ const SingleElement: React.FC<Props> = (props) => {
           isFullWidthElement={isFullWidthElement}
           height={height}
           gap={gap}
-          ref={_ref}
+          ref={_ref as any}
         >
           <Styled.Image
             src={url}
@@ -191,7 +214,7 @@ const SingleElement: React.FC<Props> = (props) => {
         height={height}
         gap={gap}
         minWidth={minWidth}
-        ref={_ref}
+        ref={_ref as any}
       >
         {children}
       </Styled.Container>
@@ -199,5 +222,16 @@ const SingleElement: React.FC<Props> = (props) => {
   }
   return <>{/* return empty when the pattern is not matched */}</>;
 };
+// );
 
-export default SingleElement;
+SingleElement.defaultProps = { ...defaultProps };
+
+// const SingleElement: React.FunctionComponent<Props> = React.forwardRef(
+// (props: Props, ref: React.Ref<HTMLElement>) => {
+const SingleElementForwardRef = React.forwardRef(
+  (props: Props, ref: React.Ref<HTMLDivElement>) => {
+    return <SingleElement {...props} _ref={ref} />;
+  }
+);
+
+export default SingleElementForwardRef;
