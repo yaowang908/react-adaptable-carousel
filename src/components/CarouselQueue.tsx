@@ -302,6 +302,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
       [number | undefined, number | undefined]
     > = [];
     slideRefs.map((x) => {
+      console.dir(x.current);
       _slidesPositions.push([x?.current?.offsetLeft, x?.current?.offsetWidth]);
       return <></>;
     });
@@ -427,14 +428,15 @@ const CarouselQueue: React.FC<Props> = (props) => {
   React.useEffect(() => {
     // TODO:
     // const containerWidth = containerRef.current?.offsetWidth;
+    // setCarouselPosition({ position: 'left-end' });
     const currentSlidesPosition = getSlidesPosition();
     // const slideContentWidth = slidesPosition;
     // console.dir(containerWidth);
     // console.dir(slideContentWidth);
-    // console.dir(currentSlidesPosition);
+    console.dir(currentSlidesPosition);
     // console.dir(slideRefs);
     setSlidesPosition(currentSlidesPosition);
-  }, [slideRefs]);
+  }, [currentFirstIndex, slideRefs, thisUrlArray]);
 
   const mouseEnterHandler = () => {
     // DONE: hide buttons when tablet
