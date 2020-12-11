@@ -482,13 +482,30 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   }, [slidesPosition, currentFirstIndex]);
 
-  // disable buttons when imageHolder is shorter than container
-  React.useLayoutEffect(() => {
-    // TODO:
-    // if (slideRefs[0] && slideRefs[0].current) {
-    //   console.dir(slideRefs[0].current.getClientBoundingRect());
-    // }
-    // setSlidesPosition(currentSlidesPosition);
+  // TODO: disable buttons when imageHolder is shorter than container
+  React.useEffect(() => {
+    const _tempSlidesPosition: Array<[number, number]> = Array(
+      Object.keys(offsetLeftWidthInfo).length
+    )
+      .fill([0, 0])
+      .map((_, index) => {
+        return [offsetLeftWidthInfo[index][0], offsetLeftWidthInfo[index][1]];
+      });
+    let contentLength = 0;
+    _tempSlidesPosition.map((x) => {
+      contentLength = contentLength + thisGap + x[1];
+      return <></>;
+    });
+    // console.dir(_tempSlidesPosition);
+    // console.dir(imagesHolderRef.current?.offsetWidth);
+    // console.dir(contentLength);
+    const containerLength = imagesHolderRef.current?.offsetWidth;
+    if (containerLength && contentLength < containerLength) {
+      setThisButtonText({
+        ...thisButtonText,
+        showButton: false,
+      });
+    }
   }, []);
 
   const mouseEnterHandler = () => {
