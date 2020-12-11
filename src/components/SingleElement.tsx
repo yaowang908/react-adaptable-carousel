@@ -23,7 +23,7 @@ interface Props {
   roundCorner?: number; // only work when full-width is disabled
   minWidth?: number; // if child element is div, must set a minWidth for child container
   gap?: number; // space between items
-  _ref?: React.RefObject<HTMLDivElement>; // ref is reserved, cannot use ref as prop here
+  _ref?: any; // ref is reserved, cannot use ref as prop here
 }
 // DONE: add link options
 const SingleElement: React.FC<Props> = (props) => {
@@ -41,7 +41,7 @@ const SingleElement: React.FC<Props> = (props) => {
     roundCorner: _roundCorner,
     minWidth: _minWidth,
     gap: _gap,
-    _ref: __ref,
+    _ref,
     children: _children,
   } = props;
   const [className, setClassName] = React.useState(_className);
@@ -59,7 +59,7 @@ const SingleElement: React.FC<Props> = (props) => {
   const [roundCorner, setRoundCorner] = React.useState(_roundCorner);
   const [minWidth, setMinWidth] = React.useState(_minWidth);
   const [gap, setGap] = React.useState(_gap);
-  const [_ref, set_ref] = React.useState(__ref);
+  // const [_ref, set_ref] = React.useState(__ref);
 
   React.useEffect(() => {
     if (_className) setClassName(_className);
@@ -75,7 +75,10 @@ const SingleElement: React.FC<Props> = (props) => {
     if (_roundCorner) setRoundCorner(_roundCorner);
     if (_minWidth) setMinWidth(_minWidth);
     if (_gap) setGap(_gap);
-    if (__ref) set_ref(__ref);
+    // if (__ref) {
+    //   console.dir(__ref.toString());
+    //   set_ref(__ref);
+    // }
   }, [
     _className,
     _isImageElement,
@@ -90,7 +93,7 @@ const SingleElement: React.FC<Props> = (props) => {
     _roundCorner,
     _minWidth,
     _gap,
-    __ref,
+    // __ref,
   ]);
 
   React.useEffect(() => {

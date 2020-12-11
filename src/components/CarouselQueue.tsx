@@ -83,9 +83,9 @@ const CarouselQueue: React.FC<Props> = (props) => {
   ] = React.useState<boolean>(false);
   const prevButtonRef = React.useRef<HTMLButtonElement>(null);
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
-  const [slideRefs, setSlideRefs] = React.useState<
-    React.RefObject<HTMLDivElement>[]
-  >([]);
+  // const [slideRefs, setSlideRefs] = React.useState<
+  //   Array<(ele: HTMLElement) => void>
+  // >([]);
   const [slidesPosition, setSlidesPosition] = React.useState<
     Array<[number | undefined, number | undefined]>
   >();
@@ -142,6 +142,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
     divElementMinWidth || 200
   );
   const [thisChildren, setThisChildren] = React.useState(children);
+
+  // const [slidesBoundingInfo, setSlidesBoundingInfo] = React.useState({});
 
   // set new state when get new prop
   React.useEffect(() => {
@@ -281,52 +283,90 @@ const CarouselQueue: React.FC<Props> = (props) => {
   }, [carouselPosition]);
 
   // initialize slideRefs
+  // React.useEffect(() => {
+  //   let _tempLength = 0;
+  //   _tempLength = thisUrlArray?.length || 0;
+  //   if (thisIsDivElement)
+  //     _tempLength = React.Children.toArray(thisChildren).length;
+  //   setSlideRefs((slideRefs) =>
+  //     Array(_tempLength)
+  //       .fill(0)
+  //       .map(
+  //         (_, i) =>
+  //           slideRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>()
+  //       )
+  //   );
+  // }, [thisUrlArray]);
+
+  // initialize callback refs
+  // measure children with callback refs
+  let _tempLength = 0;
+  _tempLength = thisUrlArray?.length || 0;
+  let slidesBoundingInfo = {};
+  let offsetLeftWidthInfo = {};
+  const callbackRefsArray = Array(_tempLength)
+    .fill(0)
+    .map((_, i) => {
+      // console.dir('This is a callback ref');
+      return (ele) => {
+        const thisIndex = i;
+        if (ele) {
+          // console.dir(ele);
+          // console.dir(ele.offsetLeft);
+          offsetLeftWidthInfo = {
+            ...offsetLeftWidthInfo,
+            [thisIndex]: [ele.offsetLeft, ele.offsetWidth],
+          };
+          slidesBoundingInfo = {
+            ...slidesBoundingInfo,
+            [thisIndex]: ele.getBoundingClientRect(),
+          };
+          // console.log(`Number ${thisIndex} is added!`);
+        }
+      };
+    });
+  // console.dir(callbackRefsArray);
+
   React.useEffect(() => {
-    let _tempLength = 0;
-    _tempLength = thisUrlArray?.length || 0;
-    if (thisIsDivElement)
-      _tempLength = React.Children.toArray(thisChildren).length;
-    setSlideRefs((slideRefs) =>
-      Array(_tempLength)
-        .fill(0)
-        .map(
-          (_, i) =>
-            slideRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>()
-        )
-    );
+    const _tempSlidesPosition: Array<[number, number]> = Array(
+      Object.keys(offsetLeftWidthInfo).length
+    )
+      .fill([0, 0])
+      .map((_, index) => {
+        return [offsetLeftWidthInfo[index][0], offsetLeftWidthInfo[index][1]];
+      });
+    // console.dir(_tempSlidesPosition);
+    setSlidesPosition(_tempSlidesPosition);
   }, [thisUrlArray]);
 
-  const getSlidesPosition = () => {
-    // slidesPositions [left, width]
-    const _slidesPositions: Array<
-      [number | undefined, number | undefined]
-    > = [];
-    slideRefs.map((x) => {
-      _slidesPositions.push([x?.current?.offsetLeft, x?.current?.offsetWidth]);
-      return <></>;
-    });
-    // console.log(_slidesPositions);
-    return _slidesPositions;
-  };
-
   const resizeHandler = _.debounce(() => {
-    setSlidesPosition(getSlidesPosition());
+    // setSlidesPosition(getSlidesPosition());
+    setSlidesPosition([]);
   }, 500);
 
   // set slidesPosition on window resize
   React.useEffect(() => {
     // set containerWidth on window resize
     // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
-    // setSlidesPosition(getSlidesPosition());
+    const _tempSlidesPosition: Array<[number, number]> = Array(
+      Object.keys(offsetLeftWidthInfo).length
+    )
+      .fill([0, 0])
+      .map((_, index) => {
+        return [offsetLeftWidthInfo[index][0], offsetLeftWidthInfo[index][1]];
+      });
+    // console.dir(_tempSlidesPosition);
+    setSlidesPosition(_tempSlidesPosition);
     window.addEventListener('resize', resizeHandler);
     return () => {
       window.removeEventListener('resize', resizeHandler);
     };
-  }, [slideRefs]);
+  }, []);
 
   React.useEffect(() => {
-    setSlidesPosition(getSlidesPosition());
-  }, [currentFirstIndex, slideRefs, thisUrlArray]);
+    setSlidesPosition([]);
+    // console.dir(slidesBoundingInfo);
+  }, [currentFirstIndex, thisUrlArray]);
 
   // get current first card's index
   React.useEffect(() => {
@@ -347,9 +387,22 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   // set holder scroll left base on index
   React.useEffect(() => {
+    const _tempSlidesPosition: Array<[number, number]> = Array(
+      Object.keys(offsetLeftWidthInfo).length
+    )
+      .fill([0, 0])
+      .map((_, index) => {
+        return [offsetLeftWidthInfo[index][0], offsetLeftWidthInfo[index][1]];
+      });
+
     const holder = imagesHolderRef.current;
-    if (slidesPosition && slidesPosition[currentFirstIndex] && holder) {
-      const targetScrollLeft = slidesPosition[currentFirstIndex][0];
+    console.dir(_tempSlidesPosition);
+    if (
+      _tempSlidesPosition &&
+      _tempSlidesPosition[currentFirstIndex] &&
+      holder
+    ) {
+      const targetScrollLeft = _tempSlidesPosition[currentFirstIndex][0];
       if (targetScrollLeft) holder.scrollLeft = targetScrollLeft;
       setHolderScrollLeft(holder.scrollLeft);
     }
@@ -387,7 +440,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     } else {
       return () => {};
     }
-  }, [slideRefs, slidesPosition, currentFirstIndex]);
+  }, [slidesPosition, currentFirstIndex]);
   // handle next button
   React.useEffect(() => {
     if (nextButtonRef.current !== null && imagesHolderRef.current !== null) {
@@ -421,20 +474,16 @@ const CarouselQueue: React.FC<Props> = (props) => {
     } else {
       return () => {};
     }
-  }, [slideRefs, slidesPosition, currentFirstIndex]);
+  }, [slidesPosition, currentFirstIndex]);
 
   // disable buttons when imageHolder is shorter than container
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     // TODO:
-    // const containerWidth = containerRef.current?.offsetWidth;
-    const currentSlidesPosition = getSlidesPosition();
-    // const slideContentWidth = slidesPosition;
-    // console.dir(containerWidth);
-    // console.dir(slideContentWidth);
-    // console.dir(currentSlidesPosition);
-    // console.dir(slideRefs);
-    setSlidesPosition(currentSlidesPosition);
-  }, [slideRefs]);
+    // if (slideRefs[0] && slideRefs[0].current) {
+    //   console.dir(slideRefs[0].current.getClientBoundingRect());
+    // }
+    // setSlidesPosition(currentSlidesPosition);
+  }, []);
 
   const mouseEnterHandler = () => {
     // DONE: hide buttons when tablet
@@ -572,6 +621,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
         )}
         <Styled.ImagesHolder ref={imagesHolderRef} gap={thisGap}>
           {thisUrlArray.map((x, index) => {
+            // console.dir(callbackRefsArray?.[index]?.toString());
             return (
               <SingleElement
                 isDivElement={thisIsDivElement}
@@ -586,7 +636,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
                 height={thisComponentHeight}
                 roundCorner={thisRoundCorner || 0}
                 key={index}
-                _ref={slideRefs[index] as any}
+                _ref={callbackRefsArray[index] as any}
+                // _ref={(ele: any) => console.dir(ele) as any}
               />
             );
           })}
@@ -671,7 +722,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                     height={thisComponentHeight}
                     minWidth={setDivMinWidth()} // full width div item don't care
                     roundCorner={thisRoundCorner || 0}
-                    _ref={slideRefs[index] as any}
+                    _ref={callbackRefsArray[index] as any}
                   >
                     {child}
                   </SingleElement>
