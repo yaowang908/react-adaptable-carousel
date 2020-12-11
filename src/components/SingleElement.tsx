@@ -46,7 +46,7 @@ interface Props {
 const SingleElement: React.FC<Props> = (props) => {
   // const SingleElement: React.FunctionComponent<Props> = React.forwardRef(
   // (props: Props, ref: React.Ref<HTMLElement>) => {
-  const elementRef = React.useRef<HTMLDivElement>(null);
+  const elementRef = React.useRef<HTMLDivElement | null>(null);
   const {
     className: _className,
     isImageElement: _isImageElement,
@@ -204,7 +204,10 @@ const SingleElement: React.FC<Props> = (props) => {
         height={height}
         gap={gap}
         roundCorner={roundCorner}
-        ref={_ref as any}
+        ref={(el) => {
+          elementRef.current = el;
+          _ref(el);
+        }}
       />
     );
   }
@@ -216,7 +219,10 @@ const SingleElement: React.FC<Props> = (props) => {
         height={height}
         gap={gap}
         minWidth={minWidth}
-        ref={_ref as any}
+        ref={(el) => {
+          elementRef.current = el;
+          _ref(el);
+        }}
       >
         {children}
       </Styled.Container>
