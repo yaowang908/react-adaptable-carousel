@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import SingleElement from './SingleElement';
+import SingleElementForwardRef from './SingleElement';
 // import debounce from '../lib/debounce';
 import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselFullWidth.style';
@@ -286,8 +286,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
     setStepsLengthArr(_stepsLengthArr);
   }, [containerWidth, itemAmount, itemsWidth]);
+  // move the slide automatically or by clicking the buttons. Not swap or drag
   React.useEffect(() => {
-    // move the slide automatically or by clicking the buttons. Not swap or drag
     // DONE: smooth swipe
     // take the current slide index and display it
     const holder = imagesHolderRef.current;
@@ -298,6 +298,7 @@ const CarouselFullWidth: React.FC<Props> = ({
      */
     currentPosition = stepsLengthArr[currentSliderIndex];
     if (holder && !isCarouselPaused) {
+      // console.log(stepsLengthArr);
       holder.style['scroll-snap-type' as any] = 'none';
       scrollTo.left(holder, holder.scrollLeft, currentPosition, 500);
     }
@@ -309,8 +310,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     isCarouselPaused,
     stepsLengthArr,
   ]);
+  // pause auto movement when tag lose focus
   React.useEffect(() => {
-    // pause auto movement when tag lose focus
     const visibilityHandler = () => {
       if (document.visibilityState === 'visible') {
         // console.log("focus");
@@ -342,8 +343,8 @@ const CarouselFullWidth: React.FC<Props> = ({
       nextButtonRef.current.style.display = 'none';
     }
   };
+  // set prev next buttons listeners
   React.useEffect(() => {
-    // set prev next buttons listeners
     if (
       prevButtonRef.current &&
       nextButtonRef.current &&
@@ -401,8 +402,8 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
     return () => {};
   }, [currentSliderIndex, itemAmount, stepsLengthArr]);
+  // when reaching ends disable buttons
   React.useEffect(() => {
-    // DONE: when reaching ends disable buttons
     if (prevButtonRef.current && nextButtonRef.current) {
       const prevButton = prevButtonRef.current;
       const nextButton = nextButtonRef.current;
@@ -504,7 +505,7 @@ const CarouselFullWidth: React.FC<Props> = ({
         >
           {urlArray.map((x, index) => {
             return (
-              <SingleElement
+              <SingleElementForwardRef
                 isDivElement={isDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
@@ -516,7 +517,7 @@ const CarouselFullWidth: React.FC<Props> = ({
                 height={componentHeight}
                 roundCorner={0}
                 key={index}
-                _ref={itemRefs[index] as any}
+                ref={itemRefs[index]}
               />
             );
           })}
@@ -565,7 +566,7 @@ const CarouselFullWidth: React.FC<Props> = ({
               children as any,
               (child: React.ReactElement, index: number) => {
                 return (
-                  <SingleElement
+                  <SingleElementForwardRef
                     isDivElement={isDivElement}
                     isVideoElement={false}
                     isImageElement={false}
@@ -573,11 +574,11 @@ const CarouselFullWidth: React.FC<Props> = ({
                     gap={0}
                     height={componentHeight}
                     minWidth={0} // full width div item don't care
-                    _ref={itemRefs[index] as any}
                     roundCorner={0}
+                    ref={itemRefs[index]}
                   >
                     {child}
-                  </SingleElement>
+                  </SingleElementForwardRef>
                 );
               }
             )

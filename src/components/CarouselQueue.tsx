@@ -2,7 +2,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import SingleElement from './SingleElement';
+import SingleElementForwardRef from './SingleElement';
 // import debounce from '../lib/debounce';
 // import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselQueue.style';
@@ -646,7 +646,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
           {thisUrlArray.map((x, index) => {
             // console.dir(callbackRefsArray?.[index]?.toString());
             return (
-              <SingleElement
+              <SingleElementForwardRef
                 isDivElement={thisIsDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
@@ -736,7 +736,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
               thisChildren as any,
               (child: React.ReactElement, index: number) => {
                 return (
-                  <SingleElement
+                  <SingleElementForwardRef
                     isDivElement={thisIsDivElement}
                     key={index}
                     isImageElement={false}
@@ -748,7 +748,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
                     _ref={callbackRefsArray[index] as any}
                   >
                     {child}
-                  </SingleElement>
+                  </SingleElementForwardRef>
                 );
               }
             )

@@ -9,9 +9,11 @@ const left = (
   to: number,
   duration: number
 ) => {
-  // var start = element.scrollLeft,
   // console.log('==============================');
+  // console.log(element);
   // console.log(start);
+  // console.log(to);
+  // console.log(duration);
   // console.log('==============================');
 
   const change = to - start;
