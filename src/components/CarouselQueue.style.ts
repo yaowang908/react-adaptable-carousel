@@ -24,8 +24,7 @@ const ImagesHolder = styled.div<HolderProps>`
   position relative;
   overflow-x: scroll;
   height: calc(100% + 3px);
-  ${(props) => (props.gap ? `margin-left: -${props.gap}px;` : 'margin: 0;')}
-  
+  // ${(props) => (props.gap ? `margin-left: -${props.gap}px;` : 'margin: 0;')}
   ${media.desktop} {
       
   }

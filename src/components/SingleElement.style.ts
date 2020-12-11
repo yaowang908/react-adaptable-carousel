@@ -21,7 +21,7 @@ const Container = styled.div<ContainerProps>`
   ${(props) => (props.minWidth ? `min-width:${props.minWidth}px;` : '')}
   ${(props) => (props.gap ? `margin: 0 0 0 ${props.gap}px;` : 'margin: 0;')}
   display: grid;
-  place-item: center;
+  place-items: center;
   box-sizing: border-box;
   & img {
     -webkit-user-drag: none;
@@ -31,7 +31,7 @@ const Container = styled.div<ContainerProps>`
     user-drag: none;
     object-fit: fill;
     width: ${(props) => (props.height ? 'auto' : '100%')};
-    margin: 0 auto;
+    // margin: 0 auto;
     height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   }
   & > div {
@@ -78,6 +78,9 @@ const Image = styled.img.attrs((props) => ({
   ${(props) =>
     props.roundCorner ? `border-radius:${props.roundCorner}px;` : ``}
   ${(props) => (props.gap ? `margin: 0 0 0 ${props.gap}px;` : 'margin: 0;')}
+  &:nth-child(1) {
+    margin-left: 0px;
+  }
 `;
 
 export const Styled = {
