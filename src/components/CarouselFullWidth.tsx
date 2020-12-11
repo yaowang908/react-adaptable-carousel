@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import SingleElementForwardRef from './SingleElement';
+import SingleElement from './SingleElement';
 // import debounce from '../lib/debounce';
 import { scrollTo } from '../lib/smoothScrollTo';
 import { Styled } from './CarouselFullWidth.style';
@@ -505,7 +505,7 @@ const CarouselFullWidth: React.FC<Props> = ({
         >
           {urlArray.map((x, index) => {
             return (
-              <SingleElementForwardRef
+              <SingleElement
                 isDivElement={isDivElement}
                 isImageElement
                 isVideoElement={x.isVideo ? x.isVideo : false}
@@ -517,7 +517,7 @@ const CarouselFullWidth: React.FC<Props> = ({
                 height={componentHeight}
                 roundCorner={0}
                 key={index}
-                ref={itemRefs[index]}
+                _ref={itemRefs[index]}
               />
             );
           })}
@@ -566,7 +566,7 @@ const CarouselFullWidth: React.FC<Props> = ({
               children as any,
               (child: React.ReactElement, index: number) => {
                 return (
-                  <SingleElementForwardRef
+                  <SingleElement
                     isDivElement={isDivElement}
                     isVideoElement={false}
                     isImageElement={false}
@@ -575,10 +575,10 @@ const CarouselFullWidth: React.FC<Props> = ({
                     height={componentHeight}
                     minWidth={0} // full width div item don't care
                     roundCorner={0}
-                    ref={itemRefs[index]}
+                    _ref={itemRefs[index]}
                   >
                     {child}
-                  </SingleElementForwardRef>
+                  </SingleElement>
                 );
               }
             )

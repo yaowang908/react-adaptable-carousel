@@ -229,10 +229,10 @@ SingleElement.defaultProps = { ...defaultProps };
 
 // const SingleElement: React.FunctionComponent<Props> = React.forwardRef(
 // (props: Props, ref: React.Ref<HTMLElement>) => {
-const SingleElementForwardRef = React.forwardRef(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
-    return <SingleElement {...props} _ref={ref} />;
-  }
-);
+// const SingleElementForwardRef = React.forwardRef(
+//   (props: Props, ref: React.Ref<HTMLDivElement>) => {
+//     return <SingleElement {...props} _ref={ref} />;
+//   }
+// );
 
-export default SingleElementForwardRef;
+export default SingleElement;
