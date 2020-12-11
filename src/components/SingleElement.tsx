@@ -26,22 +26,22 @@ interface Props {
   _ref?: any; // ref is reserved, cannot use ref as prop here
 }
 
-const defaultProps: Props = {
-  className: '',
-  isImageElement: true,
-  isDivElement: false,
-  isVideoElement: false,
-  url: '',
-  imgAlt: '',
-  height: 0,
-  link: '',
-  isFullWidthElement: false,
-  children: <></>,
-  roundCorner: 0,
-  minWidth: 0,
-  gap: 0,
-  _ref: null,
-};
+// const defaultProps: Props = {
+//   className: '',
+//   isImageElement: true,
+//   isDivElement: false,
+//   isVideoElement: false,
+//   url: '',
+//   imgAlt: '',
+//   height: 0,
+//   link: '',
+//   isFullWidthElement: false,
+//   children: <></>,
+//   roundCorner: 0,
+//   minWidth: 0,
+//   gap: 0,
+//   _ref: null,
+// };
 // DONE: add link options
 const SingleElement: React.FC<Props> = (props) => {
   // const SingleElement: React.FunctionComponent<Props> = React.forwardRef(
@@ -225,14 +225,6 @@ const SingleElement: React.FC<Props> = (props) => {
 };
 // );
 
-SingleElement.defaultProps = { ...defaultProps };
-
-// const SingleElement: React.FunctionComponent<Props> = React.forwardRef(
-// (props: Props, ref: React.Ref<HTMLElement>) => {
-// const SingleElementForwardRef = React.forwardRef(
-//   (props: Props, ref: React.Ref<HTMLDivElement>) => {
-//     return <SingleElement {...props} _ref={ref} />;
-//   }
-// );
+// SingleElement.defaultProps = { ...defaultProps };
 
 export default SingleElement;
