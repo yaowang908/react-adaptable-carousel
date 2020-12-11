@@ -70,16 +70,6 @@ const CarouselFullWidth: React.FC<Props> = ({
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
   const [stepsLengthArr, setStepsLengthArr] = React.useState<number[]>([]);
 
-  // const {
-  //   themeColor,
-  //   isDivElement,
-  //   urlArray,
-  //   componentHeight,
-  //   interval,
-  //   children,
-  //   buttonText,
-  // } = props;
-
   const [themeColor, setThemeColor] = React.useState(_themeColor);
   const [isDivElement, setIsDivElement] = React.useState(_isDivElement);
   const [urlArray, setUrlArray] = React.useState(_urlArray);
@@ -237,21 +227,7 @@ const CarouselFullWidth: React.FC<Props> = ({
   }, [itemAmount]);
   // get all items width
   React.useEffect(() => {
-    const __itemsWidth: number[] = Array(itemAmount)
-      .fill(0)
-      .map((_, i) => {
-        if (itemRefs[i]) {
-          const _cur = itemRefs[i].current;
-          console.dir(itemRefs[i]);
-          console.log(
-            `itemRefs[i]: ${itemRefs[i]}, itemsRefs[i].current: ${itemRefs[i].current?.offsetWidth}`
-          );
-          return Number(_cur?.offsetWidth.toString().replace('px', ''));
-        }
-        // console.error('1');
-        return 0;
-      });
-    // console.dir(__itemsWidth);
+    const __itemsWidth: number[] = Array(itemAmount).fill(containerWidth);
     setItemsWidth(__itemsWidth);
   }, [containerWidth, itemAmount, itemRefs]);
   // auto increase slider index

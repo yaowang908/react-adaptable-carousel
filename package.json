@@ -78,6 +78,7 @@
     "react-dom": "^17.0.1",
     "react-player": "^2.7.0",
     "react-refresh": "^0.8.3",
+    "react-use-dimensions": "^1.2.1",
     "resolve": "1.18.1",
     "resolve-url-loader": "^3.1.2",
     "sass-loader": "8.0.2",
