@@ -82,13 +82,13 @@ const CarouselFullWidth: React.FC<Props> = ({
 
   // set new state when get new prop
   React.useEffect(() => {
-    if (_themeColor) setThemeColor(_themeColor);
-    if (_isDivElement) setIsDivElement(_isDivElement);
-    if (_urlArray) setUrlArray(_urlArray);
-    if (_componentHeight) setComponentHeight(_componentHeight);
-    if (_interval) setThisInterval(_interval);
-    if (_children) setChildren(_children);
-    if (_buttonText) setButtonText(_buttonText);
+    if (_themeColor !== undefined) setThemeColor(_themeColor);
+    if (_isDivElement !== undefined) setIsDivElement(_isDivElement);
+    if (_urlArray !== undefined) setUrlArray(_urlArray);
+    if (_componentHeight !== undefined) setComponentHeight(_componentHeight);
+    if (_interval !== undefined) setThisInterval(_interval);
+    if (_children !== undefined) setChildren(_children);
+    if (_buttonText !== undefined) setButtonText(_buttonText);
   }, [
     _themeColor,
     _isDivElement,

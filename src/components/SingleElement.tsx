@@ -81,19 +81,20 @@ const SingleElement: React.FC<Props> = (props) => {
   // const [_ref, set_ref] = React.useState(__ref);
 
   React.useEffect(() => {
-    if (_className) setClassName(_className);
-    if (_isImageElement) setIsImageElement(_isImageElement);
-    if (_isVideoElement) setIsVideoElement(_isVideoElement);
-    if (_isFullWidthElement) setIsFullWidthElement(_isFullWidthElement);
-    if (_url) setUrl(_url);
-    if (_imgAlt) setImgAlt(_imgAlt);
-    if (_height) setHeight(_height);
-    if (_link) setLink(_link);
-    if (_isDivElement) setIsDivElement(_isDivElement);
-    if (_children) setChildren(_children);
-    if (_roundCorner) setRoundCorner(_roundCorner);
-    if (_minWidth) setMinWidth(_minWidth);
-    if (_gap) setGap(_gap);
+    if (_className !== undefined) setClassName(_className);
+    if (_isImageElement !== undefined) setIsImageElement(_isImageElement);
+    if (_isVideoElement !== undefined) setIsVideoElement(_isVideoElement);
+    if (_isFullWidthElement !== undefined)
+      setIsFullWidthElement(_isFullWidthElement);
+    if (_url !== undefined) setUrl(_url);
+    if (_imgAlt !== undefined) setImgAlt(_imgAlt);
+    if (_height !== undefined) setHeight(_height);
+    if (_link !== undefined) setLink(_link);
+    if (_isDivElement !== undefined) setIsDivElement(_isDivElement);
+    if (_children !== undefined) setChildren(_children);
+    if (_roundCorner !== undefined) setRoundCorner(_roundCorner);
+    if (_minWidth !== undefined) setMinWidth(_minWidth);
+    if (_gap !== undefined) setGap(_gap);
     // if (__ref) {
     //   console.dir(__ref.toString());
     //   set_ref(__ref);
@@ -115,8 +116,8 @@ const SingleElement: React.FC<Props> = (props) => {
     // __ref,
   ]);
 
+  // differentiating click and drag
   React.useEffect(() => {
-    // differentiating click and drag
     let __isUserDragging = false;
     // const ele = elementRef?.current || _ref?.current;
     const _ele = elementRef || _ref;

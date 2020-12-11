@@ -147,17 +147,19 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   // set new state when get new prop
   React.useEffect(() => {
-    if (props.urlArray) setThisUrlArray(props.urlArray);
-    if (props.themeColor) setThisThemeColor(props.themeColor);
-    if (props.reminder) setThisReminder(props.reminder);
-    if (props.buttonText) setThisButtonText(props.buttonText);
-    if (props.componentHeight) setThisComponentHeight(props.componentHeight);
-    if (props.gap) setThisGap(props.gap);
-    if (props.roundCorner) setThisRoundCorner(props.roundCorner);
-    if (props.isDivElement) setThisIsDivElement(props.isDivElement);
-    if (props.divElementMinWidth)
+    if (props.urlArray !== undefined) setThisUrlArray(props.urlArray);
+    if (props.themeColor !== undefined) setThisThemeColor(props.themeColor);
+    if (props.reminder !== undefined) setThisReminder(props.reminder);
+    if (props.buttonText !== undefined) setThisButtonText(props.buttonText);
+    if (props.componentHeight !== undefined)
+      setThisComponentHeight(props.componentHeight);
+    if (props.gap !== undefined) setThisGap(props.gap);
+    if (props.roundCorner !== undefined) setThisRoundCorner(props.roundCorner);
+    if (props.isDivElement !== undefined)
+      setThisIsDivElement(props.isDivElement);
+    if (props.divElementMinWidth !== undefined)
       setThisDivElementMinWidth(props.divElementMinWidth);
-    if (props.children) setThisChildren(props.children);
+    if (props.children !== undefined) setThisChildren(props.children);
   }, [props]);
   // handler drag move carousel
   React.useEffect(() => {
