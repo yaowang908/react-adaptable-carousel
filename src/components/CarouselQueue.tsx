@@ -301,9 +301,15 @@ const CarouselQueue: React.FC<Props> = (props) => {
   // initialize callback refs
   // measure children with callback refs
   let _tempLength = 0;
-  _tempLength = thisUrlArray?.length || 0;
+  if (thisUrlArray[0].url) {
+    // thisUrlArray has a default value {url:"",link:"", isVideo:false}
+    _tempLength = thisUrlArray.length;
+  } else if (React.Children) {
+    _tempLength = React.Children.toArray(thisChildren).length;
+  }
   let slidesBoundingInfo = {};
   let offsetLeftWidthInfo = {};
+  // console.dir(thisUrlArray);
   const callbackRefsArray = Array(_tempLength)
     .fill(0)
     .map((_, i) => {
@@ -396,7 +402,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
       });
 
     const holder = imagesHolderRef.current;
-    console.dir(_tempSlidesPosition);
+    // console.dir(_tempSlidesPosition);
     if (
       _tempSlidesPosition &&
       _tempSlidesPosition[currentFirstIndex] &&
