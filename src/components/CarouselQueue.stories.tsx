@@ -74,6 +74,13 @@ Default.args = {
 };
 
 export const AutoHeight = Template.bind({});
+AutoHeight.decorators = [
+  (Story) => (
+    <div style={{ height: '190px', maxWidth: '1080px', display: 'flex' }}>
+      <Story />
+    </div>
+  ),
+];
 AutoHeight.args = {
   urlArray: [
     { url: 'https://via.placeholder.com/200x300.png?text=0', link: '' },

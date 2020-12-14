@@ -20,8 +20,8 @@ const Container = styled.div<ContainerProps>`
   scroll-snap-align: start;
   ${(props) => (props.minWidth ? `min-width:${props.minWidth}px;` : '')}
   ${(props) => (props.gap ? `margin: 0 0 0 ${props.gap}px;` : 'margin: 0;')}
-  display: grid;
-  place-items: center;
+  display: flex;
+  // place-items: center;
   box-sizing: border-box;
   & img {
     -webkit-user-drag: none;
@@ -32,6 +32,7 @@ const Container = styled.div<ContainerProps>`
     object-fit: fill;
     width: ${(props) => (props.height ? 'auto' : '100%')};
     // margin: 0 auto;
+    max-height: 100%;
     height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   }
   & > div {
@@ -73,6 +74,7 @@ const Image = styled.img.attrs((props) => ({
   object-fit: fill;
   height: ${(props) =>
     props.height ? (props) => `${props.height}px` : 'auto'};
+  max-height: 100%;
   scroll-snap-align: start;
   box-sizing: border-box;
   ${(props) =>

@@ -284,22 +284,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   }, [carouselPosition]);
 
-  // initialize slideRefs
-  // React.useEffect(() => {
-  //   let _tempLength = 0;
-  //   _tempLength = thisUrlArray?.length || 0;
-  //   if (thisIsDivElement)
-  //     _tempLength = React.Children.toArray(thisChildren).length;
-  //   setSlideRefs((slideRefs) =>
-  //     Array(_tempLength)
-  //       .fill(0)
-  //       .map(
-  //         (_, i) =>
-  //           slideRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>()
-  //       )
-  //   );
-  // }, [thisUrlArray]);
-
   // initialize callback refs
   // measure children with callback refs
   let _tempLength = 0;
@@ -349,13 +333,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
 
   const resizeHandler = _.debounce(() => {
     // setSlidesPosition(getSlidesPosition());
-    setSlidesPosition([]);
-  }, 500);
-
-  // set slidesPosition on window resize
-  React.useEffect(() => {
-    // set containerWidth on window resize
-    // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
     const _tempSlidesPosition: Array<[number, number]> = Array(
       Object.keys(offsetLeftWidthInfo).length
     )
@@ -365,16 +342,17 @@ const CarouselQueue: React.FC<Props> = (props) => {
       });
     // console.dir(_tempSlidesPosition);
     setSlidesPosition(_tempSlidesPosition);
+  }, 500);
+
+  // set slidesPosition on window resize
+  React.useEffect(() => {
+    // set containerWidth on window resize
+    // Don't apply [] to this useEffect, otherwise offsetWidth will not equal to the real width after first render
     window.addEventListener('resize', resizeHandler);
     return () => {
       window.removeEventListener('resize', resizeHandler);
     };
   }, []);
-
-  React.useEffect(() => {
-    setSlidesPosition([]);
-    // console.dir(slidesBoundingInfo);
-  }, [currentFirstIndex, thisUrlArray]);
 
   // get current first card's index
   React.useEffect(() => {
@@ -411,7 +389,9 @@ const CarouselQueue: React.FC<Props> = (props) => {
       holder
     ) {
       const targetScrollLeft = _tempSlidesPosition[currentFirstIndex][0];
-      if (targetScrollLeft) holder.scrollLeft = targetScrollLeft;
+      if (typeof targetScrollLeft !== 'undefined')
+        holder.scrollLeft = targetScrollLeft;
+      // console.log(targetScrollLeft);
       setHolderScrollLeft(holder.scrollLeft);
     }
     // console.log('set holder scroll left base on index');
@@ -424,21 +404,24 @@ const CarouselQueue: React.FC<Props> = (props) => {
       const holder = imagesHolderRef.current;
       const mouseDownHandler = (e: MouseEvent) => {
         e.stopPropagation();
+        // console.log(holder.scrollLeft);
         let _currentFirstIndex = currentFirstIndex;
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
           setCarouselPosition({ position: 'right-end' });
           // keep moving
           _currentFirstIndex -= 1;
-        } else if (_currentFirstIndex === 0) {
+        } else if (holder.scrollLeft === 0) {
           setCarouselPosition({ position: 'left-end' });
           // reaching left end, do nothing
         } else {
           setCarouselPosition({ position: 'middle' });
           // keep moving
+          // console.log('keep moving');
           _currentFirstIndex -= 1;
-          if (_currentFirstIndex === 0)
-            setCarouselPosition({ position: 'left-end' });
+          // if (_currentFirstIndex === 0)
+          //   setCarouselPosition({ position: 'left-end' });
         }
+        // console.log(`afterCLick index: ${_currentFirstIndex}`);
         setCurrentFirstIndex(_currentFirstIndex);
       };
       prevButton.addEventListener('mousedown', mouseDownHandler);
@@ -484,7 +467,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   }, [slidesPosition, currentFirstIndex]);
 
-  // TODO: disable buttons when imageHolder is shorter than container
+  // DONE: disable buttons when imageHolder is shorter than container
   React.useEffect(() => {
     const _tempSlidesPosition: Array<[number, number]> = Array(
       Object.keys(offsetLeftWidthInfo).length
@@ -503,6 +486,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
     // console.dir(contentLength);
     const containerLength = imagesHolderRef.current?.offsetWidth;
     if (containerLength && contentLength < containerLength) {
+      // console.log('triggered function to hide buttons');
       setThisButtonText({
         ...thisButtonText,
         showButton: false,
