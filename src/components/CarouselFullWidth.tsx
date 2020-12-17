@@ -52,6 +52,7 @@ const CarouselFullWidth: React.FC<Props> = ({
   interval: _interval,
   children: _children,
   buttonText: _buttonText,
+  pauseCarousel,
 }) => {
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
   const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
@@ -423,16 +424,18 @@ const CarouselFullWidth: React.FC<Props> = ({
       }
     }
   });
-  // React.useEffect(() => { //for development purpose
-  //   const auto_interval = interval ? interval : 2000; //interval
-  //   if(pauseCarousel) {
-  //     setCurrentSliderIndex(pauseCarousel);
-  //     const nIntervalId = setInterval(() => {
-  //       setIsCarouselPaused(true);
-  //     }, auto_interval);
-  //     return () => clearInterval(nIntervalId);
-  //   }
-  // }, []);
+  // for development purpose
+  React.useEffect(() => {
+    const auto_interval = interval;
+    if (pauseCarousel) {
+      setCurrentSliderIndex(pauseCarousel);
+      const nIntervalId = setInterval(() => {
+        setIsCarouselPaused(true);
+      }, auto_interval);
+      return () => clearInterval(nIntervalId);
+    }
+    return () => {};
+  }, []);
   const buttonContent = (param: 'prev' | 'next') => {
     const tempBtn = {
       prev: '<',

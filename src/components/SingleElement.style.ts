@@ -31,7 +31,7 @@ const Container = styled.div<ContainerProps>`
     user-drag: none;
     object-fit: fill;
     width: ${(props) => (props.height ? 'auto' : '100%')};
-    // margin: 0 auto;
+    margin: 0 auto;
     max-height: 100%;
     height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   }
@@ -81,7 +81,7 @@ const Image = styled.img.attrs((props) => ({
     props.roundCorner ? `border-radius:${props.roundCorner}px;` : ``}
   ${(props) => (props.gap ? `margin: 0 0 0 ${props.gap}px;` : 'margin: 0;')}
   &:nth-child(1) {
-    margin-left: 0px;
+    // margin-left: 0px;
   }
 `;
 
