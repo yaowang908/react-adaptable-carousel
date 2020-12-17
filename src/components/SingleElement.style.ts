@@ -38,6 +38,8 @@ const Container = styled.div<ContainerProps>`
   & > div {
     display: grid;
     place-items: center;
+    height: 100%;
+    margin: 0 auto;
   }
   ${media.desktop} {
   }

@@ -140,4 +140,5 @@ DivElementSlide.args = {
   buttonText: {
     showButton: false,
   },
+  pauseCarousel: 0,
 };

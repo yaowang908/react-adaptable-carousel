@@ -63,9 +63,7 @@ const CarouselFullWidth: React.FC<Props> = ({
   const [isCarouselPaused, setIsCarouselPaused] = React.useState<boolean>(
     false
   );
-  const [itemRefs, setItemRefs] = React.useState<
-    React.RefObject<HTMLDivElement>[]
-  >([]);
+  // const [itemRefs, setItemRefs] = React.useState<{ (HTMLElement): void }[]>([]);
   const [scrollDirection, setScrollDirection] = React.useState<number>(1);
   const prevButtonRef = React.useRef<HTMLButtonElement>(null);
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -216,21 +214,32 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
   }, [isDivElement, urlArray, children]);
   // init item refs
-  React.useEffect(() => {
-    setItemRefs((itemRefs) =>
-      Array(itemAmount)
-        .fill(0)
-        .map(
-          (_, i) =>
-            itemRefs[i] || React.createRef<React.RefObject<HTMLDivElement>>()
-        )
-    );
-  }, [itemAmount]);
+  // measure children with callback refs
+  let _tempLength = 0;
+  if (_urlArray && _urlArray[0].url) {
+    // thisUrlArray has a default value {url:"",link:"", isVideo:false}
+    _tempLength = _urlArray.length;
+  } else if (React.Children) {
+    _tempLength = React.Children.toArray(children).length;
+  }
+  const itemRefs = Array(_tempLength)
+    .fill(0)
+    .map((_, i) => {
+      // console.dir('This is a callback ref');
+      return (ele) => {
+        // const thisIndex = i;
+        if (ele) {
+          return { ele, i };
+        }
+        return {};
+      };
+    });
+
   // get all items width
   React.useEffect(() => {
     const __itemsWidth: number[] = Array(itemAmount).fill(containerWidth);
     setItemsWidth(__itemsWidth);
-  }, [containerWidth, itemAmount, itemRefs]);
+  }, [containerWidth, itemAmount]);
   // auto increase slider index
   React.useEffect(() => {
     const auto_interval = interval || 2000; // interval
@@ -424,10 +433,10 @@ const CarouselFullWidth: React.FC<Props> = ({
       }
     }
   });
-  // for development purpose
+  // pause carousel on certain index
   React.useEffect(() => {
     const auto_interval = interval;
-    if (pauseCarousel) {
+    if (pauseCarousel || pauseCarousel === 0) {
       setCurrentSliderIndex(pauseCarousel);
       const nIntervalId = setInterval(() => {
         setIsCarouselPaused(true);
