@@ -78,6 +78,8 @@ const CarouselFullWidth: React.FC<Props> = ({
   const [interval, setThisInterval] = React.useState(_interval);
   const [children, setChildren] = React.useState(_children);
   const [buttonText, setButtonText] = React.useState(_buttonText);
+  // this variable handles carousel pause in mouseEnter and leave functions
+  const [persistStatus, setPersistStatus] = React.useState<boolean>(false);
 
   // set new state when get new prop
   React.useEffect(() => {
@@ -128,17 +130,26 @@ const CarouselFullWidth: React.FC<Props> = ({
       const mouseMoveHandler = (e: MouseEvent) => {
         e.stopPropagation();
         // console.log('Mouse move');
+        // console.dir(setPersistStatus);
         const dx = e.clientX - pos.x;
         const dy = e.clientY - pos.y;
 
         holder.scrollTop = pos.top - dy;
         holder.scrollLeft = pos.left - dx;
+
+        // when user DnD pause carousel
+        setPersistStatus(true);
+        setIsCarouselPaused(true);
       };
       const mouseUpHandler = (e: MouseEvent) => {
         e.stopPropagation();
         // console.log('Mouse up');
         holder.style.cursor = 'grab';
         holder.style.removeProperty('user-select');
+        holder.style['scroll-snap-type' as any] = 'mandatory';
+        holder.style[
+          'scroll-snap-points-x' as any
+        ] = `repeat(${containerWidth}px)`;
         holder.style['scroll-snap-type' as any] = 'x mandatory';
         // console.log(holder.scrollLeft);
 
@@ -162,13 +173,16 @@ const CarouselFullWidth: React.FC<Props> = ({
       };
       holder.addEventListener('mousedown', mouseDownHandler);
       return () => {
+        // console.log('listeners destroyed');
         holder.removeEventListener('mousedown', mouseDownHandler);
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
       };
     }
     return () => {};
-  });
+    // subscribe only to isCarouselPaused, destroy listeners on isCarouselPaused change
+  }, [isCarouselPaused]);
+
   // set container width
   React.useEffect(() => {
     if (containerRef.current) {
@@ -336,6 +350,7 @@ const CarouselFullWidth: React.FC<Props> = ({
       window.removeEventListener('visibilitychange', visibilityHandler);
     };
   });
+
   const mouseEnterHandler = () => {
     setIsCarouselPaused(true);
     // DONE: hide buttons when tablet
@@ -347,7 +362,9 @@ const CarouselFullWidth: React.FC<Props> = ({
     }
   };
   const mouseLeaveHandler = () => {
-    setIsCarouselPaused(false);
+    // only set false when carousel is not pause before previous mouseEnter
+    console.log(persistStatus);
+    if (!persistStatus) setIsCarouselPaused(false);
     if (prevButtonRef.current && nextButtonRef.current) {
       prevButtonRef.current.style.display = 'none';
       nextButtonRef.current.style.display = 'none';
@@ -366,6 +383,7 @@ const CarouselFullWidth: React.FC<Props> = ({
       let currentPosition: number = 0;
       const prevMouseDownHandler = (e: MouseEvent) => {
         e.stopPropagation();
+        setPersistStatus(false);
         if (currentSliderIndex === 0) {
           // do nothing
         } else {
@@ -383,6 +401,7 @@ const CarouselFullWidth: React.FC<Props> = ({
 
       const nextMouseDownHandler = (e: MouseEvent) => {
         e.stopPropagation();
+        setPersistStatus(false);
         if (currentSliderIndex === itemAmount - 1) {
           // do nothing
         } else {
