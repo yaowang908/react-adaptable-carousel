@@ -41,6 +41,7 @@ import { CarouselFullWidth } from 'react-adaptable-carousel';
   * @param { boolean } isDivElement - if the children are div element
   * @param { array } [urlArray] - if not div elements, urlArray has to be set
   * @param { number } [interval] - interval between slides
+  * @param { number } [pauseCarousel] - leave it undefined if you want auto move, set to a number to pause on certain index
 */
 const App = () => {
   const args = {

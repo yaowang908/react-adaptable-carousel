@@ -228,10 +228,82 @@ const CarouselQueue: React.FC<Props> = (props) => {
         holder.removeEventListener('mouseup', mouseUpHandler);
       };
       holder.addEventListener('mousedown', mouseDownHandler);
+      const touchstartHandler = (e: TouchEvent) => {
+        e.stopPropagation();
+        // console.log('touch start');
+        holder.style.cursor = 'grabbing';
+        holder.style.userSelect = 'none';
+        holder.style.removeProperty('scroll-snap-type');
+        holder.style.margin = '0'; // scroll snap will conflict with preset margin
+
+        pos = {
+          left: holder.scrollLeft,
+          top: holder.scrollTop,
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        };
+
+        holder.addEventListener('touchmove', touchmoveHandler);
+        holder.addEventListener('touchend', touchendHandler);
+        holder.addEventListener('touchcancel', touchcancelHandler);
+      };
+      const touchmoveHandler = (e: TouchEvent) => {
+        e.stopPropagation();
+        // console.log('touch move');
+        const dx = e.touches[0].clientX - pos.x;
+        const dy = e.touches[0].clientY - pos.y;
+
+        holder.scrollTop = pos.top - dy;
+        holder.scrollLeft = pos.left - dx;
+      };
+      const touchendHandler = (e: TouchEvent) => {
+        e.stopPropagation();
+        // console.log('touch end');
+        holder.style.cursor = 'grab';
+        holder.style.removeProperty('user-select');
+        holder.style['scroll-snap-type' as any] = 'x mandatory';
+        // console.log('ScrollLeft: '+holder.scrollLeft);
+        // console.log('width: '+holder.offsetWidth);
+        // console.log('ScrollWidth: '+holder.scrollWidth);
+        if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
+          setCarouselPosition({ position: 'right-end' });
+        } else if (holder.scrollLeft <= thisGap) {
+          setCarouselPosition({ position: 'left-end' });
+        } else {
+          setCarouselPosition({ position: 'middle' });
+        }
+        setHolderScrollLeft(holder.scrollLeft);
+        const _tempIndexArray = slidesPosition
+          ?.map((x, index) => {
+            if (x[0] === holder.scrollLeft) {
+              return index;
+            }
+            if (index === 0 && holder.scrollLeft === 0) {
+              return 0;
+            }
+            return null;
+          })
+          .filter((x) => x !== null);
+        const _currentFirstIndex = _tempIndexArray ? _tempIndexArray[0] : 0;
+        if (_currentFirstIndex) setCurrentFirstIndex(_currentFirstIndex);
+        holder.removeEventListener('touchmove', touchmoveHandler);
+        holder.removeEventListener('touchend', touchendHandler);
+      };
+      const touchcancelHandler = () => {
+        // console.log('touch canceled');
+        holder.removeEventListener('touchmove', touchmoveHandler);
+        holder.removeEventListener('touchend', touchendHandler);
+        holder.removeEventListener('touchcancel', touchcancelHandler);
+      };
+      holder.addEventListener('touchstart', touchstartHandler);
       return () => {
         holder.removeEventListener('mousedown', mouseDownHandler);
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
+        holder.removeEventListener('touchstart', touchstartHandler);
+        holder.removeEventListener('touchmove', touchmoveHandler);
+        holder.removeEventListener('touchend', touchendHandler);
+        holder.removeEventListener('touchcancel', touchcancelHandler);
       };
     } else {
       return () => {};

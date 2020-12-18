@@ -25,6 +25,7 @@ import { tabletDelimiter } from '../lib/customMediaQuery';
  * @param { boolean } isDivElement - whether the children are div element
  * @param { array } [urlArray] - if not div elements, urlArray has to be set
  * @param { number } [interval] - interval between slides
+ * @param { number } [pauseCarousel] - leave it undefined if you want auto move, set to a number to pause on certain index
  */
 
 interface Props {
@@ -172,11 +173,86 @@ const CarouselFullWidth: React.FC<Props> = ({
         holder.removeEventListener('mouseup', mouseUpHandler);
       };
       holder.addEventListener('mousedown', mouseDownHandler);
+      const touchstartHandler = (e: TouchEvent) => {
+        e.stopPropagation();
+        // console.log('touch start');
+        holder.style.cursor = 'grabbing';
+        holder.style.userSelect = 'none';
+        holder.style.removeProperty('scroll-snap-type');
+        holder.style.margin = '0'; // scroll snap will conflict with preset margin
+
+        pos = {
+          left: holder.scrollLeft,
+          top: holder.scrollTop,
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        };
+
+        holder.addEventListener('touchmove', touchmoveHandler);
+        holder.addEventListener('touchend', touchendHandler);
+        holder.addEventListener('touchcancel', touchcancelHandler);
+      };
+      const touchmoveHandler = (e: TouchEvent) => {
+        e.stopPropagation();
+        // console.log('touch move');
+        // console.dir(setPersistStatus);
+        const dx = e.touches[0].clientX - pos.x;
+        const dy = e.touches[0].clientY - pos.y;
+
+        holder.scrollTop = pos.top - dy;
+        holder.scrollLeft = pos.left - dx;
+
+        // when user DnD pause carousel
+        setPersistStatus(true);
+        setIsCarouselPaused(true);
+      };
+      const touchendHandler = (e: TouchEvent) => {
+        e.stopPropagation();
+        // console.log('touch end');
+        holder.style.cursor = 'grab';
+        holder.style.removeProperty('user-select');
+        holder.style['scroll-snap-type' as any] = 'mandatory';
+        holder.style[
+          'scroll-snap-points-x' as any
+        ] = `repeat(${containerWidth}px)`;
+        holder.style['scroll-snap-type' as any] = 'x mandatory';
+        // console.log(holder.scrollLeft);
+
+        const stepsLengthArr: number[] = []; // these are the actual number to move
+        let __position = 0;
+        stepsLengthArr.push(__position);
+        for (let i = 0; i < itemAmount - 1; i += 1) {
+          __position += itemsWidth[i];
+          stepsLengthArr.push(__position);
+        }
+        let __tempIndex: number = 0;
+        for (let i = 0; i < stepsLengthArr.length; i += 1) {
+          if (holder && holder.scrollLeft >= stepsLengthArr[i]) {
+            __tempIndex = i;
+          }
+        }
+        setCurrentSliderIndex(__tempIndex);
+
+        holder.removeEventListener('touchmove', touchmoveHandler);
+        holder.removeEventListener('touchend', touchendHandler);
+        holder.removeEventListener('touchcancel', touchcancelHandler);
+      };
+      const touchcancelHandler = () => {
+        // console.log('touch canceled');
+        holder.removeEventListener('touchmove', touchmoveHandler);
+        holder.removeEventListener('touchend', touchendHandler);
+        holder.removeEventListener('touchcancel', touchcancelHandler);
+      };
+      holder.addEventListener('touchstart', touchstartHandler);
       return () => {
         // console.log('listeners destroyed');
         holder.removeEventListener('mousedown', mouseDownHandler);
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
+        holder.removeEventListener('touchstart', touchstartHandler);
+        holder.removeEventListener('touchmove', touchmoveHandler);
+        holder.removeEventListener('touchend', touchendHandler);
+        holder.removeEventListener('touchcancel', touchcancelHandler);
       };
     }
     return () => {};
