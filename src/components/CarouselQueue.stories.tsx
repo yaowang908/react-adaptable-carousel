@@ -86,12 +86,6 @@ AutoHeight.args = {
     { url: 'https://via.placeholder.com/200x300.png?text=0', link: '' },
     { url: 'https://via.placeholder.com/400x300.png?text=1', link: '' },
     { url: 'https://via.placeholder.com/300x300.png?text=2', link: '' },
-    { url: 'https://via.placeholder.com/200x300.png?text=3', link: '' },
-    { url: 'https://via.placeholder.com/400x300.png?text=4', link: '' },
-    { url: 'https://via.placeholder.com/300x300.png?text=5', link: '' },
-    { url: 'https://via.placeholder.com/200x300.png?text=6', link: '' },
-    { url: 'https://via.placeholder.com/400x300.png?text=7', link: '' },
-    { url: 'https://via.placeholder.com/300x300.png?text=8', link: '' },
   ],
   componentHeight: 0, // set 0 means to set image height to auto
   isDivElement: false,
@@ -104,8 +98,8 @@ AutoHeight.args = {
     buttonWidth: 40,
     buttonHeight: 80,
     isImageBg: true,
-    prev: 'https://via.placeholder.com/40x80.png?text=<',
-    next: 'https://via.placeholder.com/40x80.png?text=>',
+    prev: 'https://via.placeholder.com/40x80/FF0000/000000?text=<',
+    next: 'https://via.placeholder.com/40x80/FF0000/000000?text=>',
   },
 };
 

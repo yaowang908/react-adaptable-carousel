@@ -363,7 +363,7 @@ const CarouselFullWidth: React.FC<Props> = ({
   };
   const mouseLeaveHandler = () => {
     // only set false when carousel is not pause before previous mouseEnter
-    console.log(persistStatus);
+    // console.log(persistStatus);
     if (!persistStatus) setIsCarouselPaused(false);
     if (prevButtonRef.current && nextButtonRef.current) {
       prevButtonRef.current.style.display = 'none';
