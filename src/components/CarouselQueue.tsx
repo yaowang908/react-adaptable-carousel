@@ -343,10 +343,14 @@ const CarouselQueue: React.FC<Props> = (props) => {
         // left end, disable prev
         prevButton.style.filter = 'grayscale(1)';
         prevButton.style.cursor = 'not-allowed';
+        nextButton.style.filter = 'none';
+        nextButton.style.cursor = 'pointer';
       } else if (carouselPosition.position === 'right-end') {
         // right end, disable next
         nextButton.style.filter = 'grayscale(1)';
         nextButton.style.cursor = 'not-allowed';
+        prevButton.style.filter = 'none';
+        prevButton.style.cursor = 'pointer';
       } else {
         prevButton.style.filter = 'none';
         nextButton.style.filter = 'none';
@@ -391,6 +395,35 @@ const CarouselQueue: React.FC<Props> = (props) => {
     });
   // console.dir(callbackRefsArray);
 
+  // hide buttons when content is shorter than container
+  React.useEffect(() => {
+    if (slidesPosition && imagesHolderRef.current) {
+      let contentWidth = slidesPosition.reduce(
+        (acc, cur) => acc + Number(cur[1]),
+        0
+      );
+      contentWidth += (slidesPosition.length - 1) * thisGap;
+      // console.dir(contentWidth);
+      // console.dir(imagesHolderRef.current?.offsetWidth);
+      if (contentWidth < imagesHolderRef.current.offsetWidth) {
+        setThisButtonText({
+          ...thisButtonText,
+          showButton: false,
+        });
+      }
+      if (
+        contentWidth > imagesHolderRef.current.offsetWidth &&
+        buttonText?.showButton
+      ) {
+        // console.dir('1');
+        setThisButtonText({
+          ...thisButtonText,
+          showButton: true,
+        });
+      }
+    }
+  }, [slidesPosition]);
+  // setSlidesPosition
   React.useEffect(() => {
     const _tempSlidesPosition: Array<[number, number]> = Array(
       Object.keys(offsetLeftWidthInfo).length
@@ -478,10 +511,15 @@ const CarouselQueue: React.FC<Props> = (props) => {
         e.stopPropagation();
         // console.log(holder.scrollLeft);
         let _currentFirstIndex = currentFirstIndex;
-        if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
+        // console.log(holder.scrollWidth);
+        // console.log(holder.scrollLeft);
+        // console.log(holder.offsetWidth);
+        if (holder.scrollWidth - holder.scrollLeft < holder.offsetWidth) {
           setCarouselPosition({ position: 'right-end' });
           // keep moving
           _currentFirstIndex -= 1;
+        } else if (_currentFirstIndex === 0) {
+          setCarouselPosition({ position: 'left-end' });
         } else if (holder.scrollLeft === 0) {
           setCarouselPosition({ position: 'left-end' });
           // reaching left end, do nothing
@@ -540,31 +578,31 @@ const CarouselQueue: React.FC<Props> = (props) => {
   }, [slidesPosition, currentFirstIndex]);
 
   // DONE: disable buttons when imageHolder is shorter than container
-  React.useEffect(() => {
-    const _tempSlidesPosition: Array<[number, number]> = Array(
-      Object.keys(offsetLeftWidthInfo).length
-    )
-      .fill([0, 0])
-      .map((_, index) => {
-        return [offsetLeftWidthInfo[index][0], offsetLeftWidthInfo[index][1]];
-      });
-    let contentLength = 0;
-    _tempSlidesPosition.map((x) => {
-      contentLength = contentLength + thisGap + x[1];
-      return <></>;
-    });
-    // console.dir(_tempSlidesPosition);
-    // console.dir(imagesHolderRef.current?.offsetWidth);
-    // console.dir(contentLength);
-    const containerLength = imagesHolderRef.current?.offsetWidth;
-    if (containerLength && contentLength < containerLength) {
-      // console.log('triggered function to hide buttons');
-      setThisButtonText({
-        ...thisButtonText,
-        showButton: false,
-      });
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const _tempSlidesPosition: Array<[number, number]> = Array(
+  //     Object.keys(offsetLeftWidthInfo).length
+  //   )
+  //     .fill([0, 0])
+  //     .map((_, index) => {
+  //       return [offsetLeftWidthInfo[index][0], offsetLeftWidthInfo[index][1]];
+  //     });
+  //   let contentLength = 0;
+  //   _tempSlidesPosition.map((x) => {
+  //     contentLength = contentLength + thisGap + x[1];
+  //     return <></>;
+  //   });
+  //   // console.dir(_tempSlidesPosition);
+  //   // console.dir(imagesHolderRef.current?.offsetWidth);
+  //   // console.dir(contentLength);
+  //   const containerLength = imagesHolderRef.current?.offsetWidth;
+  //   if (containerLength && contentLength < containerLength) {
+  //     // console.log('triggered function to hide buttons');
+  //     setThisButtonText({
+  //       ...thisButtonText,
+  //       showButton: false,
+  //     });
+  //   }
+  // }, []);
 
   const mouseEnterHandler = () => {
     // DONE: hide buttons when tablet
@@ -576,6 +614,8 @@ const CarouselQueue: React.FC<Props> = (props) => {
     }
   };
   const mouseLeaveHandler = () => {
+    const mql = window.matchMedia(`(max-width: ${tabletDelimiter}px)`);
+    if (mql.matches) return;
     if (prevButtonRef.current && nextButtonRef.current) {
       prevButtonRef.current.style.display = 'none';
       nextButtonRef.current.style.display = 'none';

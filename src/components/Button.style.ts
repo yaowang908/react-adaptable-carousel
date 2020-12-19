@@ -39,7 +39,7 @@ const Prev = styled.div<ButtonProps>`
     ${(props) => (props.imageButton ? 'border: 1px solid white' : '')};
   }
   ${media.tablet} {
-    display: none;
+    // display: none;
   }
 `;
 
