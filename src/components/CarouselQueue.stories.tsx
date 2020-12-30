@@ -86,6 +86,9 @@ AutoHeight.args = {
     { url: 'https://via.placeholder.com/200x300.png?text=0', link: '' },
     { url: 'https://via.placeholder.com/400x300.png?text=1', link: '' },
     { url: 'https://via.placeholder.com/300x300.png?text=2', link: '' },
+    { url: 'https://via.placeholder.com/200x300.png?text=3', link: '' },
+    { url: 'https://via.placeholder.com/400x300.png?text=4', link: '' },
+    { url: 'https://via.placeholder.com/300x300.png?text=5', link: '' },
   ],
   componentHeight: 0, // set 0 means to set image height to auto
   isDivElement: false,
