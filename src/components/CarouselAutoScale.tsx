@@ -1,4 +1,5 @@
 import React from 'react';
+import './CarouselAutoScale.style.scss';
 
 interface Props {
   themeColor: { reminder: string; reminderTxt: string };
@@ -35,7 +36,13 @@ const CarouselAutoScale: React.FC<Props> = (props) => {
 
   // TODO: rebuild the CarouselQueue Component, new name: CarouselAutoScale
   // ...break into small pieces, lib and Component
-  return <div>Placeholder</div>;
+  return (
+    <div className="CAS_container">
+      <div className="CAS_holder">
+        <div className="CAS_item">X</div>
+      </div>
+    </div>
+  );
 };
 
 export default CarouselAutoScale;
