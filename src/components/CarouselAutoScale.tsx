@@ -20,7 +20,7 @@ interface Props {
   divElementMinWidth?: number;
 }
 
-const CarouselAutoScale: React.FC<Props> = (props) => {
+const CarouselAutoScale: React.FC<Props> = () => {
   // const {
   //   themeColor,
   //   reminder,

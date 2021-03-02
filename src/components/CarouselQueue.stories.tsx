@@ -64,7 +64,7 @@ Default.args = {
     lastTxt: '',
   },
   buttonText: {
-    showButton: false,
+    showButton: true,
     buttonWidth: 40,
     buttonHeight: 80,
     isImageBg: true,
