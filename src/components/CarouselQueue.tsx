@@ -63,6 +63,8 @@ interface Position {
  *
  */
 
+//  FIXME: not working in Safari
+
 const CarouselQueue: React.FC<Props> = (props) => {
   // const [containerWidth, setContainerWidth] = React.useState<number>(0);
   // const [currentSliderIndex, setCurrentSliderIndex] = React.useState<number>(0);
