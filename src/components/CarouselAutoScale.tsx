@@ -36,6 +36,9 @@ const CarouselAutoScale: React.FC<Props> = () => {
 
   // TODO: rebuild the CarouselQueue Component, new name: CarouselAutoScale
   // ...break into small pieces, lib and Component
+  // ...need to consider back compatibility, accept same arguments
+
+  // This new component will be a single one running alone, reconsider the structure, try not to use 3-party package.
   return (
     <div className="CAS_container">
       <div className="CAS_holder">
