@@ -152,8 +152,7 @@ const CarouselFullWidth: React.FC<Props> = ({
           'scroll-snap-points-x' as any
         ] = `repeat(${containerWidth}px)`;
         holder.style['scroll-snap-type' as any] = 'x mandatory';
-        // console.log(holder.scrollLeft);
-
+        // console.log('holder.scrollLeft', holder.scrollLeft);
         const stepsLengthArr: number[] = []; // these are the actual number to move
         let __position = 0;
         stepsLengthArr.push(__position);
@@ -167,8 +166,10 @@ const CarouselFullWidth: React.FC<Props> = ({
             __tempIndex = i;
           }
         }
-        setCurrentSliderIndex(__tempIndex);
-
+        // setCurrentSliderIndex(__tempIndex);
+        // When drag to right, increase __tempIndex by 1, other wise carousel won't move to next slide
+        if (pos.left < holder.scrollLeft) __tempIndex += 1;
+        holder.scrollLeft = stepsLengthArr[__tempIndex];
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
       };
@@ -231,8 +232,10 @@ const CarouselFullWidth: React.FC<Props> = ({
             __tempIndex = i;
           }
         }
-        setCurrentSliderIndex(__tempIndex);
-
+        // setCurrentSliderIndex(__tempIndex);
+        // When drag to right, increase __tempIndex by 1, other wise carousel won't move to next slide
+        if (pos.left < holder.scrollLeft) __tempIndex += 1;
+        holder.scrollLeft = stepsLengthArr[__tempIndex];
         holder.removeEventListener('touchmove', touchmoveHandler);
         holder.removeEventListener('touchend', touchendHandler);
         holder.removeEventListener('touchcancel', touchcancelHandler);

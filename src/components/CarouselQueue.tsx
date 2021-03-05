@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable prefer-template */
 /* eslint-disable no-else-return */
 import React from 'react';
@@ -200,13 +199,13 @@ const CarouselQueue: React.FC<Props> = (props) => {
       };
       const mouseUpHandler = (e: MouseEvent) => {
         e.stopPropagation();
-        console.log('Mouse up');
+        // console.log('Mouse up');
         holder.style.cursor = 'grab';
         holder.style.removeProperty('user-select');
         holder.style['scroll-snap-type' as any] = 'x mandatory';
-        console.log('ScrollLeft: ' + holder.scrollLeft);
-        console.log('width: ' + holder.offsetWidth);
-        console.log('ScrollWidth: ' + holder.scrollWidth);
+        // console.log('ScrollLeft: ' + holder.scrollLeft);
+        // console.log('width: ' + holder.offsetWidth);
+        // console.log('ScrollWidth: ' + holder.scrollWidth);
         if (holder.scrollWidth - holder.offsetWidth <= holder.scrollLeft) {
           setCarouselPosition({ position: 'right-end' });
         } else if (holder.scrollLeft <= thisGap) {
@@ -215,7 +214,7 @@ const CarouselQueue: React.FC<Props> = (props) => {
           setCarouselPosition({ position: 'middle' });
         }
         setHolderScrollLeft(holder.scrollLeft);
-        console.log(slidesPosition);
+        // console.log(slidesPosition);
         const _tempIndexArray = slidesPosition
           ?.map((x, index) => {
             if (x[0] && x[0] > holder.scrollLeft) {
@@ -227,9 +226,9 @@ const CarouselQueue: React.FC<Props> = (props) => {
             return null;
           })
           .filter((x) => x !== null);
-        console.log(_tempIndexArray);
+        // console.log(_tempIndexArray);
         const _currentFirstIndex = _tempIndexArray ? _tempIndexArray[0] : 0;
-        console.log(_currentFirstIndex);
+        // console.log(_currentFirstIndex);
         if (_currentFirstIndex) setCurrentFirstIndex(_currentFirstIndex);
         holder.removeEventListener('mousemove', mouseMoveHandler);
         holder.removeEventListener('mouseup', mouseUpHandler);
@@ -503,10 +502,6 @@ const CarouselQueue: React.FC<Props> = (props) => {
       const targetScrollLeft = _tempSlidesPosition[currentFirstIndex][0];
       if (typeof targetScrollLeft !== 'undefined') {
         holder.scrollLeft = targetScrollLeft;
-        console.log(
-          '🚀 ~ file: CarouselQueue.tsx ~ line 506 ~ React.useEffect ~ targetScrollLeft',
-          targetScrollLeft
-        );
       }
       // console.log(targetScrollLeft);
       setHolderScrollLeft(holder.scrollLeft);
