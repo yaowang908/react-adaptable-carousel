@@ -1,4 +1,5 @@
 import React from 'react';
+// import SingleElement from './SingleElement';
 import './CarouselAutoScale.style.scss';
 
 interface Props {
@@ -20,19 +21,19 @@ interface Props {
   divElementMinWidth?: number;
 }
 
-const CarouselAutoScale: React.FC<Props> = () => {
-  // const {
-  //   themeColor,
-  //   reminder,
-  //   buttonText,
-  //   componentHeight,
-  //   gap,
-  //   roundCorner,
-  //   isDivElement,
-  //   urlArray,
-  //   divElementMinWidth,
-  //   children,
-  // } = props;
+const CarouselAutoScale: React.FC<Props> = (props) => {
+  const {
+    // themeColor,
+    // reminder,
+    // buttonText,
+    // componentHeight,
+    // gap,
+    // roundCorner,
+    // isDivElement,
+    urlArray,
+    // divElementMinWidth,
+    // children,
+  } = props;
 
   // TODO: rebuild the CarouselQueue Component, new name: CarouselAutoScale
   // ...break into small pieces, lib and Component
@@ -42,7 +43,19 @@ const CarouselAutoScale: React.FC<Props> = () => {
   return (
     <div className="CAS_container">
       <div className="CAS_holder">
-        <div className="CAS_item">X</div>
+        {urlArray?.map((x, index) =>
+          x.isVideo ? (
+            <div key={index}>
+              <h1>{x.url}</h1>
+            </div>
+          ) : (
+            <div key={index}>
+              <a href={x.link}>
+                <img src={x.url} alt="" />
+              </a>
+            </div>
+          )
+        )}
       </div>
     </div>
   );
